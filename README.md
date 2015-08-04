@@ -1,4 +1,6 @@
-Ensure xsltproc is installed
+Ensure xsltproc is installed.
+
+The xsl templates have been adapted from [jats-conversion](https://github.com/PeerJ/jats-conversion)
 
 ```
 git clone git@github.com:elifesciences/elife-citation-exports.git
