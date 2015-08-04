@@ -11,3 +11,7 @@ cd elife-citation-exports
 xsltproc src/jats-to-bibtex.xsl tests/fixtures/jats/00288.xml
 xsltproc src/jats-to-ris.xsl tests/fixtures/jats/00288.xml
 ```
+
+```
+phpunit --verbose -c tests/phpunit.xml
+```
