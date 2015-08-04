@@ -10,4 +10,7 @@ before_script:
   - xsltproc src/jats-to-bibtex.xsl tests/fixtures/jats/00288.xml > tmp/00288.bib
   - xsltproc src/jats-to-ris.xsl tests/fixtures/jats/00288.xml > tmp/00288.ris
 
+  - find tmp -name "*.bib" -exec cat {} \;
+  - find tmp -name "*.ris" -exec cat {} \;
+
 script: phpunit --verbose -c tests/phpunit.xml
