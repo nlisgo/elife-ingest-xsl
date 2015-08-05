@@ -7,7 +7,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install xsltproc
 
-  - ./tests/generation_citation_formats.sh
+  - ./generation_citation_formats.sh
 
   # Output citation formats grouped by format
   - for ext in $(find tests/tmp -type f -name "*.*" | awk -F. '!a[$NF]++{print $NF}'); do find tests/tmp -name "*.$ext" -exec cat {} \;; done

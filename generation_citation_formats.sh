@@ -7,8 +7,8 @@
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
-SOURCEFOLDER="$SCRIPTPATH/fixtures/jats"
-DESTFOLDER="$SCRIPTPATH/tmp"
+SOURCEFOLDER="$SCRIPTPATH/tests/fixtures/jats"
+DESTFOLDER="$SCRIPTPATH/tests/tmp"
 
 #########################
 # The command line help #
