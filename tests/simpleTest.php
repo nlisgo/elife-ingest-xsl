@@ -9,7 +9,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->temp_folder = 'tmp/';
+        $this->temp_folder = 'tests/tmp/';
         $this->bib_folder = 'tests/fixtures/bib/';
         $this->ris_folder = 'tests/fixtures/ris/';
     }
