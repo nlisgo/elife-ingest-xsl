@@ -24,7 +24,7 @@ display_help() {
 ################################
 # Check if parameters options  #
 # are given on the commandline #
-###############################
+################################
 while true;
 do
     case "$1" in

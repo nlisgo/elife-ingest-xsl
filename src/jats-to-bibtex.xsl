@@ -12,7 +12,7 @@
     <template match="article-meta">
         <text>@article {</text>
         <value-of select="article-id[@pub-id-type='doi']"/>
-        <text>,&#10;</text><!-- newline -->
+        <text>,&#10;</text>
         <call-template name="item">
             <with-param name="key">author</with-param>
             <with-param name="value">
@@ -156,27 +156,32 @@
     </template>
 
     <template match="abstract">
-        <variable name="text" select="."/>
+        <variable name="text">
+            <choose>
+                <when test="object-id[@pub-id-type='doi']">
+                    <variable name="newtext1">
+                        <call-template name="string-replace-all">
+                            <with-param name="text" select="."/>
+                            <with-param name="replace" select="object-id[@pub-id-type='doi']"/>
+                            <with-param name="by" select="''"/>
+                        </call-template>
+                    </variable>
 
-        <variable name="newtext1">
-            <call-template name="string-replace-all">
-                <with-param name="text" select="$text"/>
-                <with-param name="replace" select="object-id[@pub-id-type='doi']"/>
-                <with-param name="by" select="''"/>
-            </call-template>
-        </variable>
-
-        <variable name="newtext2">
-        <call-template name="string-replace-all">
-            <with-param name="text" select="$newtext1"/>
-            <with-param name="replace" select="'DOI: http://dx.doi.org/'"/>
-            <with-param name="by" select="''"/>
-        </call-template>
+                    <call-template name="string-replace-all">
+                        <with-param name="text" select="$newtext1"/>
+                        <with-param name="replace" select="'DOI: http://dx.doi.org/'"/>
+                        <with-param name="by" select="''"/>
+                    </call-template>
+                </when>
+                <otherwise>
+                    <value-of select="."/>
+                </otherwise>
+            </choose>
         </variable>
 
         <call-template name="item">
             <with-param name="key">abstract</with-param>
-            <with-param name="value" select="$newtext2"/>
+            <with-param name="value" select="$text"/>
         </call-template>
     </template>
 
