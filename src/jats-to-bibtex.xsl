@@ -11,12 +11,28 @@
 
     <template match="article-meta">
         <text>@article {</text>
-        <text>&#10;</text><!-- newline -->
-        <apply-templates select="contrib-group[not(@contrib-group)][1]"/>
-        <apply-templates select="contrib-group[not(@contrib-group)][2]"/>
+        <value-of select="article-id[@pub-id-type='doi']"/>
+        <text>,&#10;</text><!-- newline -->
+        <call-template name="item">
+            <with-param name="key">author</with-param>
+            <with-param name="value">
+                <apply-templates select="contrib-group/contrib[@contrib-type='author']"/>
+            </with-param>
+        </call-template>
+        <call-template name="item">
+            <with-param name="key">editor</with-param>
+            <with-param name="value">
+                <apply-templates select="contrib-group/contrib[@contrib-type='editor']"/>
+            </with-param>
+        </call-template>
         <apply-templates select="title-group/article-title"/>
         <apply-templates select="volume"/>
         <apply-templates select="pub-date[@date-type='pub']/year"/>
+        <apply-templates select="pub-date[@date-type='pub']/month"/>
+        <call-template name="item">
+            <with-param name="key">pages</with-param>
+            <with-param name="value" select="elocation-id"/>
+        </call-template>
         <apply-templates select="article-id[@pub-id-type='doi']"/>
         <apply-templates select="../journal-meta/publisher/publisher-name"/>
         <apply-templates select="abstract[not(@abstract-type)]"/>
@@ -25,13 +41,11 @@
         <call-template name="item">
             <with-param name="key">article_type</with-param>
             <with-param name="value">journal</with-param>
-            <with-param name="suffix" select="','"/>
         </call-template>
         <apply-templates select="pub-date[@date-type='pub']"/>
         <call-template name="item">
-            <with-param name="key">URL</with-param>
-            <with-param name="value" select="concat('http://elifesciences.org/content/', volume, '/', elocation-id)"/>
-            <with-param name="suffix" select="','"/>
+            <with-param name="key">url</with-param>
+            <with-param name="value" select="concat('https://dx.doi.org/', article-id[@pub-id-type='doi'])"/>
         </call-template>
         <call-template name="item">
             <with-param name="key">citation</with-param>
@@ -39,14 +53,13 @@
             <with-param name="suffix" select="''"/>
         </call-template><!-- always at the end, to avoid trailing comma -->
         <text>}</text>
-        <text>&#10;</text><!-- newline -->
     </template>
 
     <template name="item">
         <param name="key"/>
         <param name="value"/>
         <param name="suffix" select="','"/>
-        <value-of select="concat('&#x9;', $key, ' = {', $value, '}', $suffix, '&#10;')"/>
+        <value-of select="concat(' ', $key, ' = {', $value, '}', $suffix, '&#10;')"/>
     </template>
 
     <template match="article-id[@pub-id-type='doi']">
@@ -65,20 +78,11 @@
         </call-template>
     </template>
 
-    <template match="contrib-group[not(@contrib-group)][1]">
+    <template match="contrib-group[@content-type='authors']">
         <call-template name="item">
             <with-param name="key">author</with-param>
             <with-param name="value">
                 <apply-templates select="contrib[@contrib-type='author']"/>
-            </with-param>
-        </call-template>
-    </template>
-
-    <template match="contrib-group[not(@contrib-group)][2]">
-        <call-template name="item">
-            <with-param name="key">editor</with-param>
-            <with-param name="value">
-                <apply-templates select="contrib[@contrib-type='editor']"/>
             </with-param>
         </call-template>
     </template>
@@ -130,6 +134,17 @@
         <call-template name="item">
             <with-param name="key">year</with-param>
             <with-param name="value"><value-of select="."/></with-param>
+        </call-template>
+    </template>
+
+    <template match="pub-date[@date-type='pub']/month">
+        <call-template name="item">
+            <with-param name="key">month</with-param>
+            <with-param name="value">
+                <call-template name="month-abbrev-en">
+                    <with-param name="MM" select="."/>
+                </call-template>
+            </with-param>
         </call-template>
     </template>
 
@@ -246,6 +261,12 @@
         <xsl:text>\texttt{</xsl:text>
         <xsl:apply-templates mode="markup"/>
         <xsl:text>}</xsl:text>
+    </template>
+
+    <template name="month-abbrev-en">
+        <param name="MM"/>
+        <variable name="months" select="'  janfebmaraprmayjunjulaugsepoctnovdec'"/>
+        <value-of select="substring($months, number($MM) * 3, 3)"/>
     </template>
 
     <template name="string-replace-all">

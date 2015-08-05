@@ -22,7 +22,7 @@
         <apply-templates select="volume"/>
         <call-template name="item">
             <with-param name="key">UR</with-param>
-            <with-param name="value" select="concat('http://elifesciences.org/content/', volume, '/', elocation-id)"/>
+            <with-param name="value" select="concat('https://dx.doi.org/', article-id[@pub-id-type='doi'])"/>
         </call-template>
         <call-template name="item">
             <with-param name="key">M3</with-param>
