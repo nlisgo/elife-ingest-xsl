@@ -9,13 +9,18 @@ cd elife-citation-exports
 
 Generate example citation formats:
 ```
-./tests/generation_citation_formats.sh
+./generation_citation_formats.sh
 ```
 
-Review the output of example citation formats in:
+Usage guidance for this script is:
 ```
-tests/tmp/
+Usage: generation_citation_formats.sh [-h] [-s <source folder>] [-d <destination folder>]
 ```
+
+The default source folder is tests/fixtures/jats.
+The default destination folder is tests/tmp.
+
+Review the output of example citation formats in the destination folder.
 
 Run PHPUnit tests on example citation formats
 ```
@@ -28,6 +33,13 @@ Apply xsl templates to another JATS XML file:
 xsltproc src/jats-to-bibtex.xsl [JATS XML file]
 xsltproc src/jats-to-ris.xsl [JATS XML file]
 ```
+
+To process all of the elife articles then do the following:
+```
+git clone git@github.com:elifesciences/elife-articles.git
+./generation_citation_formats.sh -s elife-articles -d elife-articles-processed
+```
+
 
 Useful resources:
 

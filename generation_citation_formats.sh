@@ -62,8 +62,8 @@ generate_citation_formats() {
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
         echo "Generating citation formats for $filename ..."
-        xsltproc $SCRIPTPATH/../src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
-        xsltproc $SCRIPTPATH/../src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
+        xsltproc $SCRIPTPATH/src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
+        xsltproc $SCRIPTPATH/src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
     done
 }
 
