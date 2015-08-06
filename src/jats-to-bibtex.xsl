@@ -26,8 +26,14 @@
             </with-param>
         </call-template>
         <apply-templates select="title-group/article-title"/>
-        <apply-templates select="volume"/>
-        <apply-templates select="pub-date[@date-type='pub']/year"/>
+        <call-template name="item">
+            <with-param name="key">volume</with-param>
+            <with-param name="value"><call-template name="volume"/></with-param>
+        </call-template>
+        <call-template name="item">
+            <with-param name="key">year</with-param>
+            <with-param name="value"><call-template name="year"/></with-param>
+        </call-template>
         <apply-templates select="pub-date[@date-type='pub']/month"/>
         <call-template name="item">
             <with-param name="key">pages</with-param>
@@ -47,9 +53,10 @@
             <with-param name="key">url</with-param>
             <with-param name="value" select="concat('https://dx.doi.org/', article-id[@pub-id-type='doi'])"/>
         </call-template>
+        <apply-templates select="kwd-group[@kwd-group-type='author-keywords']"/>
         <call-template name="item">
             <with-param name="key">citation</with-param>
-            <with-param name="value" select="concat(../journal-meta/journal-title-group/journal-title, ' ', pub-date[@date-type='pub']/year, ';', volume, ':', elocation-id)"/>
+            <with-param name="value"><call-template name="citation"/></with-param>
             <with-param name="suffix" select="''"/>
         </call-template><!-- always at the end, to avoid trailing comma -->
         <text>}</text>
@@ -106,7 +113,7 @@
         <value-of select="concat(', ', .)"/>
     </template>
 
-    <template match="kwd-group[@kwd-group-type='author']">
+    <template match="kwd-group[@kwd-group-type='author-keywords']">
         <call-template name="item">
             <with-param name="key">keywords</with-param>
             <with-param name="value">
@@ -131,6 +138,13 @@
     </template>
 
     <template match="pub-date[@date-type='pub']/year">
+        <call-template name="item">
+            <with-param name="key">year</with-param>
+            <with-param name="value"><value-of select="."/></with-param>
+        </call-template>
+    </template>
+
+    <template match="permissions/copyright-year">
         <call-template name="item">
             <with-param name="key">year</with-param>
             <with-param name="value"><value-of select="."/></with-param>
@@ -181,7 +195,7 @@
 
         <call-template name="item">
             <with-param name="key">abstract</with-param>
-            <with-param name="value" select="$text"/>
+            <with-param name="value" select="normalize-space($text)"/>
         </call-template>
     </template>
 
@@ -266,6 +280,38 @@
         <xsl:text>\texttt{</xsl:text>
         <xsl:apply-templates mode="markup"/>
         <xsl:text>}</xsl:text>
+    </template>
+
+    <template name="citation">
+        <variable name="year"><call-template name="year"/></variable>
+        <variable name="volume"><call-template name="volume"/></variable>
+        <value-of select="concat(//journal-meta/journal-title-group/journal-title, ' ', $year, ';', $volume, ':', //article-meta/elocation-id)"/>
+    </template>
+
+    <template name="year">
+        <choose>
+            <when test="//article-meta/pub-date[@date-type='pub']/year">
+                <value-of select="//article-meta/pub-date[@date-type='pub']/year"/>
+            </when>
+            <otherwise>
+                <value-of select="//article-meta/permissions/copyright-year"/>
+            </otherwise>
+        </choose>
+    </template>
+
+    <template name="volume">
+        <variable name="value">
+            <choose>
+                <when test="//article-meta/volume">
+                    <value-of select="//article-meta/volume"/>
+                </when>
+                <otherwise>
+                    <variable name="year"><call-template name="year"/></variable>
+                    <value-of select="$year - 2011"/>
+                </otherwise>
+            </choose>
+        </variable>
+        <value-of select="$value"/>
     </template>
 
     <template name="month-abbrev-en">

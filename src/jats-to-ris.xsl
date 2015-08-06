@@ -19,10 +19,13 @@
         <apply-templates select="../journal-meta/issn"/>
         <apply-templates select="../journal-meta/publisher/publisher-name"/>
         <apply-templates select="article-id[@pub-id-type='doi']"/>
-        <apply-templates select="volume"/>
+        <call-template name="item">
+            <with-param name="key">VL</with-param>
+            <with-param name="value"><call-template name="volume"/></with-param>
+        </call-template>
         <call-template name="item">
             <with-param name="key">UR</with-param>
-            <with-param name="value" select="concat('https://dx.doi.org/', article-id[@pub-id-type='doi'])"/>
+            <with-param name="value"><value-of select="concat('https://dx.doi.org/', article-id[@pub-id-type='doi'])"/></with-param>
         </call-template>
         <call-template name="item">
             <with-param name="key">M3</with-param>
@@ -30,9 +33,13 @@
         </call-template>
         <call-template name="item">
             <with-param name="key">C1</with-param>
-            <with-param name="value" select="concat(../journal-meta/journal-title-group/journal-title, ' ', pub-date[@date-type='pub']/year, ';', volume, ':', elocation-id)"/>
+            <with-param name="value"><call-template name="citation"/></with-param>
         </call-template>
-        <apply-templates select="kwd-group[@kwd-group-type='author']/kwd"/>
+        <call-template name="item">
+            <with-param name="key">SP</with-param>
+            <with-param name="value" select="elocation-id"/>
+        </call-template>
+        <apply-templates select="kwd-group[@kwd-group-type='author-keywords']/kwd"/>
         <apply-templates select="abstract[not(@abstract-type)]"/>
         <text>ER  -&#32;</text><!-- space at the end, might not be necessary -->
         <text>&#10;</text><!-- newline -->
@@ -93,7 +100,7 @@
         </call-template>
         <call-template name="item">
             <with-param name="key">DA</with-param>
-            <with-param name="value" select="concat(year, '/', month, '/', day)"/>
+            <with-param name="value"><value-of select="concat(year, '/', month, '/', day)"/></with-param>
         </call-template>
     </template>
 
@@ -129,7 +136,7 @@
 
         <call-template name="item">
             <with-param name="key">AB</with-param>
-            <with-param name="value" select="$text"/>
+            <with-param name="value"><value-of select="normalize-space($text)"/></with-param>
         </call-template>
     </template>
 
@@ -161,6 +168,38 @@
         <call-template name="item">
             <with-param name="key">SN</with-param>
         </call-template>
+    </template>
+
+    <template name="citation">
+        <variable name="year"><call-template name="year"/></variable>
+        <variable name="volume"><call-template name="volume"/></variable>
+        <value-of select="concat(//journal-meta/journal-title-group/journal-title, ' ', $year, ';', $volume, ':', //article-meta/elocation-id)"/>
+    </template>
+
+    <template name="year">
+        <choose>
+            <when test="//article-meta/pub-date[@date-type='pub']/year">
+                <value-of select="//article-meta/pub-date[@date-type='pub']/year"/>
+            </when>
+            <otherwise>
+                <value-of select="//article-meta/permissions/copyright-year"/>
+            </otherwise>
+        </choose>
+    </template>
+
+    <template name="volume">
+        <variable name="value">
+            <choose>
+                <when test="//article-meta/volume">
+                    <value-of select="//article-meta/volume"/>
+                </when>
+                <otherwise>
+                    <variable name="year"><call-template name="year"/></variable>
+                    <value-of select="$year - 2011"/>
+                </otherwise>
+            </choose>
+        </variable>
+        <value-of select="$value"/>
     </template>
 
     <template name="string-replace-all">
