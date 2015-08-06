@@ -9,15 +9,17 @@ SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
 SOURCEFOLDER="$SCRIPTPATH/tests/fixtures/jats"
 DESTFOLDER="$SCRIPTPATH/tests/tmp"
+XSLTPROCOPTS="--novalid"
 
 #########################
 # The command line help #
 #########################
 display_help() {
-    echo "Usage: $(basename "$0") [-h] [-s <source folder>] [-d <destination folder>]"
+    echo "Usage: $(basename "$0") [-h] [-s <source folder>] [-d <destination folder>] [-o <xsltproc options>]"
     echo
     echo "   -s  set the source folder (default: $SOURCEFOLDER)"
     echo "   -d  set the destination folder (default: $DESTFOLDER)"
+    echo "   -o  set options for xsltproc (default: '--novalid')"
     exit 1
 }
 
@@ -38,6 +40,10 @@ do
            ;;
       -d | --destination)
           DESTFOLDER="$2"
+           shift 2
+           ;;
+      -o | --options)
+          XSLTPROCOPTS="$2"
            shift 2
            ;;
       -*)
@@ -62,8 +68,8 @@ generate_citation_formats() {
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
         echo "Generating citation formats for $filename ..."
-        xsltproc $SCRIPTPATH/src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
-        xsltproc $SCRIPTPATH/src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
     done
 }
 
