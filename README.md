@@ -14,11 +14,20 @@ Generate example citation formats:
 
 Usage guidance for this script is:
 ```
-Usage: generation_citation_formats.sh [-h] [-s <source folder>] [-d <destination folder>]
+Usage: generation_citation_formats.sh [-h] [-s <source folder>] [-d <destination folder>] [-o <xsltproc options>]
 ```
 
 The default source folder is tests/fixtures/jats.
 The default destination folder is tests/tmp.
+The default xsltproc options are --novalid. (See: http://xmlsoft.org/XSLT/xsltproc.html)
+
+If you want to validate the XML against the DTD at the same time then you can simply set the -o parameter to ''
+
+```
+./generation_citation_formats.sh -o ''
+```
+
+Note that this will take considerably more time to process.
 
 Review the output of example citation formats in the destination folder.
 
@@ -45,3 +54,4 @@ Useful resources:
 
 * http://truben.no/latex/bibtex
 * https://code.google.com/p/bibtex-check/
+* http://xmlsoft.org/XSLT/xsltproc.html
