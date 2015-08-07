@@ -14,6 +14,10 @@
         </call-template>
         <apply-templates select="contrib-group/contrib"/>
         <apply-templates select="title-group/article-title"/>
+        <call-template name="item">
+            <with-param name="key">PY</with-param>
+            <with-param name="value"><call-template name="year"/></with-param>
+        </call-template>
         <apply-templates select="pub-date[@date-type='pub']"/>
         <apply-templates select="../journal-meta/journal-title-group/journal-title"/>
         <apply-templates select="../journal-meta/issn"/>
@@ -94,10 +98,6 @@
     </template>
 
     <template match="pub-date">
-        <call-template name="item">
-            <with-param name="key">PY</with-param>
-            <with-param name="value" select="year"/>
-        </call-template>
         <call-template name="item">
             <with-param name="key">DA</with-param>
             <with-param name="value"><value-of select="concat(year, '/', month, '/', day)"/></with-param>
