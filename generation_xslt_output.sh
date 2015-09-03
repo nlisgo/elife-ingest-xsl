@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Prepare citation styles derived from elife article XML.
+# Prepare xslt output derived from elife article XML.
 # use ctrl-c to quit.
 
 # @author: Nathan Lisgo <n.lisgo@elifesciences.org>
@@ -57,7 +57,7 @@ do
     esac
 done
 
-generate_citation_formats() {
+generate_xslt_output() {
     # create clean tmp folder
     if [ -d $DESTFOLDER ]; then
         rm -Rf $DESTFOLDER
@@ -67,10 +67,11 @@ generate_citation_formats() {
     # for each jats xml file create a citation format of each type
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
-        echo "Generating citation formats for $filename ..."
+        echo "Generating xslt output for $filename ..."
         xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
         xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-html.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.html
     done
 }
 
-time generate_citation_formats
+time generate_xslt_output
