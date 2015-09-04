@@ -223,9 +223,7 @@
 			<xsl:apply-templates />
 		</div>
 	</xsl:template>
-	<xsl:template match="abstract/title">
-		<h2><xsl:apply-templates /></h2>
-	</xsl:template>
+	<xsl:template match="abstract/title"/>
 
 
   <!-- Start transforming sections to heading levels -->
