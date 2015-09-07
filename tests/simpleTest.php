@@ -83,6 +83,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testJatsToHtmlDoiMedia() {
+        $compares = $this->compareDoiHtmlSection('-doi-media');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
     /**
      * Prepare array of actual and expected results for DOI HTML.
      */
