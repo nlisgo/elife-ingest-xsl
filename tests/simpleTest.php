@@ -75,8 +75,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testJatsToHtmlDoiTable() {
-        $compares = $this->compareDoiHtmlSection('-doi-table');
+    public function testJatsToHtmlDoiTableWrap() {
+        $compares = $this->compareDoiHtmlSection('-doi-table-wrap');
 
         foreach ($compares as $compare) {
             $this->assertEqualHtml($compare[0], $compare[1]);
