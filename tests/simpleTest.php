@@ -83,6 +83,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testJatsToHtmlDoiBoxedText() {
+        $compares = $this->compareDoiHtmlSection('-doi-boxed-text');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
     public function testJatsToHtmlDoiMedia() {
         $compares = $this->compareDoiHtmlSection('-doi-media');
 
