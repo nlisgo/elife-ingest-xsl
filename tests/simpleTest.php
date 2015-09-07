@@ -52,8 +52,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJatsToHtmlAbstract() {
-
-        $compares = $this->compareSection('-abstract', "//*[@id='abstract']");
+        $compares = $this->compareHtmlSection('-abstract', "//*[@id='abstract']");
 
         foreach ($compares as $compare) {
             $this->assertEqualHtml($compare[0], $compare[1]);
@@ -61,8 +60,23 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJatsToHtmlDigest() {
+        $compares = $this->compareHtmlSection('-digest', "//*[@id='elife-digest']");
 
-        $compares = $this->compareSection('-digest', "//*[@id='elife-digest']");
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
+    public function testJatsToHtmlDoiFig() {
+        $compares = $this->compareDoiHtmlSection('-doi-fig');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
+    public function testJatsToHtmlDoiTable() {
+        $compares = $this->compareDoiHtmlSection('-doi-table');
 
         foreach ($compares as $compare) {
             $this->assertEqualHtml($compare[0], $compare[1]);
@@ -70,31 +84,58 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Prepare array of actual and expected results for DOI HTML.
+     */
+    protected function compareDoiHtmlSection($suffix) {
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<doi>[^\-]+)' . $suffix . '\.html$/', basename($html), $matches);
+            if ($found) {
+                $sections[] = [
+                    'suffix' => '-' . $matches['doi'] . $suffix,
+                    'query' => "//*[@data-doi='10.7554/" . $matches['doi'] . "']",
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], $section['query']));
+        }
+
+        return $compares;
+    }
+
+    /**
      * Prepare array of actual and expected results.
      */
-    protected function compareSection($suffix, $xpath_query) {
+    protected function compareHtmlSection($suffix, $xpath_query) {
+        $html_prefix = '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $expected = 'expected';
         $htmls = glob($this->html_folder . "*" . $suffix . ".html");
         $compares = [];
 
+        libxml_use_internal_errors(TRUE);
         foreach ($htmls as $html) {
             $file = str_replace($suffix, '', basename($html));
-            $actualDom = new DomDocument();
-            libxml_use_internal_errors(TRUE);
-            $actualDom->loadHTMLFile($this->temp_folder . $file);
-            libxml_clear_errors();
+            $actualDom = new DOMDocument();
+            $actual_html = file_get_contents(__DIR__ . '/tmp/' . $file);
+            $actualDom->loadHTML($html_prefix . $actual_html);
             $xpath = new DOMXPath($actualDom);
             $elements = $xpath->query($xpath_query);
 
-            $expectedDom = new DomDocument();
-            $html = file_get_contents($html);
-            $expectedDom->loadXML('<' . $expected . '>' . $html . '</' . $expected . '>');
+            $expectedDom = new DOMDocument();
+            $expected_html = file_get_contents($html);
+            $expectedDom->loadHTML($html_prefix . '<' . $expected . '>' . $expected_html . '</' . $expected . '>');
 
             $compares[] = [
                 $this->getInnerHtml($expectedDom->getElementsByTagName($expected)->item(0)),
                 $this->getInnerHtml($elements->item(0)),
             ];
         }
+        libxml_clear_errors();
 
         return $compares;
     }
