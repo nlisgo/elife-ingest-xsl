@@ -91,6 +91,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testJatsToHtmlDoiSupplementaryMaterial() {
+        $compares = $this->compareDoiHtmlSection('-doi-supplementary-material');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
     public function testJatsToHtmlDoiMedia() {
         $compares = $this->compareDoiHtmlSection('-doi-media');
 
