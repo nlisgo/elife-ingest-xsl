@@ -251,7 +251,7 @@
 	<xsl:template match="p">
 		<p>
 			<xsl:attribute name="id">
-				<xsl:value-of select="concat('p-', count(preceding::p)+1)" />
+				<xsl:value-of select="concat('p-', count(preceding::p)+2)" />
 			</xsl:attribute>
 			<xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0)">
 				<xsl:attribute name="class">
