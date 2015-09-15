@@ -268,7 +268,7 @@
 			</a>
 		</xsl:if>
 		<xsl:if test="@ext-link-type = 'doi'">
-			<a href="{.}">
+			<a href="/lookup/doi/{@xlink:href}">
 				<xsl:apply-templates />
 			</a>
 		</xsl:if>
