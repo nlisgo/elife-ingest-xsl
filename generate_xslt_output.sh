@@ -68,9 +68,9 @@ generate_xslt_output() {
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
         echo "Generating xslt output for $filename ..."
-        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
-        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
-        xsltproc $XSLTPROCOPTS $SCRIPTPATH/src/jats-to-html.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.html
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/lib/xsl/jats-to-bibtex.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.bib
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/lib/xsl/jats-to-ris.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.ris
+        xsltproc $XSLTPROCOPTS $SCRIPTPATH/lib/xsl/jats-to-html.xsl $SOURCEFOLDER/$filename > $DESTFOLDER/${filename%.*}.html
     done
 }
 
