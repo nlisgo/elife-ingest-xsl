@@ -1,4 +1,6 @@
 {
+  "name": "elife/elife-ingest-xsl",
+  "type": "library",
   "require": {
     "php": ">=5.5",
     "beberlei/assert": "~2.3"
