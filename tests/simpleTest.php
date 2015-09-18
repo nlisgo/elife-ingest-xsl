@@ -77,6 +77,22 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testJatsToHtmlDecisionLetter() {
+        $compares = $this->compareHtmlSection('-section-decision-letter', 'getDecisionLetter');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
+    public function testJatsToHtmlAuthorResponse() {
+        $compares = $this->compareHtmlSection('-section-author-response', 'getAuthorResponse');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
     public function testJatsToHtmlAcknowledgements() {
         $compares = $this->compareHtmlSection('-section-acknowledgements', 'getAcknowledgements');
 
