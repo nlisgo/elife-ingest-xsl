@@ -2,6 +2,9 @@
 
 namespace eLifeIngestXsl\ConvertXML;
 
+use Assert;
+use InvalidArgumentException;
+
 final class XMLString {
   /**
    * @var string
@@ -14,6 +17,10 @@ final class XMLString {
   private function __construct($value) {
     $value = is_string($value) ? trim($value) : $value;
 
+    Assert\that($value)
+      ->string()
+      ->notBlank();
+
     $this->value = $value;
   }
 
@@ -21,6 +28,8 @@ final class XMLString {
    * @param string $value
    *
    * @return XMLString
+   *
+   * @throws InvalidArgumentException
    */
   public static function fromString($value)
   {
