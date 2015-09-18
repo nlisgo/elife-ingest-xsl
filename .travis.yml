@@ -17,15 +17,6 @@ before_install:
 install:
   - composer install --prefer-source --no-interaction
 
-before_script:
-  - sudo apt-get update
-  - sudo apt-get install xsltproc
-
-  - ./generate_xslt_output.sh
-
-  # Output citation formats grouped by format
-  - for ext in $(find tests/tmp -type f -name "*.*" | awk -F. '!a[$NF]++{print $NF}'); do find tests/tmp -name "*.$ext" -exec cat {} \;; done
-
 script:
   - ./bin/phpspec run --format=pretty
   - ./bin/phpunit --testdox
