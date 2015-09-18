@@ -250,9 +250,6 @@
 
 	<xsl:template match="p">
 		<p>
-			<xsl:attribute name="id">
-				<xsl:value-of select="concat('p-', count(preceding::p)+2)" />
-			</xsl:attribute>
 			<xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0)">
 				<xsl:attribute name="class">
 					<xsl:value-of select="'first-child'" />
@@ -320,11 +317,8 @@
 				<div class="highwire-markup">
 					<div xmlns="http://www.w3.org/1999/xhtml" id="content-block" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						<div class="table-expansion " id="{$id}">
-							<span class="highwire-journal-article-marker-start"></span>
 							<xsl:apply-templates />
-							<span class="highwire-journal-article-marker-end"></span>
 						</div>
-						<span id="related-urls"></span>
 					</div>
 				</div>
 			</div>
@@ -346,21 +340,13 @@
 	<xsl:template match="table-wrap/table">
 		<div class="table-wrapper">
 			<table>
-				<xsl:attribute name="id">
-					<xsl:value-of select="concat(name(.), '-', count(preceding::table)+1)" />
-				</xsl:attribute>
 				<xsl:apply-templates select="@* | node() " />
 			</table>
 		</div>
 	</xsl:template>
 	<!-- Handle other parts of table -->
 	<xsl:template match="thead|tbody|th|td|tr">
-		<xsl:variable name="name" select="name(.)" />
-		<xsl:variable name="elementCount" select="count(preceding::*[name()=$name])+1" />
 		<xsl:copy>
-			<xsl:attribute name="id">
-				<xsl:value-of select="concat($name, '-', $elementCount)" />
-			</xsl:attribute>
 			<xsl:if test="@style">
 				<xsl:attribute name="style">
 					<xsl:value-of select="@style"/>
@@ -441,16 +427,13 @@
 		<div xmlns:xhtml="http://www.w3.org/1999/xhtml" class="highwire-markup" data-fragment-nid="" data-doi="{$data-doi}">
 			<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" id="content-block-markup">
 				<div class="fig-expansion " id="{@id}">
-					<span class="highwire-journal-article-marker-start"></span>
 					<div class="fig-inline-img">
 						<a href="" class="colorbox colorbox-load figure-expand-popup init-colorbox-processed cboxElement">
 							<img src="http://cdn-site.elifesciences.org/content/elife/4/{@id}.gif" data-img="{@id}.gif" alt="{$caption}"/>
 						</a>
 					</div>
 					<xsl:apply-templates />
-					<span class="highwire-journal-article-marker-end"></span>
 				</div>
-				<span id="related-urls"></span>
 			</div>
 		</div>
 	</xsl:template>
@@ -506,10 +489,8 @@
 				<div class="highwire-markup">
 					<div xmlns="http://www.w3.org/1999/xhtml" id="content-block-markup" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						<div class="article fulltext-view ">
-							<span class="highwire-journal-article-marker-start"></span>
 							<xsl:apply-templates />
 						</div>
-						<span id="related-urls"></span>
 					</div>
 				</div>
 				<a class="back-to-top visible-small" href="#body-top">To Top</a>
@@ -530,19 +511,13 @@
 			<xsl:apply-templates />
 		</h2>
 	</xsl:template>
-	
+
 	<xsl:template match="ack/p">
-		<div class="ctools-collapsible-content">
-			<div xmlns="http://www.w3.org/1999/xhtml" class="section ack" id="ack-1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-				<p>
-					<xsl:attribute name="id">
-						<xsl:value-of select="concat('p-', count(preceding::p)+1)" />
-					</xsl:attribute>
-					<xsl:apply-templates />
-				</p>
-			</div>
-			<a class="back-to-top visible-small" href="#body-top">To Top</a>
-		</div>
+        <div id="ack-1">
+            <p>
+                <xsl:apply-templates />
+            </p>
+        </div>
 	</xsl:template>
 	<!-- START Reference Handling -->
 	
@@ -1056,11 +1031,8 @@
 			<div class="highwire-markup">
 				<div xmlns="http://www.w3.org/1999/xhtml" id="content-block" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 					<div class="article fulltext-view ">
-						<span class="highwire-journal-article-marker-start"></span>
 						<xsl:apply-templates/>
-						<span class="highwire-journal-article-marker-end"></span>
 					</div>
-					<span id="related-urls"></span>
 				</div>
 			</div>
 		</div>
