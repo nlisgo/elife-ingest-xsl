@@ -3,13 +3,11 @@ language: php
 php:
   - 5.5
   - 5.6
-  - nightly
-  - hhvm
+  - 7.0
 
 matrix:
   allow_failures:
-    - php: nightly
-    - php: hhvm
+    - 7.0
 
 ## Run on container environment
 sudo: false
