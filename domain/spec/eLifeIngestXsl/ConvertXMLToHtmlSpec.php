@@ -62,12 +62,12 @@ class ConvertXMLToHtmlSpec extends ObjectBehavior {
 
   public  function it_might_have_an_acknowledgements_section() {
     $this->setupXML();
-    $this->getAcknowledgement()->shouldNotBeNull();
+    $this->getAcknowledgements()->shouldNotBeNull();
   }
 
   public  function it_might_not_have_an_acknowledgements_section() {
     $this->setupXML('01911-poa');
-    $this->getAcknowledgement()->shouldBeNull();
+    $this->getAcknowledgements()->shouldBeNull();
   }
 
   public  function it_might_have_a_main_text_section() {

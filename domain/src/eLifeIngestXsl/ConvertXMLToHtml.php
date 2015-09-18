@@ -56,7 +56,7 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
-  public function getAcknowledgement()
+  public function getAcknowledgements()
   {
     return $this->getSection("//*[@id='ack-1']");
   }

@@ -1,15 +1,23 @@
 <?php
 
 
+use eLifeIngestXsl\ConvertXML\XMLString;
+use eLifeIngestXsl\ConvertXMLToBibtex;
+use eLifeIngestXsl\ConvertXMLToHtml;
+use eLifeIngestXsl\ConvertXMLToRis;
+
 class simpleTest extends PHPUnit_Framework_TestCase
 {
     private $temp_folder = '';
+    private $jats_folder = '';
     private $bib_folder = '';
     private $ris_folder = '';
+    private $html_folder = '';
 
     public function setUp()
     {
         $this->temp_folder = 'tests/tmp/';
+        $this->jats_folder = 'tests/fixtures/jats/';
         $this->bib_folder = 'tests/fixtures/bib/';
         $this->ris_folder = 'tests/fixtures/ris/';
         $this->html_folder = 'tests/fixtures/html/';
@@ -21,10 +29,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $compares = [];
 
         foreach ($cits as $cit) {
-            $file = basename($cit);
+            $file = basename($cit, '.bib');
+            $bibtex = new ConvertXMLToBibtex(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
             $compares[] = [
                 file_get_contents($cit),
-                file_get_contents($this->temp_folder . $file),
+                $bibtex->getOutput(),
             ];
         }
 
@@ -39,10 +48,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $compares = [];
 
         foreach ($cits as $cit) {
-            $file = basename($cit);
+            $file = basename($cit, '.ris');
+            $ris = new ConvertXMLToRis(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
             $compares[] = [
                 file_get_contents($cit),
-                file_get_contents($this->temp_folder . $file),
+                $ris->getOutput(),
             ];
         }
 
@@ -52,7 +62,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJatsToHtmlAbstract() {
-        $compares = $this->compareHtmlSection('-abstract', "//*[@id='abstract']");
+        $compares = $this->compareHtmlSection('-section-abstract', 'getAbstract');
 
         foreach ($compares as $compare) {
             $this->assertEqualHtml($compare[0], $compare[1]);
@@ -60,7 +70,23 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJatsToHtmlDigest() {
-        $compares = $this->compareHtmlSection('-digest', "//*[@id='elife-digest']");
+        $compares = $this->compareHtmlSection('-section-digest', 'getDigest');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
+    public function testJatsToHtmlAcknowledgements() {
+        $compares = $this->compareHtmlSection('-section-acknowledgements', 'getAcknowledgements');
+
+        foreach ($compares as $compare) {
+            $this->assertEqualHtml($compare[0], $compare[1]);
+        }
+    }
+
+    public function testJatsToHtmlDoiAbstract() {
+        $compares = $this->compareDoiHtmlSection('-doi-abstract');
 
         foreach ($compares as $compare) {
             $this->assertEqualHtml($compare[0], $compare[1]);
@@ -119,14 +145,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
             if ($found) {
                 $sections[] = [
                     'suffix' => '-' . $matches['doi'] . $suffix,
-                    'query' => "//*[@data-doi='10.7554/" . $matches['doi'] . "']",
+                    'doi' => '10.7554/' . $matches['doi'],
                 ];
             }
         }
         $compares = [];
 
         foreach ($sections as $section) {
-            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], $section['query']));
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getDoi', $section['doi']));
         }
 
         return $compares;
@@ -135,20 +161,19 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Prepare array of actual and expected results.
      */
-    protected function compareHtmlSection($suffix, $xpath_query) {
+    protected function compareHtmlSection($suffix, $method, $params = []) {
+        if (is_string($params)) {
+            $params = [$params];
+        }
         $html_prefix = '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $expected = 'expected';
         $htmls = glob($this->html_folder . "*" . $suffix . ".html");
         $compares = [];
 
         libxml_use_internal_errors(TRUE);
-        foreach ($htmls as $html) {
-            $file = str_replace($suffix, '', basename($html));
-            $actualDom = new DOMDocument();
-            $actual_html = file_get_contents(__DIR__ . '/tmp/' . $file);
-            $actualDom->loadHTML($html_prefix . $actual_html);
-            $xpath = new DOMXPath($actualDom);
-            $elements = $xpath->query($xpath_query);
+          foreach ($htmls as $html) {
+            $file = str_replace($suffix, '', basename($html, '.html'));
+            $actual_html = new ConvertXMLToHtml(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
 
             $expectedDom = new DOMDocument();
             $expected_html = file_get_contents($html);
@@ -156,7 +181,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
             $compares[] = [
                 $this->getInnerHtml($expectedDom->getElementsByTagName($expected)->item(0)),
-                $this->getInnerHtml($elements->item(0)),
+                call_user_func_array([$actual_html, $method], $params),
             ];
         }
         libxml_clear_errors();
