@@ -21,13 +21,13 @@ class ConvertXMLToHtmlSpec extends ObjectBehavior {
 
   public function it_might_have_an_abstract() {
     $this->setupXML();
-    $abstract = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-abstract.html');
+    $abstract = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-section-abstract.html');
     $this->getAbstract()->shouldHaveHTML($abstract);
   }
 
   public function it_might_have_a_digest() {
     $this->setupXML();
-    $digest = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-digest.html');
+    $digest = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-section-digest.html');
     $this->getDigest()->shouldHaveHTML($digest);
   }
 
@@ -38,7 +38,7 @@ class ConvertXMLToHtmlSpec extends ObjectBehavior {
 
   public function it_might_have_a_doi_section() {
     $this->setupXML();
-    $abstract = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-abstract.html');
+    $abstract = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-eLife.00288.001-doi-abstract.html');
     $this->getDoi('10.7554/eLife.00288.001')->shouldHaveHTML($abstract);
 
     $this->getDoi('10.7554/eLife.00288.043')->shouldNotBeNull();
