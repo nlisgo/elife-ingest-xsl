@@ -1070,7 +1070,7 @@
 			</xsl:attribute>
 			<span class="ctools-toggle"></span>
 			
-			<xsl:call-templates name="subarticle-title"/>
+			<xsl:call-template name="subarticle-title"/>
 			
 			<div class="ctools-collapsible-content">
 				<div>
