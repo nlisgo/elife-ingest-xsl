@@ -37,9 +37,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
             ];
         }
 
-        foreach ($compares as $compare) {
-            $this->assertEquals($compare[0], $compare[1]);
-        }
+        $this->runComparisons($compares);
     }
 
     public function testJatsToRis()
@@ -56,96 +54,82 @@ class simpleTest extends PHPUnit_Framework_TestCase
             ];
         }
 
-        foreach ($compares as $compare) {
-            $this->assertEquals($compare[0], $compare[1]);
-        }
+        $this->runComparisons($compares);
     }
 
     public function testJatsToHtmlAbstract() {
         $compares = $this->compareHtmlSection('-section-abstract', 'getAbstract');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDigest() {
         $compares = $this->compareHtmlSection('-section-digest', 'getDigest');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDecisionLetter() {
         $compares = $this->compareHtmlSection('-section-decision-letter', 'getDecisionLetter');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlAuthorResponse() {
         $compares = $this->compareHtmlSection('-section-author-response', 'getAuthorResponse');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlAcknowledgements() {
         $compares = $this->compareHtmlSection('-section-acknowledgements', 'getAcknowledgements');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiAbstract() {
         $compares = $this->compareDoiHtmlSection('-doi-abstract');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiFig() {
         $compares = $this->compareDoiHtmlSection('-doi-fig');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiTableWrap() {
         $compares = $this->compareDoiHtmlSection('-doi-table-wrap');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiBoxedText() {
         $compares = $this->compareDoiHtmlSection('-doi-boxed-text');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiSupplementaryMaterial() {
         $compares = $this->compareDoiHtmlSection('-doi-supplementary-material');
-
-        foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
-        }
+        $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiMedia() {
         $compares = $this->compareDoiHtmlSection('-doi-media');
+        $this->runHtmlComparisons($compares);
+    }
 
+    /**
+     * Compare the expect and actual HTML results.
+     *
+     * @param array[] $compares
+     */
+    protected function runHtmlComparisons($compares) {
+        $this->runComparisons($compares, 'assertEqualHtml');
+    }
+
+    /**
+     * Compare the expect and actual results.
+     *
+     * @param array[] $compares
+     * @param string $method
+     */
+    protected function runComparisons($compares, $method = 'assertEquals') {
         foreach ($compares as $compare) {
-            $this->assertEqualHtml($compare[0], $compare[1]);
+            call_user_func_array([$this, $method], $compare);
         }
     }
 
