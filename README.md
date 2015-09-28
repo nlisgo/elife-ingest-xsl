@@ -26,13 +26,17 @@ The default destination folder is tests/tmp.
 
 Review the output of example citation formats in the destination folder.
 
-Run PHPUnit tests on example citation formats
+Run PHPUnit tests on example citation formats:
 ```
-./bin/phpunit --verbose -c tests/phpunit.xml
+./bin/phpunit
+```
+
+You can filter by a specific method in ```/tests/simpleTest.php```, for example:
+```
+./bin/phpunit --filter=testJatsToHtmlDecisionLetter
 ```
 
 Apply xsl templates to another JATS XML file:
-
 ```
 cat [JATS XML file] | ./scripts/convert_xml.php -t bib
 cat [JATS XML file] | ./scripts/convert_xml.php -t ris
