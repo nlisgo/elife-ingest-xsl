@@ -313,6 +313,16 @@
 
 
   <!-- Start transforming sections to heading levels -->
+  <xsl:template match="supplementary-material">
+      <xsl:variable name="id">
+                    <xsl:value-of select="substring-before(substring-after(@id, 'D'),'-')"/>
+    </xsl:variable>
+    <div class="supplementary-material-expansion" id="DC{$id}">
+        <xsl:apply-templates />
+    </div>
+  </xsl:template>
+
+  
   <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"-->
   <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"/>
   
@@ -336,7 +346,7 @@
 
 	<xsl:template match="p">
 		<p>
-			<xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0)">
+			<xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
 				<xsl:attribute name="class">
 					<xsl:value-of select="'first-child'" />
 				</xsl:attribute>
@@ -373,11 +383,11 @@
 				<!-- If xref has multiple elements in rid, then the link should points to 1st -->
 				<xsl:choose>
 				    <xsl:when test="contains(@rid, ' ')">
-						#<xsl:value-of select="substring-before(@rid, ' ')" />
+						<xsl:value-of select="concat('#',substring-before(@rid, ' '))" />
 				    </xsl:when>
 				    <xsl:otherwise>
-				    	#<xsl:value-of select="@rid"/>
-					</xsl:otherwise>
+				    	<xsl:value-of select="concat('#',@rid)"/>
+				    </xsl:otherwise>
 				</xsl:choose>
 				
 			</xsl:attribute>
@@ -393,22 +403,15 @@
 	<xsl:template match="table-wrap">
 		<!-- line commented and a new line added on 12th August, 2015
 			 For the citation links, take the id from the table-wrap -->
-		<!-- <xsl:variable name="id" select="concat('T', count(preceding::table-wrap)+1)"/> -->
-		<xsl:variable name="id" select="@id"/>
-		
+		<!-- <xsl:variable name="id" select="concat('T', count(preceding::table-wrap)+1)"/>
+		<xsl:variable name="id" select="@id"/> -->
+		<xsl:variable name="id">
+                                <xsl:value-of select="substring-after(@id, 'l')"/>
+                </xsl:variable>
 		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
-		
-		<div id="{$id}" class="table pos-float table-expand-inline" data-doi="{$data-doi}">
-			<div class="highwire-markup-wrapper highwire-get-markup">
-				<div class="highwire-markup">
-					<div xmlns="http://www.w3.org/1999/xhtml" id="content-block" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-						<div class="table-expansion " id="{$id}">
-							<xsl:apply-templates />
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                <div class="table-expansion" id="T{$id}">
+			<xsl:apply-templates />
+                </div>  
 	</xsl:template>
 	
 	<xsl:template match="table-wrap/label" />
@@ -418,20 +421,33 @@
 		</span>
 	</xsl:template>
 	<xsl:template match="caption">
-		<div class="table-caption">
-			<xsl:apply-templates select="parent::table-wrap/label" mode="captionLabel" />
-			<xsl:apply-templates />
-		</div>
+                <xsl:choose>
+                        <!-- if article-title exists, make it as title.
+                                 Otherwise, make source -->
+                        <xsl:when test="not(parent::boxed-text)">
+                                <div class="table-caption">
+                                        <xsl:apply-templates select="parent::table-wrap/label" mode="captionLabel" />
+                                        <xsl:apply-templates />
+                                        <div class="sb-div caption-clear"></div>
+                                </div>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <xsl:apply-templates />
+                        </xsl:otherwise>
+                </xsl:choose>
+		
 	</xsl:template>
 	<xsl:template match="table-wrap/table">
-		<div class="table-wrapper">
-			<table>
-				<xsl:apply-templates select="@* | node() " />
-			</table>
-		</div>
+		
+                    <table>
+                            <xsl:apply-templates select="@* | node() " />
+                    </table>
+                    <xsl:if test="not(table-wrap-foot)">
+                        <div class="table-foot"></div>
+                    </xsl:if>		
 	</xsl:template>
 	<!-- Handle other parts of table -->
-	<xsl:template match="thead|tbody|th|td|tr">
+	<xsl:template match="thead|tr">
 		<xsl:copy>
 			<xsl:if test="@style">
 				<xsl:attribute name="style">
@@ -441,6 +457,26 @@
 			<xsl:apply-templates />
 		</xsl:copy>
 	</xsl:template>
+	<xsl:template match="tbody">
+            <xsl:copy>
+                <xsl:attribute name="id">
+                    <xsl:value-of select="concat('tbody-', count(preceding::tbody)+1)" />
+                </xsl:attribute>
+                <xsl:apply-templates />
+            </xsl:copy>
+	</xsl:template>
+        <xsl:template match="th|td">
+            <xsl:copy>
+                    <xsl:if test="@style">
+                            <xsl:attribute name="style">
+                                    <xsl:value-of select="@style"/>
+                            </xsl:attribute>
+                    </xsl:if>
+                    <xsl:attribute name="rowspan">1</xsl:attribute>
+                    <xsl:attribute name="colspan">1</xsl:attribute>
+                    <xsl:apply-templates />
+            </xsl:copy>
+        </xsl:template>
 	
 	<!-- Handle Table FootNote -->
 	<xsl:template match="table-wrap-foot">
@@ -510,12 +546,17 @@
 	<xsl:template match="//fig">
 		<xsl:variable name="caption" select="child::label/text()"/>
 		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
-		<div xmlns:xhtml="http://www.w3.org/1999/xhtml" class="highwire-markup" data-fragment-nid="" data-doi="{$data-doi}">
-			<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" id="content-block-markup">
-				<div class="fig-expansion " id="{@id}">
+                <xsl:variable name="id">
+                    <xsl:value-of select="count(preceding::fig)+1" />
+                </xsl:variable>
+                <xsl:variable name="graphics" select="child::graphic/@xlink:href"/>
+                
+		<div id="F{$id}" class="fig-inline-img-set">
+			<div class="elife-fig-image-caption-wrapper">
+				<div class="fig-expansion">
 					<div class="fig-inline-img">
-						<a href="" class="colorbox colorbox-load figure-expand-popup init-colorbox-processed cboxElement">
-							<img src="http://cdn-site.elifesciences.org/content/elife/4/{@id}.gif" data-img="{@id}.gif" alt="{$caption}"/>
+						<a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
+							<img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
 						</a>
 					</div>
 					<xsl:apply-templates />
@@ -526,26 +567,41 @@
 	
 	<!-- fig caption -->
 	<xsl:template match="fig//caption">
-		<div class="fig-caption">
-			<!-- three options -->
-			<span class="elife-figure-links">
-				<span class="elife-figure-link elife-figure-link-download">
-					<a href="http://cdn-site.elifesciences.org/content/elife/4/{../@id}.jpg?download=true">Download figure</a>
-				</span>
-				<span class="elife-figure-link elife-figure-link-newtab">
-					<a href="http://cdn-site.elifesciences.org/content/elife/4/{../@id}.jpg" target="_new">Open in new tab</a>
-				</span>
-				<span class="elife-figure-link elife-figure-link-ppt">
-					<a href="">Download powerpoint</a>
-				</span>
-			</span>
-			<span class="fig-label">
-				<xsl:value-of select="../label/text()"/>
-			</span>
-			<xsl:apply-templates />
-		</div>
-		<div class="sb-div caption-clear"></div>
+                <xsl:choose>
+                       
+                        <xsl:when test="not(parent::supplementary-material)">
+                                <div class="fig-caption">
+                                    <xsl:variable name="graphics" select="../graphic/@xlink:href"/>
+                                    <!-- three options -->
+                                    <span class="elife-figure-links">
+                                            <span class="elife-figure-link elife-figure-link-download">
+                                                    <a href="[graphic-{$graphics}-large-download]">Download figure</a>
+                                            </span>
+                                            <span class="elife-figure-link elife-figure-link-newtab">
+                                                    <a href="[graphic-{$graphics}-large]" target="_new">Open in new tab</a>
+                                            </span>
+                                            <!-- <span class="elife-figure-link elife-figure-link-ppt">
+                                                    <a href="">Download powerpoint</a>
+                                            </span> -->
+                                    </span>
+                                    <span class="fig-label">
+                                            <xsl:value-of select="../label/text()"/>
+                                    </span>
+                                    <xsl:apply-templates />
+                                    <div class="sb-div caption-clear"></div>
+                            </div>
+                            
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="supplementary-material-label">
+                                <xsl:value-of select="../label/text()"/>
+                            </span>
+                            <xsl:apply-templates />
+                        </xsl:otherwise>
+                </xsl:choose>
+		
 	</xsl:template>
+        <xsl:template match="fig/graphic"/>
 	
 	<xsl:template match="fig//caption/title">
 		<span class="caption-title">
@@ -554,9 +610,16 @@
 	</xsl:template>
 	
 	<xsl:template match="fig//ext-link">
-		<a href="{@xlink:href}">
+            <xsl:if test="ancestor::supplementary-material">
+		<a href="/lookup/doi/{@xlink:href}">
 			<xsl:apply-templates />
 		</a>
+            </xsl:if>
+            <xsl:if test="not(ancestor::supplementary-material)">
+                <a href="{@xlink:href}">
+			<xsl:apply-templates />
+		</a>
+            </xsl:if>
 	</xsl:template>
 	
 	<!-- reset unwanted -->
@@ -568,20 +631,12 @@
 	
 	<!-- body content -->
 	<xsl:template match="body">
-		<div id="main-text" class="ctools-collapsible-container ctools-collapsible-processed">
-			<span class="ctools-toggle"></span>
-			<h2 class="pane-title ctools-collapsible-handle">Main text</h2>
-			<div class="ctools-collapsible-content">
-				<div class="highwire-markup">
-					<div xmlns="http://www.w3.org/1999/xhtml" id="content-block-markup" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-						<div class="article fulltext-view ">
-							<xsl:apply-templates />
-						</div>
-					</div>
-				</div>
-				<a class="back-to-top visible-small" href="#body-top">To Top</a>
-			</div>
-		</div>
+		
+                <div class="elife-article-decision-letter">
+                        <div class="article fulltext-view">
+                                <xsl:apply-templates />
+                        </div>
+                </div>
 	</xsl:template>
 	<!-- Acknowledgement -->
 	
@@ -884,33 +939,6 @@
 						</div>
 					</xsl:if>
 				</div>
-				
-				<!-- <xsl:if test="child::pub-id">
-					<xsl:variable name="doivalue" select="child::pub-id/node()"></xsl:variable>
-					<div class="elife-reflink-doi-cited-wrapper">
-						<span class="elife-reflink-details-doi">
-							<a href="{concat('http://dx.doi.org/', $doivalue)}">
-								<xsl:value-of select="concat('http://dx.doi.org/', $doivalue)"/>
-							</a>
-						</span>-->
-						<!-- count no.of cited -->
-						<!-- <xsl:text> — </xsl:text>
-						<span class="elife-reflink-details-cited">
-							<xsl:value-of select="concat('cited ', count(preceding::xref[@rid=$refid]), ' times in paper')"/>
-						</span>
-					</div>
-					<div class="elife-reflink-links-wrapper">
-						<span class="elife-reflink-link life-reflink-link-ijlink">
-							<a href="" target="_blank" rel="nofollow">HighWire</a>
-						</span>
-						<span class="elife-reflink-link life-reflink-link-doi">
-							<a href="" target="_blank" rel="nofollow">CrossRef</a>
-						</span>
-						<span class="elife-reflink-link life-reflink-link-medline">
-							<a href="" target="_blank" rel="nofollow">PubMed</a>
-						</span>
-					</div>
-				</xsl:if>-->
 			</div>
 			<xsl:apply-templates />
 		</div>
@@ -922,25 +950,6 @@
 	<!-- reference authors -->
 	<xsl:template match="person-group[@person-group-type='author']"/>
 	
-	<!--<xsl:template match="person-group[@person-group-type='author']" name="authors">
-		<div class="elife-reflink-authors">
-			<xsl:for-each select="child::name">
-				<xsl:variable name="givenname" select="child::given-names"/>
-				<xsl:variable name="surname" select="child::surname"/>
-				<xsl:variable name="fullname" select="concat($givenname, ' ', $surname)"/>
-				<xsl:variable name="hrefvalue" select="concat('http://scholar.google.com/scholar?q=&quot;author:',$fullname,'&quot;')"/>
-				<span class="elife-reflink-author">
-					<a href="{$hrefvalue}">
-						<xsl:value-of select="$fullname"/>
-					</a>
-				</span>-->
-				<!-- if next name exists then add comma(,) -->
-				<!--<xsl:if test="following-sibling::name">
-					<xsl:text>, </xsl:text>
-				</xsl:if>
-			</xsl:for-each>
-		</div>
-	</xsl:template>-->
 	<!-- END Reference Handling -->
 
 	<!-- START Appendix -->
@@ -995,7 +1004,7 @@
 				<!-- if mimetype is application -->
 				<span class="inline-linked-media-wrapper">
 					<a href="{@xlink:href}?download=true">
-						<!-- <i class="icon-download-alt"></i>--> Download source data
+						<i class="icon-download-alt"> </i> Download source data
 						<span class="inline-linked-media-filename">
 						<xsl:value-of select="concat('[', @xlink:href, ']')"></xsl:value-of></span>
 					</a>
@@ -1011,15 +1020,11 @@
 		            </xsl:attribute>
 					<div class="media-inline video-inline">
 						<div class="elife-inline-video">
-							<video controls="controls" poster="{@xlink:href}" preload="none" style="background-color:black">
-								<source src="{@xlink:href}" type="video/mp4; codecs=&quot;avc1.42E01E, mp4a.40.2&quot;"/>
-								<source src="{@xlink:href}" type="video/ogg; codecs=&quot;theora, vorbis&quot;"/>
-								<img src="{@xlink:href}"/>
-								<xsl:text>Your browser does not appear to support HTML5 video. Please upgrade your browser.</xsl:text>
-							</video>
+                                                        <xsl:text>[video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline]</xsl:text>
+							
 							<div class="elife-video-links">
 								<span class="elife-video-link elife-video-link-download">
-									<a href="{@xlink:href}">Download Video </a>
+									<a href="[video-{@id}-download]">Download Video </a>
 								</span>
 							</div>
 						</div>
@@ -1058,7 +1063,7 @@
 	
 	<xsl:template match="sub-article">
 		<xsl:variable name="data-doi" select="child::front-stub/article-id[@pub-id-type='doi']/text()"/>
-		<div class="ctools-collapsible-container ctools-collapsible-processed" data-doi="{$data-doi}">
+		<div data-doi="{$data-doi}">
 			<!-- determine the attribute -->
 			<xsl:attribute name="id">
 				<xsl:if test="@article-type='article-commentary'">
@@ -1068,48 +1073,28 @@
 					<xsl:text>author-response</xsl:text>
 				</xsl:if>
 			</xsl:attribute>
-			<span class="ctools-toggle"></span>
-			
 			<xsl:call-template name="subarticle-title"/>
-			
-			<div class="ctools-collapsible-content">
-				<div>
-					<!-- determine the attribute -->
-					<xsl:attribute name="id">
-						<xsl:if test="@article-type='article-commentary'">
-							<xsl:text>decision_letter</xsl:text>
-						</xsl:if>
-						<xsl:if test="@article-type='reply'">
-							<xsl:text>author_response</xsl:text>
-						</xsl:if>
-					</xsl:attribute>
-					<xsl:apply-templates/>
-				</div>
-				<a class="back-to-top visible-small" href="#body-top">To Top</a>
-			</div>
+                        
 		</div>
 		<div class="panel-separator"></div>
 	</xsl:template>
 	
-	<!-- sub article title h2 -->
-	<xsl:template match="sub-article//title-group" name="subarticle-title">
-		<h2 class="pane-title ctools-collapsible-handle">
+        
+         <xsl:template match="sub-article//title-group" name="subarticle-title">
 			<xsl:apply-templates/>
-		</h2>
 	</xsl:template>
+        
 	
-	<xsl:template match="sub-article//article-title">
-		<xsl:apply-templates/>
-	</xsl:template>
+	<xsl:template match="sub-article//article-title"/>
 	
 	<xsl:template match="sub-article/front-stub">
 		<xsl:apply-templates/>
 	</xsl:template>
 	
 	<!-- sub-article body -->
-	<xsl:template match="sub-article/body">
+        <xsl:template match="sub-article/body">
 		<div>
-			<!-- determine the class based on attribute -->
+			
 			<xsl:attribute name="class">
 				<xsl:if test="../@article-type='article-commentary'">
 					<xsl:text>elife-article-decision-letter</xsl:text>
@@ -1118,30 +1103,33 @@
 					<xsl:text>elife-article-author-response</xsl:text>
 				</xsl:if>
 			</xsl:attribute>
-			<div class="highwire-markup">
-				<div xmlns="http://www.w3.org/1999/xhtml" id="content-block" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-					<div class="article fulltext-view ">
-						<xsl:apply-templates/>
-					</div>
-				</div>
-			</div>
+			
+                        <div class="article fulltext-view ">
+                                <xsl:apply-templates/>
+                        </div>
+				
+                        
 		</div>
-		<div>
-			<xsl:attribute name="class">
-				<xsl:if test="../@article-type='article-commentary'">
-					<xsl:text>elife-article-decision-letter-doi</xsl:text>
-				</xsl:if>
-				<xsl:if test="../@article-type='reply'">
-					<xsl:text>elife-article-author-response-doi</xsl:text>
-				</xsl:if>
-			</xsl:attribute>
-			<strong>DOI: </strong>
-			<a href="">
-				<xsl:text>http://dx.doi.org/</xsl:text>
-				<xsl:value-of select="preceding-sibling::*//article-id"/>
-			</a>
-		</div>
+                <div>
+                        <xsl:attribute name="class">
+                                <xsl:if test="../@article-type='article-commentary'">
+                                        <xsl:text>elife-article-decision-letter-doi</xsl:text>
+                                </xsl:if>
+                                <xsl:if test="../@article-type='reply'">
+                                        <xsl:text>elife-article-author-response-doi</xsl:text>
+                                </xsl:if>
+                        </xsl:attribute>
+                        <strong>DOI: </strong>
+
+                        <xsl:variable name="doino" select="preceding-sibling::*//article-id" />
+                        <a href="/lookup/doi/{$doino}">
+                                <xsl:text>http://dx.doi.org/</xsl:text>
+                                <xsl:value-of select="$doino" />
+                        </a>
+                </div>
+		
 	</xsl:template>
+	
 	
 	<xsl:template match="sub-article//article-id"/>
 	
@@ -1156,38 +1144,32 @@
 	<xsl:template match="sub-article//contrib-group/contrib">
 		<div>
 			<xsl:attribute name="class">
-				<xsl:value-of select="concat('elife-article-decision-revewing', @contrib-type)" />
+				<xsl:value-of select="concat('elife-article-decision-reviewing', @contrib-type)" />
 			</xsl:attribute>
 			<xsl:apply-templates />
 		</div>
 	</xsl:template>
-	
-	<xsl:template match="sub-article//name|sub-article//aff">
+	<xsl:template match="sub-article//name|sub-article//given-names|sub-article//surname|sub-article//role">
+                <span class="nlm-given-names">
+			<xsl:value-of select="given-names"/>
+		</span>  
+                <xsl:text> </xsl:text>
+		<span class="nlm-surname">                
+                    <xsl:value-of select="surname"/>
+		</span>
+                
+               <xsl:value-of select="name"/>
+	</xsl:template>
+	<xsl:template match="sub-article//aff">
 		<xsl:apply-templates />
 		<xsl:if test="following-sibling::*">
 			<xsl:text>, </xsl:text>
 		</xsl:if>
 	</xsl:template>
-	
-	<xsl:template match="sub-article//surname">
-		<span class="nlm-surname">
-			<xsl:apply-templates />
-		</span>
-	</xsl:template>
-	
-	<xsl:template match="sub-article//given-names">
-		<span class="nlm-given-names">
-			<xsl:apply-templates />
-		</span>
-	</xsl:template>
-	
-	<xsl:template match="sub-article//role">
+        <xsl:template match="sub-article//role">
 		<span class="nlm-role">
 			<xsl:apply-templates />
 		</span>
-		<xsl:if test="following-sibling::*">
-			<xsl:text>, </xsl:text>
-		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="sub-article//institution">
@@ -1200,9 +1182,6 @@
 		<span class="nlm-country">
 			<xsl:apply-templates />
 		</span>
-		<xsl:if test="following-sibling::*">
-			<xsl:text>, </xsl:text>
-		</xsl:if>
 	</xsl:template>
 	
 	<!-- END sub-article author contrib information -->
@@ -1213,7 +1192,12 @@
 		
 		<!-- below div commented and a new line added on 12th August, 2015
 			 For the citation links, take the id from the boxed-text -->
-		<div class="boxed-text" data-doi="{$data-doi}" id="{@id}">
+                
+                <xsl:variable name="boxedid">
+                                <xsl:value-of select="substring-after(@id, 'x')"/>
+                </xsl:variable>
+                
+		<div class="boxed-text" id="boxed-text-{$boxedid}">
 			<xsl:apply-templates/>
 		</div>
 		
@@ -1225,6 +1209,12 @@
 		</div> -->
 		
 	</xsl:template>
+        
+        <xsl:template match="boxed-text/label">
+            <span class="boxed-text-label">
+                <xsl:apply-templates/>
+            </span>
+        </xsl:template>
 	
 	<!-- START - general format -->
 	
@@ -1261,7 +1251,6 @@
 	<xsl:template match="italic">
 		<em>
 			<xsl:apply-templates/>
-			<xsl:text> </xsl:text>
 		</em>
 	</xsl:template>
 	
