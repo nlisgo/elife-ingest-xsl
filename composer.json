@@ -1,0 +1,31 @@
+{
+  "name": "elife/elife-ingest-xsl",
+  "type": "library",
+  "require": {
+    "php": ">=5.5",
+    "beberlei/assert": "~2.3"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "~2.2",
+    "phpunit/phpunit": "~4.7",
+    "symfony/var-dumper": "^2.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "eLifeIngestXsl\\": [
+        "domain/src/eLifeIngestXsl/"
+      ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "spec\\eLifeIngestXsl\\": "domain/spec/eLifeIngestXsl/",
+      "tests\\eLifeIngestXsl\\": [
+        "domain/tests/eLifeIngestXsl/"
+      ]
+    }
+  },
+  "config": {
+    "bin-dir": "./bin"
+  }
+}
