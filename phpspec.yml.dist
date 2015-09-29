@@ -1,0 +1,4 @@
+suites:
+    domain:
+        spec_path: domain
+        src_path: domain/src
