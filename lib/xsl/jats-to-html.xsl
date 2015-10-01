@@ -369,11 +369,6 @@
 	<!-- START handling citation objects -->
 	<xsl:template match="xref">
 		<a>
-			<xsl:attribute name="id">
-				<xsl:variable name="rid" select="./@rid" />
-				<xsl:variable name="crid" select="count(preceding::xref[@rid=$rid])+1" />
-				<xsl:value-of select="concat('xref-', ./@rid, '-', $crid)" />
-			</xsl:attribute>
 			<xsl:attribute name="class">
 				<xsl:value-of select="concat('xref-', ./@ref-type)" />
 			</xsl:attribute>
@@ -1208,28 +1203,19 @@
 		
 		<!-- below div commented and a new line added on 12th August, 2015
 			 For the citation links, take the id from the boxed-text -->
-                
-                <xsl:variable name="boxedid">
-                    <xsl:choose>
-                            <xsl:when test="@id!= ''">
-                                <!-- <xsl:value-of select="translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz','')"/> -->
-                                <xsl:value-of select="@id"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="concat('box', count(preceding::boxed-text[@id])+count(preceding::boxed-text[not(@id)])+1)" />
-                            </xsl:otherwise>    
-                   </xsl:choose>
-                </xsl:variable>
                 <xsl:choose>
                         <xsl:when test="child::object-id[@pub-id-type='doi']/text()!=''">
                                 <div class="boxed-text" data-doi="{$data-doi}">
-                                    <div class="boxed-text" id="{$boxedid}">
+                                    <div class="boxed-text">
+                                        <xsl:attribute name="id">
+                                            <xsl:value-of select="@id"/>
+                                        </xsl:attribute>
                                             <xsl:apply-templates/>
                                     </div>
                                 </div>
                         </xsl:when>
                         <xsl:otherwise>
-                                <div class="boxed-text" id="{$boxedid}">
+                                <div class="boxed-text">
                                         <xsl:apply-templates/>
                                 </div>
                                 
