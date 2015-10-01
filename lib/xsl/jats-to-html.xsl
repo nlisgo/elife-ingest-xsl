@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xsi xs xlink">
+<xsl:stylesheet version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xsi xs xlink">
 
-	<xsl:output method="html" indent="no" encoding="utf-8"/>
+	<xsl:output method="xml" indent="no" encoding="utf-8"/>
 
 	<xsl:template match="@* | node(  )">
 		<xsl:copy>
@@ -196,7 +194,7 @@
                      ]]>                           
                 <!-- modify by arul tooltip 19-9-15 pre xslt proccess end -->
 		</xsl:variable>
-		
+                
 		<xsl:choose>
 			<xsl:when test="@corresp">
 				<span class="elife-article-author-item corresp" data-tooltip-content="{$tooltip}" data-author-inst="">
@@ -225,17 +223,16 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+        
 	<!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->
 	<xsl:template match="surname|given-names|name">
                 <span class="nlm-given-names">
 			<xsl:value-of select="given-names"/>
-		</span>  
-                <xsl:text> </xsl:text>
+		</span>
 		<span class="nlm-surname">                
                     <xsl:value-of select="surname"/>
 		</span>
-                
+                <xsl:text>, </xsl:text>
                <xsl:value-of select="name"/>
 	</xsl:template>
 	
@@ -315,17 +312,19 @@
   <!-- Start transforming sections to heading levels -->
   <xsl:template match="supplementary-material">
       <xsl:variable name="id">
-                    <xsl:value-of select="substring-before(substring-after(@id, 'D'),'-')"/>
+                    <!--<xsl:value-of select="substring-before(substring-after(@id, 'D'),'-')"/>-->
+                    <xsl:value-of select="@id"/>
     </xsl:variable>
-    <div class="supplementary-material-expansion" id="DC{$id}">
-        <xsl:apply-templates />
+    <xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+    <div class="supplementary-material"  data-doi="{$data-doi}">
+        <div class="supplementary-material-expansion" id="{$id}">
+            <xsl:apply-templates />
+        </div>
     </div>
   </xsl:template>
-
   
   <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"-->
   <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"/>
-  
   <xsl:template match="sec[not(@sec-type='additional-information')][not(@sec-type='datasets')][not(@sec-type='supplementary-material')]">
   	<div>
       <xsl:if test="@sec-type">
@@ -346,7 +345,8 @@
 
 	<xsl:template match="p">
 		<p>
-			<xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
+			
+                        <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
 				<xsl:attribute name="class">
 					<xsl:value-of select="'first-child'" />
 				</xsl:attribute>
@@ -391,9 +391,9 @@
 				</xsl:choose>
 				
 			</xsl:attribute>
-			<xsl:attribute name="rel">
+			<!--<xsl:attribute name="rel">
 				<xsl:value-of select="concat('#', ./@rid)" />
-			</xsl:attribute>
+			</xsl:attribute>-->
 			<xsl:apply-templates />
 		</a>
 	</xsl:template>
@@ -406,19 +406,24 @@
 		<!-- <xsl:variable name="id" select="concat('T', count(preceding::table-wrap)+1)"/>
 		<xsl:variable name="id" select="@id"/> -->
 		<xsl:variable name="id">
-                                <xsl:value-of select="substring-after(@id, 'l')"/>
+                                <!--<xsl:value-of select="substring-after(@id, 'l')"/>
+                                <xsl:value-of select="@id"/>-->                                
+                                <xsl:value-of select="translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz','')"/>
                 </xsl:variable>
 		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
-                <div class="table-expansion" id="T{$id}">
-			<xsl:apply-templates />
-                </div>  
+		
+		<div class="table-wrap"  data-doi="{$data-doi}">
+                    <div class="table-expansion" id="T{$id}">
+                            <xsl:apply-templates />
+                    </div>   
+                </div>
 	</xsl:template>
 	
 	<xsl:template match="table-wrap/label" />
 	<xsl:template match="table-wrap/label" mode="captionLabel">
 		<span class="table-label">
 			<xsl:apply-templates />
-		</span>
+		</span>                
 	</xsl:template>
 	<xsl:template match="caption">
                 <xsl:choose>
@@ -457,7 +462,7 @@
 			<xsl:apply-templates />
 		</xsl:copy>
 	</xsl:template>
-	<xsl:template match="tbody">
+        <xsl:template match="tbody">
             <xsl:copy>
                 <xsl:attribute name="id">
                     <xsl:value-of select="concat('tbody-', count(preceding::tbody)+1)" />
@@ -509,7 +514,8 @@
 		<xsl:variable name="data-doi" select="child::fig[1]/object-id[@pub-id-type='doi']/text()"/>
 		
 		<div class="fig-group" id="{concat('fig-group-', count(preceding::fig-group)+1)}" data-doi="{$data-doi}">
-			<div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel">
+			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
+                        <div class="fig-inline-img-set fig-inline-img-set-carousel">
 				<div class="elife-fig-slider-wrapper eLifeArticleFiguresSlider-processed">
 					<div class="elife-fig-slider">
 						<div class="elife-fig-slider-img elife-fig-slider-primary">
@@ -547,22 +553,24 @@
 		<xsl:variable name="caption" select="child::label/text()"/>
 		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
                 <xsl:variable name="id">
-                    <xsl:value-of select="count(preceding::fig)+1" />
+                    <!--<xsl:value-of select="count(preceding::fig)+1" />-->
+                    <xsl:value-of select="@id" />
                 </xsl:variable>
                 <xsl:variable name="graphics" select="child::graphic/@xlink:href"/>
-                
-		<div id="F{$id}" class="fig-inline-img-set">
-			<div class="elife-fig-image-caption-wrapper">
-				<div class="fig-expansion">
-					<div class="fig-inline-img">
-						<a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
-							<img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
-						</a>
-					</div>
-					<xsl:apply-templates />
-				</div>
-			</div>
-		</div>
+                <div class="fig" data-doi="{$data-doi}">
+                    <div id="{$id}" class="fig-inline-img-set">
+                            <div class="elife-fig-image-caption-wrapper">
+                                    <div class="fig-expansion">
+                                            <div class="fig-inline-img">
+                                                    <a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
+                                                            <img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
+                                                    </a>
+                                            </div>
+                                            <xsl:apply-templates />
+                                    </div>
+                            </div>
+                    </div>
+                </div>
 	</xsl:template>
 	
 	<!-- fig caption -->
@@ -610,12 +618,12 @@
 	</xsl:template>
 	
 	<xsl:template match="fig//ext-link">
-            <xsl:if test="ancestor::supplementary-material">
+            <xsl:if test="ancestor::supplementary-material or @ext-link-type='doi'">
 		<a href="/lookup/doi/{@xlink:href}">
 			<xsl:apply-templates />
 		</a>
             </xsl:if>
-            <xsl:if test="not(ancestor::supplementary-material)">
+            <xsl:if test="not(ancestor::supplementary-material) and @ext-link-type!='doi'">
                 <a href="{@xlink:href}">
 			<xsl:apply-templates />
 		</a>
@@ -949,7 +957,6 @@
 	
 	<!-- reference authors -->
 	<xsl:template match="person-group[@person-group-type='author']"/>
-	
 	<!-- END Reference Handling -->
 
 	<!-- START Appendix -->
@@ -973,7 +980,6 @@
 	<!-- END Appendix -->
 	
 	<!-- START Equations -->
-	
         <!-- modify by arul tooltip 19-9-15 pre xslt proccess equation start -->
 	<xsl:template match="disp-formula">
             <span class="disp-formula" id="{@id}" style="font-size: smaller;">
@@ -992,6 +998,7 @@
 		</span>
 	</xsl:template>
 	
+	
 	<!-- END Equations -->
 	
 	<!-- START video handling -->
@@ -1003,34 +1010,42 @@
 			<xsl:when test="@mimetype = 'application'">
 				<!-- if mimetype is application -->
 				<span class="inline-linked-media-wrapper">
-					<a href="{@xlink:href}?download=true">
-						<i class="icon-download-alt"> </i> Download source data
-						<span class="inline-linked-media-filename">
-						<xsl:value-of select="concat('[', @xlink:href, ']')"></xsl:value-of></span>
+					<a href="[media-{substring-before(@xlink:href,'.')}-download]">
+						<i class="icon-download-alt"></i> Download source data<span class="inline-linked-media-filename">[<xsl:value-of select="translate(translate(preceding-sibling::label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>media-<xsl:value-of select="count(preceding::media[@mimetype = 'application'])+1" />.<xsl:value-of select="substring-after(@xlink:href,'.')"/>]</span>
+                                                <!--<xsl:value-of select="concat('[', @xlink:href, ']')"></xsl:value-of>-->
 					</a>
 				</span>
 			</xsl:when>
 			<xsl:otherwise>
 				<!-- otherwise -->
-				<div class="media video-content" data-doi="{$data-doi}">
-					<!-- set attribute -->
-					<xsl:attribute name="id">
-		                <!-- <xsl:value-of select="concat('media-', @id)"/>-->
-		                <xsl:value-of select="@id"/>
-		            </xsl:attribute>
-					<div class="media-inline video-inline">
-						<div class="elife-inline-video">
-                                                        <xsl:text>[video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline]</xsl:text>
-							
-							<div class="elife-video-links">
-								<span class="elife-video-link elife-video-link-download">
-									<a href="[video-{@id}-download]">Download Video </a>
-								</span>
-							</div>
-						</div>
-					</div>
-					<xsl:apply-templates/>
-				</div>
+                                <div class="media"  data-doi="{$data-doi}">
+                                    <div class="media video-content">
+                                            <!-- set attribute -->
+                                            <xsl:attribute name="id">
+                                                <!-- <xsl:value-of select="concat('media-', @id)"/>-->
+                                                <xsl:value-of select="@id"/>
+                                            </xsl:attribute>
+                                            <div class="media-inline video-inline">
+                                                    <div class="elife-inline-video">
+                                                            <xsl:text>[video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline]</xsl:text>
+
+                                                            <div class="elife-video-links">
+                                                                    <span class="elife-video-link elife-video-link-download">
+                                                                            <a href="[video-{@id}-download]">Download Video</a>
+                                                                            <!--<a>
+                                                                                <xsl:attribute name="href">
+                                                                                   
+                                                                                    <xsl:value-of select="concat(concat('[video-', @id),'-download]')"/>
+                                                                                </xsl:attribute>
+                                                                                Download Video
+                                                                            </a>-->
+                                                                    </span>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <xsl:apply-templates/>
+                                    </div>
+                                </div>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -1041,7 +1056,7 @@
 			<span class="media-label">
 				<xsl:value-of select="preceding-sibling::label"/>
 			</span>
-			<xsl:text> </xsl:text>
+			<!--<xsl:text> </xsl:text>-->
 			<span class="caption-title">
 				<xsl:if test="child::title">
 					<xsl:apply-templates select="child::title"/>
@@ -1104,7 +1119,7 @@
 				</xsl:if>
 			</xsl:attribute>
 			
-                        <div class="article fulltext-view ">
+                        <div class="article fulltext-view">
                                 <xsl:apply-templates/>
                         </div>
 				
@@ -1149,7 +1164,7 @@
 			<xsl:apply-templates />
 		</div>
 	</xsl:template>
-	<xsl:template match="sub-article//name|sub-article//given-names|sub-article//surname|sub-article//role">
+	<xsl:template match="sub-article//name/given-names|sub-article//name/surname">
                 <span class="nlm-given-names">
 			<xsl:value-of select="given-names"/>
 		</span>  
@@ -1157,7 +1172,7 @@
 		<span class="nlm-surname">                
                     <xsl:value-of select="surname"/>
 		</span>
-                
+                <xsl:text>, </xsl:text>
                <xsl:value-of select="name"/>
 	</xsl:template>
 	<xsl:template match="sub-article//aff">
@@ -1170,6 +1185,7 @@
 		<span class="nlm-role">
 			<xsl:apply-templates />
 		</span>
+                <xsl:text>, </xsl:text>
 	</xsl:template>
 	
 	<xsl:template match="sub-article//institution">
@@ -1194,13 +1210,32 @@
 			 For the citation links, take the id from the boxed-text -->
                 
                 <xsl:variable name="boxedid">
-                                <xsl:value-of select="substring-after(@id, 'x')"/>
+                    <xsl:choose>
+                            <xsl:when test="@id!= ''">
+                                <!-- <xsl:value-of select="translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz','')"/> -->
+                                <xsl:value-of select="@id"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat('box', count(preceding::boxed-text[@id])+count(preceding::boxed-text[not(@id)])+1)" />
+                            </xsl:otherwise>    
+                   </xsl:choose>
                 </xsl:variable>
+                <xsl:choose>
+                        <xsl:when test="child::object-id[@pub-id-type='doi']/text()!=''">
+                                <div class="boxed-text" data-doi="{$data-doi}">
+                                    <div class="boxed-text" id="{$boxedid}">
+                                            <xsl:apply-templates/>
+                                    </div>
+                                </div>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <div class="boxed-text" id="{$boxedid}">
+                                        <xsl:apply-templates/>
+                                </div>
+                                
+                        </xsl:otherwise>
+                </xsl:choose>
                 
-		<div class="boxed-text" id="boxed-text-{$boxedid}">
-			<xsl:apply-templates/>
-		</div>
-		
 		<!-- <div class="boxed-text" data-doi="{$data-doi}">
 			<xsl:attribute name="id">
 				<xsl:value-of select="concat('boxed-text-', count(preceding::boxed-text)+1)" />
@@ -1214,6 +1249,7 @@
             <span class="boxed-text-label">
                 <xsl:apply-templates/>
             </span>
+            <!--<xsl:text> </xsl:text>-->
         </xsl:template>
 	
 	<!-- START - general format -->
@@ -1250,7 +1286,7 @@
 	
 	<xsl:template match="italic">
 		<em>
-			<xsl:apply-templates/>
+                    <xsl:apply-templates/>
 		</em>
 	</xsl:template>
 	
@@ -1264,7 +1300,7 @@
 
 <metaInformation>
 	<scenarios>
-		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="elife_xmltohtml.xml" htmlbaseurl="" outputurl="elife_xmltohtml.html" processortype="saxon8" useresolver="yes" profilemode="0" profiledepth="" profilelength=""
+		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="elife07370.xml" htmlbaseurl="" outputurl="elife07370.html" processortype="saxon8" useresolver="yes" profilemode="0" profiledepth="" profilelength=""
 		          urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal"
 		          customvalidator="">
 			<advancedProp name="sInitialMode" value=""/>
