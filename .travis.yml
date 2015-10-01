@@ -24,5 +24,6 @@ install:
   - travis_retry composer install --prefer-dist --no-interaction
 
 script:
-  - ./bin/phpspec run --format=pretty
+# Disable phpspec run for now
+#  - ./bin/phpspec run --format=pretty
   - ./bin/phpunit --testdox
