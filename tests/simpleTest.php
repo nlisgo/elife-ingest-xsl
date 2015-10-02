@@ -8,7 +8,6 @@ use eLifeIngestXsl\ConvertXMLToRis;
 
 class simpleTest extends PHPUnit_Framework_TestCase
 {
-    private $temp_folder = '';
     private $jats_folder = '';
     private $bib_folder = '';
     private $ris_folder = '';
@@ -16,11 +15,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->temp_folder = 'tests/tmp/';
-        $this->jats_folder = 'tests/fixtures/jats/';
-        $this->bib_folder = 'tests/fixtures/bib/';
-        $this->ris_folder = 'tests/fixtures/ris/';
-        $this->html_folder = 'tests/fixtures/html/';
+        $realpath = realpath(dirname(__FILE__));
+        $this->jats_folder = $realpath . '/fixtures/jats/';
+        $this->bib_folder = $realpath . '/fixtures/bib/';
+        $this->ris_folder = $realpath . '/fixtures/ris/';
+        $this->html_folder = $realpath . '/fixtures/html/';
     }
 
     public function testJatsToBibtex()
