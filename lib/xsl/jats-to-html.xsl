@@ -396,19 +396,15 @@
 
 	<!-- START Table Handling -->
 	<xsl:template match="table-wrap">
-		<!-- line commented and a new line added on 12th August, 2015
-			 For the citation links, take the id from the table-wrap -->
-		<!-- <xsl:variable name="id" select="concat('T', count(preceding::table-wrap)+1)"/>
-		<xsl:variable name="id" select="@id"/> -->
-		<xsl:variable name="id">
-                                <!--<xsl:value-of select="substring-after(@id, 'l')"/>
-                                <xsl:value-of select="@id"/>-->                                
-                                <xsl:value-of select="translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz','')"/>
-                </xsl:variable>
 		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
 		
 		<div class="table-wrap"  data-doi="{$data-doi}">
-                    <div class="table-expansion" id="T{$id}">
+                    <div class="table-expansion">
+                        <xsl:if test="@id">
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                            </xsl:attribute>
+                        </xsl:if>
                             <xsl:apply-templates />
                     </div>   
                 </div>
