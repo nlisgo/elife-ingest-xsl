@@ -229,6 +229,7 @@
                 <span class="nlm-given-names">
 			<xsl:value-of select="given-names"/>
 		</span>
+        <xsl:text> </xsl:text>
 		<span class="nlm-surname">                
                     <xsl:value-of select="surname"/>
 		</span>
