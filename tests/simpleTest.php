@@ -129,7 +129,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $section = call_user_func([$actual_html, $method]);
         $found = $this->runXpath($section, $xpath);
         $this->assertGreaterThan(0, $found->length);
-        $this->assertEquals($expected, $found->item(0)->nodeValue);
+        $this->assertEquals($expected, trim($found->item(0)->nodeValue));
     }
 
     public function xpathMatchProvider() {
