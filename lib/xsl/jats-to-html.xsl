@@ -322,6 +322,7 @@
             <xsl:apply-templates />
         </div>
     </div>
+    
   </xsl:template>
   
   <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"-->
@@ -345,15 +346,25 @@
   <!-- END transforming sections to heading levels -->
 
 	<xsl:template match="p">
+            <xsl:if test="not(supplementary-material)">
 		<p>
 			
                         <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
 				<xsl:attribute name="class">
 					<xsl:value-of select="'first-child'" />
 				</xsl:attribute>
-			</xsl:if>
+			</xsl:if>                        
 			<xsl:apply-templates />
 		</p>
+           </xsl:if>   
+           <xsl:if test="supplementary-material">
+               <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
+                        <xsl:attribute name="class">
+                                <xsl:value-of select="'first-child'" />
+                        </xsl:attribute>
+                </xsl:if>                        
+                <xsl:apply-templates />
+           </xsl:if>   
 	</xsl:template>
 	<xsl:template match="ext-link">
 		<xsl:if test="@ext-link-type = 'uri'">
@@ -508,7 +519,7 @@
 		<div class="fig-group" id="{concat('fig-group-', count(preceding::fig-group)+1)}" data-doi="{$data-doi}">
 			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
                         <div class="fig-inline-img-set fig-inline-img-set-carousel">
-				<div class="elife-fig-slider-wrapper eLifeArticleFiguresSlider-processed">
+				<div class="elife-fig-slider-wrapper">
 					<div class="elife-fig-slider">
 						<div class="elife-fig-slider-img elife-fig-slider-primary">
 						
@@ -516,16 +527,18 @@
 							
 							<xsl:variable name="primarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',child::fig[not(@specific-use)]/@id, '.gif')"/>
 							<xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
-							<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$primarysrc}" alt="{$primarycap}"/>
+                                                        <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
+							<img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/>
 						</div>
 						<div class="figure-carousel-inner-wrapper">
-							<div class="figure-carousel figure-carousel-">
+							<div class="figure-carousel">
 								<xsl:for-each select="child::fig[@specific-use]">
 									<!-- use variables to set src and alt -->
 									<xsl:variable name="secondarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',@id, '.gif')"/>
 									<xsl:variable name="secondarycap" select="child::label/text()"/>
+                                                                        <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
 									<div class="elife-fig-slider-img elife-fig-slider-secondary">
-										<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$secondarysrc}" alt="{$secondarycap}"/>
+										<img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/>
 									</div>
 								</xsl:for-each>
 							</div>
