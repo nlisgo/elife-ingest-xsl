@@ -1,6 +1,5 @@
 <?php
 
-
 use eLifeIngestXsl\ConvertXML\XMLString;
 use eLifeIngestXsl\ConvertXMLToBibtex;
 use eLifeIngestXsl\ConvertXMLToHtml;
@@ -57,67 +56,67 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJatsToHtmlAbstract() {
-        $compares = $this->compareHtmlSection('-section-abstract', 'getAbstract');
+        $compares = $this->compareHtmlSection('abstract', 'getAbstract');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDigest() {
-        $compares = $this->compareHtmlSection('-section-digest', 'getDigest');
+        $compares = $this->compareHtmlSection('digest', 'getDigest');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDecisionLetter() {
-        $compares = $this->compareHtmlSection('-section-decision-letter', 'getDecisionLetter');
+        $compares = $this->compareHtmlSection('decision-letter', 'getDecisionLetter');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlAuthorResponse() {
-        $compares = $this->compareHtmlSection('-section-author-response', 'getAuthorResponse');
+        $compares = $this->compareHtmlSection('author-response', 'getAuthorResponse');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlAcknowledgements() {
-        $compares = $this->compareHtmlSection('-section-acknowledgements', 'getAcknowledgements');
+        $compares = $this->compareHtmlSection('acknowledgements', 'getAcknowledgements');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlReferences() {
-        $compares = $this->compareHtmlSection('-section-references', 'getReferences');
+        $compares = $this->compareHtmlSection('references', 'getReferences');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiAbstract() {
-        $compares = $this->compareDoiHtmlSection('-doi-abstract');
+        $compares = $this->compareDoiHtmlSection('abstract');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiFig() {
-        $compares = $this->compareDoiHtmlSection('-doi-fig');
+        $compares = $this->compareDoiHtmlSection('fig');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiFigGroup() {
-        $compares = $this->compareDoiHtmlSection('-doi-fig-group');
+        $compares = $this->compareDoiHtmlSection('fig-group');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiTableWrap() {
-        $compares = $this->compareDoiHtmlSection('-doi-table-wrap');
+        $compares = $this->compareDoiHtmlSection('table-wrap');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiBoxedText() {
-        $compares = $this->compareDoiHtmlSection('-doi-boxed-text');
+        $compares = $this->compareDoiHtmlSection('boxed-text');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiSupplementaryMaterial() {
-        $compares = $this->compareDoiHtmlSection('-doi-supplementary-material');
+        $compares = $this->compareDoiHtmlSection('supplementary-material');
         $this->runHtmlComparisons($compares);
     }
 
     public function testJatsToHtmlDoiMedia() {
-        $compares = $this->compareDoiHtmlSection('-doi-media');
+        $compares = $this->compareDoiHtmlSection('media');
         $this->runHtmlComparisons($compares);
     }
 
@@ -170,7 +169,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Prepare array of actual and expected results for DOI HTML.
      */
-    protected function compareDoiHtmlSection($suffix) {
+    protected function compareDoiHtmlSection($fragment_suffix) {
+        $suffix = '-doi-' . $fragment_suffix;
         $htmls = glob($this->html_folder . '*' . $suffix . '.html');
         $sections = [];
 
@@ -186,7 +186,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $compares = [];
 
         foreach ($sections as $section) {
-            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getDoi', $section['doi']));
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getDoi', $section['doi'], ''));
         }
 
         return $compares;
@@ -195,18 +195,19 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Prepare array of actual and expected results.
      */
-    protected function compareHtmlSection($suffix, $method, $params = []) {
+    protected function compareHtmlSection($type, $method, $params = [], $suffix = '-section-') {
+        $section_suffix = $suffix . $type;
         if (is_string($params)) {
             $params = [$params];
         }
         $html_prefix = '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $expected = 'expected';
-        $htmls = glob($this->html_folder . "*" . $suffix . ".html");
+        $htmls = glob($this->html_folder . "*" . $section_suffix . ".html");
         $compares = [];
 
         libxml_use_internal_errors(TRUE);
-          foreach ($htmls as $html) {
-            $file = str_replace($suffix, '', basename($html, '.html'));
+        foreach ($htmls as $html) {
+            $file = str_replace($section_suffix, '', basename($html, '.html'));
             $actual_html = $this->getActualHtml($file);
 
             $expectedDom = new DOMDocument();
@@ -243,13 +244,13 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Get inner HTML.
      */
-    function getInnerHtml($node) { 
-        $innerHTML= ''; 
-        $children = $node->childNodes; 
-        foreach ($children as $child) { 
-            $innerHTML .= $child->ownerDocument->saveXML($child); 
+    function getInnerHtml($node) {
+        $innerHTML= '';
+        $children = $node->childNodes;
+        foreach ($children as $child) {
+            $innerHTML .= $child->ownerDocument->saveXML($child);
         }
 
         return trim($innerHTML);
-    } 
+    }
 }
