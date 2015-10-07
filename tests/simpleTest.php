@@ -85,6 +85,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $this->runHtmlComparisons($compares);
     }
 
+    public function testJatsToHtmlMainText() {
+      $compares = $this->compareHtmlSection('main-text', 'getMainText');
+      $this->runHtmlComparisons($compares);
+    }
+
     public function testJatsToHtmlDoiAbstract() {
         $compares = $this->compareDoiHtmlSection('abstract');
         $this->runHtmlComparisons($compares);
