@@ -994,7 +994,7 @@
 				<!-- if mimetype is application -->
 				<span class="inline-linked-media-wrapper">
 					<a href="[media-{substring-before(@xlink:href,'.')}-download]">
-						<i class="icon-download-alt"></i>Download source data<span class="inline-linked-media-filename">[<xsl:value-of select="translate(translate(preceding-sibling::label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>media-<xsl:value-of select="count(preceding::media[@mimetype = 'application'])+1" />.<xsl:value-of select="substring-after(@xlink:href,'.')"/>]</span>
+						<i class="icon-download-alt"></i> Download source data<span class="inline-linked-media-filename">[<xsl:value-of select="translate(translate(preceding-sibling::label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>media-<xsl:value-of select="count(preceding::media[@mimetype = 'application'])+1" />.<xsl:value-of select="substring-after(@xlink:href,'.')"/>]</span>
                                                 <!--<xsl:value-of select="concat('[', @xlink:href, ']')"></xsl:value-of>-->
 					</a>
 				</span>
