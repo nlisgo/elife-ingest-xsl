@@ -120,6 +120,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $this->runHtmlComparisons($compares);
     }
 
+    public function testJatsToHtmlDoiSubArticle() {
+        $compares = $this->compareDoiHtmlSection('sub-article');
+        $this->runHtmlComparisons($compares);
+    }
+
     /**
      * @dataProvider xpathMatchProvider
      */
