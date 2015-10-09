@@ -1194,7 +1194,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                         <xsl:text>elife-article-author-response-doi</xsl:text>
                                 </xsl:if>
                         </xsl:attribute>
-                        <strong>DOI: </strong>
+                        <strong>DOI:</strong>
 
                         <xsl:variable name="doino" select="preceding-sibling::*//article-id" />
                         <a href="/lookup/doi/{$doino}">
