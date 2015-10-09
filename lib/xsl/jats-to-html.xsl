@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xsi xs xlink">
+<xsl:stylesheet version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xsi xs xlink mml">
 
 	<xsl:output method="xml" indent="no" encoding="utf-8"/>
 
@@ -380,29 +382,38 @@
 	</xsl:template>
 	<!-- START handling citation objects -->
 	<xsl:template match="xref">
-		<a>
-			<xsl:attribute name="class">
-				<xsl:value-of select="concat('xref-', ./@ref-type)" />
-			</xsl:attribute>
-			<xsl:attribute name="href">
-				<!-- commented and modified on 13th August, 2015 -->
-				<!-- <xsl:value-of select="concat('#', ./@rid)" />-->
-				<!-- If xref has multiple elements in rid, then the link should points to 1st -->
-				<xsl:choose>
-				    <xsl:when test="contains(@rid, ' ')">
-						<xsl:value-of select="concat('#',substring-before(@rid, ' '))" />
-				    </xsl:when>
-				    <xsl:otherwise>
-				    	<xsl:value-of select="concat('#',@rid)"/>
-				    </xsl:otherwise>
-				</xsl:choose>
-				
-			</xsl:attribute>
-			<!--<xsl:attribute name="rel">
-				<xsl:value-of select="concat('#', ./@rid)" />
-			</xsl:attribute>-->
-			<xsl:apply-templates />
-		</a>
+            <xsl:choose>
+                <xsl:when test="ancestor::fn">
+                    <span class="xref-table">
+                         <xsl:apply-templates />
+                     </span>
+                 </xsl:when>
+                 <xsl:otherwise>
+                     <a>
+                            <xsl:attribute name="class">
+                                    <xsl:value-of select="concat('xref-', ./@ref-type)" />
+                            </xsl:attribute>
+                            <xsl:attribute name="href">
+                                    <!-- commented and modified on 13th August, 2015 -->
+                                    <!-- <xsl:value-of select="concat('#', ./@rid)" />-->
+                                    <!-- If xref has multiple elements in rid, then the link should points to 1st -->
+                                    <xsl:choose>
+                                        <xsl:when test="contains(@rid, ' ')">
+                                                    <xsl:value-of select="concat('#',substring-before(@rid, ' '))" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="concat('#',@rid)"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+
+                            </xsl:attribute>
+                            <!--<xsl:attribute name="rel">
+                                    <xsl:value-of select="concat('#', ./@rid)" />
+                            </xsl:attribute>-->
+                            <xsl:apply-templates />
+                    </a>
+                 </xsl:otherwise>   
+             </xsl:choose>
 	</xsl:template>
 	<!-- END handling citation objects -->
 
@@ -449,10 +460,7 @@
 		
                     <table>
                             <xsl:apply-templates select="@* | node() " />
-                    </table>
-                    <xsl:if test="not(table-wrap-foot)">
-                        <div class="table-foot"></div>
-                    </xsl:if>		
+                    </table>                    	
 	</xsl:template>
 	<!-- Handle other parts of table -->
 	<xsl:template match="thead|tr">
@@ -466,10 +474,7 @@
 		</xsl:copy>
 	</xsl:template>
         <xsl:template match="tbody">
-            <xsl:copy>
-                <xsl:attribute name="id">
-                    <xsl:value-of select="concat('tbody-', count(preceding::tbody)+1)" />
-                </xsl:attribute>
+            <xsl:copy>                
                 <xsl:apply-templates />
             </xsl:copy>
 	</xsl:template>
@@ -495,10 +500,11 @@
 		</div>
 	</xsl:template>
 	<xsl:template match="table-wrap-foot/fn">
-		<li class="fn" id="{concat('fn-', count(preceding::fn)+1)}">
+		<li class="fn">
 			<xsl:apply-templates />
 		</li>
 	</xsl:template>
+        
 
 	<xsl:template match="named-content[@content-type='author-callout-style1']">
 		<span class="named-content author-callout-style1">
@@ -506,6 +512,83 @@
 		</span>
 	</xsl:template>
 	
+        
+        <xsl:template match="inline-formula">
+            <span class="inline-formula">
+                <xsl:apply-templates />
+            </span>
+        </xsl:template>
+        <xsl:template match="//*[local-name()='math']">
+            <span class="mathjax mml-math">
+                <xsl:text disable-output-escaping="yes">&lt;math xmlns:mml="http://www.w3.org/1998/Math/MathML"&gt;</xsl:text>
+                    <xsl:apply-templates />
+                <xsl:text disable-output-escaping="yes">&lt;/math&gt;</xsl:text>
+            </span>
+        </xsl:template>
+        
+        <xsl:template match="mml:mtext">
+            <xsl:choose>
+                <xsl:when test="string-length(text())=1 and string-length(translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',''))=0">
+                    <mi>
+                        <xsl:variable name="normaltest" select="translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ','')"/>
+                        <xsl:attribute name="mathvariant">
+                            <xsl:choose>
+                                <xsl:when test="@mathvariant and string-length($normaltest)!=0">
+                                    <xsl:value-of select="@mathvariant" />
+                                </xsl:when>    
+                                <xsl:when test="string-length($normaltest)=0">
+                                    <xsl:text>normal</xsl:text>
+                                </xsl:when>  
+                                <xsl:otherwise>
+                                    <xsl:text>normals</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:attribute>
+                        <xsl:apply-templates />
+                    </mi>
+                </xsl:when> 
+                <xsl:when test="string-length(text())=1 and string-length(translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',''))!=0">
+                        <xsl:variable name="AllowedSymbols" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()*%$#@!~&lt;&gt;,.?[]=- +   /\ '"/>
+                       
+                        <xsl:choose>
+                                <xsl:when test="position()=2">
+                                    <mrow><mo><xsl:apply-templates /></mo></mrow>
+                                </xsl:when>
+                                <xsl:when test="position()=(last()-2)">
+                                    <mrow><mo><xsl:apply-templates /></mo></mrow>
+                                </xsl:when>
+                                <xsl:when test="following-sibling::*[1]='='">
+                                    <mrow><mo><xsl:apply-templates /></mo></mrow>
+                                </xsl:when>
+                                <xsl:when test="preceding-sibling::*[1]='='">
+                                    <mrow><mo><xsl:apply-templates /></mo></mrow>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <mi>
+                                        <xsl:if test="@mathvariant">
+                                            <xsl:attribute name="mathvariant">
+                                                <xsl:value-of select="@mathvariant" />
+                                            </xsl:attribute>
+                                        </xsl:if>  
+                                       <xsl:apply-templates />
+                                    </mi>
+                                </xsl:otherwise>
+                        </xsl:choose>
+                </xsl:when> 
+                <xsl:otherwise>
+                    <mtext>   
+                        <xsl:if test="@mathvariant">
+                            <xsl:attribute name="mathvariant">
+                                <xsl:value-of select="@mathvariant" />
+                            </xsl:attribute>
+                        </xsl:if>
+                        <xsl:apply-templates />
+                    </mtext>
+                </xsl:otherwise>
+            </xsl:choose>
+            
+        </xsl:template>
+        
 	<!-- END Table Handling -->
 
 	<!-- Start Figure Handling -->
