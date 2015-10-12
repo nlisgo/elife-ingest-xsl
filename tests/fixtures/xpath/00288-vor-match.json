@@ -1,0 +1,7 @@
+[
+  {
+    "method": "getDecisionLetter",
+    "xpath": "//*[@class=\"elife-article-decision-reviewingeditor\"]",
+    "string": "Sema Sgaier, Reviewing editor, Bill & Melinda Gates Foundation, India"
+  }
+]

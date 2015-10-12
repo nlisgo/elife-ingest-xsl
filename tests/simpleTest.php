@@ -2,6 +2,7 @@
 
 use eLifeIngestXsl\ConvertXML\XMLString;
 use eLifeIngestXsl\ConvertXMLToBibtex;
+use eLifeIngestXsl\ConvertXMLToCitationFormat;
 use eLifeIngestXsl\ConvertXMLToHtml;
 use eLifeIngestXsl\ConvertXMLToRis;
 
@@ -11,123 +12,257 @@ class simpleTest extends PHPUnit_Framework_TestCase
     private $bib_folder = '';
     private $ris_folder = '';
     private $html_folder = '';
+    private $xpath_folder = '';
 
     public function setUp()
     {
-        $realpath = realpath(dirname(__FILE__));
-        $this->jats_folder = $realpath . '/fixtures/jats/';
-        $this->bib_folder = $realpath . '/fixtures/bib/';
-        $this->ris_folder = $realpath . '/fixtures/ris/';
-        $this->html_folder = $realpath . '/fixtures/html/';
+        $this->setFolders();
     }
 
-    public function testJatsToBibtex()
-    {
-        $cits = glob($this->bib_folder . "*.bib");
+    protected function setFolders() {
+        if (empty($this->jats_folder)) {
+            $realpath = realpath(dirname(__FILE__));
+            $this->jats_folder = $realpath . '/fixtures/jats/';
+            $this->bib_folder = $realpath . '/fixtures/bib/';
+            $this->ris_folder = $realpath . '/fixtures/ris/';
+            $this->html_folder = $realpath . '/fixtures/html/';
+            $this->xpath_folder = $realpath . '/fixtures/xpath/';
+        }
+    }
+
+    /**
+     * @dataProvider jatsToBibtexProvider
+     */
+    public function testJatsToBibtex($expected, $actual) {
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function jatsToBibtexProvider() {
+        return $this->jatsToCitationProvider('bib');
+    }
+
+    /**
+     * @dataProvider jatsToRisProvider
+     */
+    public function testJatsToRis($expected, $actual) {
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function jatsToRisProvider() {
+        return $this->jatsToCitationProvider('ris');
+    }
+
+    protected function jatsToCitationProvider($ext) {
         $compares = [];
+        $this->setFolders();
+        $folder = $this->{$ext . '_folder'};
+        $cits = glob($folder . '*.' . $ext);
 
         foreach ($cits as $cit) {
-            $file = basename($cit, '.bib');
-            $bibtex = new ConvertXMLToBibtex(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
+            $file = basename($cit, '.' . $ext);
+            $convert = $this->convertCitationFormat($file, $ext);
             $compares[] = [
                 file_get_contents($cit),
-                $bibtex->getOutput(),
+                $convert->getOutput(),
             ];
         }
 
-        $this->runComparisons($compares);
+        return $compares;
     }
 
-    public function testJatsToRis()
-    {
-        $cits = glob($this->ris_folder . "*.ris");
-        $compares = [];
-
-        foreach ($cits as $cit) {
-            $file = basename($cit, '.ris');
-            $ris = new ConvertXMLToRis(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
-            $compares[] = [
-                file_get_contents($cit),
-                $ris->getOutput(),
-            ];
+    /**
+     * @param string $file
+     * @param string $ext
+     * @return ConvertXMLToCitationFormat
+     */
+    protected function convertCitationFormat($file, $ext = 'bib') {
+        $xml_string = XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml'));
+        if ($ext == 'ris') {
+            return new ConvertXMLToRis($xml_string);
         }
-
-        $this->runComparisons($compares);
+        else {
+            return new ConvertXMLToBibtex($xml_string);
+        }
     }
 
-    public function testJatsToHtmlAbstract() {
-        $compares = $this->compareHtmlSection('abstract', 'getAbstract');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlAbstractProvider
+     */
+    public function testJatsToHtmlAbstract($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlDigest() {
-        $compares = $this->compareHtmlSection('digest', 'getDigest');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlAbstractProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('abstract', 'getAbstract');
     }
 
-    public function testJatsToHtmlDecisionLetter() {
-        $compares = $this->compareHtmlSection('decision-letter', 'getDecisionLetter');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlMainTextProvider
+     */
+    public function testJatsToHtmlMainText($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlAuthorResponse() {
-        $compares = $this->compareHtmlSection('author-response', 'getAuthorResponse');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlMainTextProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('main-text', 'getMainText');
     }
 
-    public function testJatsToHtmlAcknowledgements() {
-        $compares = $this->compareHtmlSection('acknowledgements', 'getAcknowledgements');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlDigestProvider
+     */
+    public function testJatsToHtmlDigest($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlReferences() {
-        $compares = $this->compareHtmlSection('references', 'getReferences');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlDigestProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('digest', 'getDigest');
     }
 
-    public function testJatsToHtmlMainText() {
-      $compares = $this->compareHtmlSection('main-text', 'getMainText');
-      $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlDecisionLetterProvider
+     */
+    public function testJatsToHtmlDecisionLetter($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlDoiAbstract() {
-        $compares = $this->compareDoiHtmlSection('abstract');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlDecisionLetterProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('decision-letter', 'getDecisionLetter');
     }
 
-    public function testJatsToHtmlDoiFig() {
-        $compares = $this->compareDoiHtmlSection('fig');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlAuthorResponseProvider
+     */
+    public function testJatsToHtmlAuthorResponse($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlDoiFigGroup() {
-        $compares = $this->compareDoiHtmlSection('fig-group');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlAuthorResponseProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-response', 'getAuthorResponse');
     }
 
-    public function testJatsToHtmlDoiTableWrap() {
-        $compares = $this->compareDoiHtmlSection('table-wrap');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlAcknowledgementsProvider
+     */
+    public function testJatsToHtmlAcknowledgements($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlDoiBoxedText() {
-        $compares = $this->compareDoiHtmlSection('boxed-text');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlAcknowledgementsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('acknowledgements', 'getAcknowledgements');
     }
 
-    public function testJatsToHtmlDoiSupplementaryMaterial() {
-        $compares = $this->compareDoiHtmlSection('supplementary-material');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlReferencesProvider
+     */
+    public function testJatsToHtmlReferences($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
     }
 
-    public function testJatsToHtmlDoiMedia() {
-        $compares = $this->compareDoiHtmlSection('media');
-        $this->runHtmlComparisons($compares);
+    public function jatsToHtmlReferencesProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('references', 'getReferences');
     }
 
-    public function testJatsToHtmlDoiSubArticle() {
-        $compares = $this->compareDoiHtmlSection('sub-article');
-        $this->runHtmlComparisons($compares);
+    /**
+     * @dataProvider jatsToHtmlDoiAbstractProvider
+     */
+    public function testJatsToHtmlDoiAbstract($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiAbstractProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('abstract');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiFigProvider
+     */
+    public function testJatsToHtmlDoiFig($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiFigProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('fig');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiFigGroupProvider
+     */
+    public function testJatsToHtmlDoiFigGroup($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiFigGroupProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('fig-group');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiTableWrapProvider
+     */
+    public function testJatsToHtmlDoiTableWrap($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiTableWrapProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('table-wrap');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiBoxedTextProvider
+     */
+    public function testJatsToHtmlDoiBoxedText($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiBoxedTextProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('boxed-text');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiSupplementaryMaterialProvider
+     */
+    public function testJatsToHtmlDoiSupplementaryMaterial($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiSupplementaryMaterialProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('supplementary-material');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiMediaProvider
+     */
+    public function testJatsToHtmlDoiMedia($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiMediaProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('media');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDoiSubArticleProvider
+     */
+    public function testJatsToHtmlDoiSubArticle($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDoiSubArticleProvider() {
+        $this->setFolders();
+        return $this->compareDoiHtmlSection('sub-article');
     }
 
     /**
@@ -142,9 +277,31 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     public function xpathMatchProvider() {
-        return [
-            ['00288-vor', 'getDecisionLetter', '//*[@class="elife-article-decision-reviewingeditor"]', 'Sema Sgaier, Reviewing editor, Bill & Melinda Gates Foundation, India'],
-        ];
+        return $this->xpathExamples('match');
+    }
+
+    protected function xpathExamples($suffix) {
+        $this->setUp();
+        $jsons = glob($this->xpath_folder . '*-' . $suffix . '.json');
+        $provider = [];
+
+        foreach ($jsons as $json) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-' . $suffix . '\.json/', basename($json), $match);
+            if ($found) {
+                $queries = file_get_contents($json);
+                $queries = json_decode($queries);
+                foreach ($queries as $query) {
+                    $provider[] = [
+                        $match['filename'],
+                        $query->method,
+                        $query->xpath,
+                        $query->string,
+                    ];
+                }
+            }
+        }
+
+        return $provider;
     }
 
     protected function runXpath($html, $xpath_query) {
@@ -153,27 +310,6 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $xpath = new DOMXPath($domDoc);
         $nodeList = $xpath->query($xpath_query);
         return $nodeList;
-    }
-
-    /**
-     * Compare the expect and actual HTML results.
-     *
-     * @param array[] $compares
-     */
-    protected function runHtmlComparisons($compares) {
-        $this->runComparisons($compares, 'assertEqualHtml');
-    }
-
-    /**
-     * Compare the expect and actual results.
-     *
-     * @param array[] $compares
-     * @param string $method
-     */
-    protected function runComparisons($compares, $method = 'assertEquals') {
-        foreach ($compares as $compare) {
-            call_user_func_array([$this, $method], $compare);
-        }
     }
 
     /**
