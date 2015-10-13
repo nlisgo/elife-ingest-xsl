@@ -268,11 +268,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider xpathMatchProvider
      */
-    public function testJatsToHtmlXpathMatch($file, $method, $xpath, $expected) {
+    public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected) {
         $actual_html = $this->getActualHtml($file);
-        $section = call_user_func([$actual_html, $method]);
+        $section = call_user_func_array([$actual_html, $method], $arguments);
         $found = $this->runXpath($section, $xpath);
-        $this->assertGreaterThan(0, $found->length);
+        $this->assertGreaterThanOrEqual(1, $found->length);
         $this->assertEquals($expected, trim($found->item(0)->nodeValue));
     }
 
@@ -294,6 +294,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
                     $provider[] = [
                         $match['filename'],
                         $query->method,
+                        (!empty($query->arguments)) ? $query->arguments : [],
                         $query->xpath,
                         $query->string,
                     ];
