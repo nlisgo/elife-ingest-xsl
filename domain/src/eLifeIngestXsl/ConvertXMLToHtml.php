@@ -129,6 +129,14 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param string $aff_id
+   * @return string
+   */
+  public function getAffiliation($aff_id) {
+    return $this->getSection("//*[@id='" . $aff_id . "']");
+  }
+
+  /**
    * @param DOMNode $node
    * @return string
    */
