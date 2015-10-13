@@ -330,6 +330,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
   <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"-->
   <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"/>
   <xsl:template match="sec[not(@sec-type='additional-information')][not(@sec-type='datasets')][not(@sec-type='supplementary-material')]">
+     
   	<div>
       <xsl:if test="@sec-type">
         <xsl:attribute name="class">
@@ -724,13 +725,353 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	
 	<!-- body content -->
 	<xsl:template match="body">
-		
+		<xsl:variable name="data-doi" select="../front/article-meta/article-id[@pub-id-type='doi']/text()"/>
                 <div class="elife-article-decision-letter">
+                        
+                         <xsl:apply-templates />
+                        
+                </div>
+                <div class="elife-article-decision-letter" id='main-text'>
                         <div class="article fulltext-view">
-                                <xsl:apply-templates />
+                               <!-- <xsl:call-template name="testrenderApplicationsDrop" />  -->
+                                <xsl:apply-templates  mode="testing"/>
                         </div>
                 </div>
 	</xsl:template>
+        
+       <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"  mode="testing"/>
+      <xsl:template match="sec[not(@sec-type='additional-information')][not(@sec-type='datasets')][not(@sec-type='supplementary-material')]/@id"  mode="testing"/>
+      <xsl:template match="sec[not(@sec-type='additional-information')][not(@sec-type='datasets')][not(@sec-type='supplementary-material')]"  mode="testing">
+     
+            <div>
+          
+          <xsl:if test="@sec-type">
+            <xsl:attribute name="class">
+              <xsl:value-of select="concat('section ', ./@sec-type)"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@id">
+            <xsl:attribute name="id">
+              <xsl:value-of select="@id"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:if test="not(@sec-type)">
+            <xsl:attribute name="class">
+              <xsl:value-of select="'subsection'"/>
+            </xsl:attribute>
+          </xsl:if>
+          
+          <xsl:apply-templates  mode="testing" />
+            </div>
+      </xsl:template>
+      
+      <xsl:template match="sec/title" mode="testing">
+        <xsl:element name ="h{count(ancestor::sec) + 1}">
+          <xsl:apply-templates select="@* | node( )" />
+        </xsl:element>
+      </xsl:template>
+      <xsl:template match="p"  mode="testing">
+            <xsl:if test="not(supplementary-material)">
+		<p>
+			
+                        <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
+				<xsl:attribute name="class">
+					<xsl:value-of select="'first-child'" />
+				</xsl:attribute>
+			</xsl:if>                        
+			<xsl:apply-templates mode="testing"/>
+		</p>
+           </xsl:if>   
+           <xsl:if test="supplementary-material">
+               <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
+                        <xsl:attribute name="class">
+                                <xsl:value-of select="'first-child'" />
+                        </xsl:attribute>
+                </xsl:if>                        
+                <xsl:apply-templates mode="testing"/>
+           </xsl:if>   
+	</xsl:template>
+        <xsl:template match="xref" mode="testing">
+            <xsl:choose>
+                <xsl:when test="ancestor::fn">
+                    <span class="xref-table">
+                         <xsl:apply-templates />
+                     </span>
+                 </xsl:when>
+                 <xsl:otherwise>
+                     <a>
+                            <xsl:attribute name="class">
+                                    <xsl:value-of select="concat('xref-', ./@ref-type)" />
+                            </xsl:attribute>
+                            <xsl:attribute name="href">
+                                    <!-- commented and modified on 13th August, 2015 -->
+                                    <!-- <xsl:value-of select="concat('#', ./@rid)" />-->
+                                    <!-- If xref has multiple elements in rid, then the link should points to 1st -->
+                                    <xsl:choose>
+                                        <xsl:when test="contains(@rid, ' ')">
+                                                    <xsl:value-of select="concat('#',substring-before(@rid, ' '))" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="concat('#',@rid)"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+
+                            </xsl:attribute>
+                            <!--<xsl:attribute name="rel">
+                                    <xsl:value-of select="concat('#', ./@rid)" />
+                            </xsl:attribute>-->
+                            <xsl:apply-templates />
+                    </a>
+                 </xsl:otherwise>   
+             </xsl:choose>
+	</xsl:template>
+        
+        <xsl:template match="table-wrap" mode="testing">
+		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+                    <div class="table-expansion">
+                        <xsl:if test="@id">
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                            </xsl:attribute>
+                        </xsl:if>
+                            <xsl:apply-templates mode="testing"/>
+                            
+                            <!--<xsl:if test="table-wrap-foot">
+                                <div class="table-foot">
+                                        <ul class="table-footnotes">
+                                             <xsl:for-each select="table-wrap-foot/fn">
+                                                 <li class="fn">
+                                                     <xsl:attribute name="id">
+                                                        <xsl:value-of select="count(ancestor::table-wrap/ancestor::sec//table-wrap//fn)"/>
+                                                    </xsl:attribute>
+                                                     <xsl:apply-templates mode="rendertablefoot"/>
+                                                 </li>
+                                             </xsl:for-each>
+                                        </ul>
+                                </div>
+                            </xsl:if>-->
+                    </div>
+	</xsl:template>
+        
+        <xsl:template match="caption" mode="testing">
+                <xsl:choose>
+                        <!-- if article-title exists, make it as title.
+                                 Otherwise, make source -->
+                        <xsl:when test="not(parent::boxed-text)">
+                                <div class="table-caption">
+                                        <xsl:apply-templates select="parent::table-wrap/label" mode="captionLabel" />
+                                        <xsl:apply-templates />
+                                        <div class="sb-div caption-clear"></div>
+                                </div>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <xsl:apply-templates />
+                        </xsl:otherwise>
+                </xsl:choose>
+		
+	</xsl:template>
+	<xsl:template match="table-wrap/table" mode="testing">
+		
+                    <table>
+                            <xsl:apply-templates select="@* | node() " />
+                    </table>                    	
+	</xsl:template>
+        
+        <!--<xsl:template match="table-wrap-foot/fn"  mode="rendertablefoot">
+		
+			<xsl:apply-templates />
+		
+	</xsl:template>-->
+        <xsl:template match="table-wrap-foot"  mode="testing">
+		<div class="table-foot">
+			<ul class="table-footnotes">
+				<xsl:apply-templates mode="testing" />
+			</ul>
+		</div>
+	</xsl:template>
+	<xsl:template match="fn" mode="testing">
+		<li class="fn">
+                   <!-- <xsl:if test="not(../child::fn/@id)">
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="concat('fn-',count(preceding::fn)+1)"/>
+                        </xsl:attribute>
+                    </xsl:if>-->
+                    <xsl:attribute name="id">
+                            <xsl:value-of select="concat('fn-',count(preceding::fn)+1)"/>
+                        </xsl:attribute>
+			<xsl:apply-templates />
+		</li>
+	</xsl:template>
+	<xsl:template match="object-id|table-wrap/label" mode="testing"/>
+        
+        <xsl:template match="boxed-text"  mode="testing">
+		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+		
+		<!-- below div commented and a new line added on 12th August, 2015
+			 For the citation links, take the id from the boxed-text -->
+                <xsl:choose>
+                        <xsl:when test="child::object-id[@pub-id-type='doi']/text()!=''">
+                                <div class="boxed-text">
+                                    <xsl:attribute name="id">
+                                        <xsl:value-of select="@id"/>
+                                    </xsl:attribute>
+                                        <xsl:apply-templates/>
+                                </div>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <div class="boxed-text">
+                                        <xsl:apply-templates/>
+                                </div>
+                                
+                        </xsl:otherwise>
+                </xsl:choose>
+                
+		
+		
+	</xsl:template>
+        
+        <xsl:template match="bold" mode="testing">
+		<strong>
+			<xsl:apply-templates/>
+		</strong>
+	</xsl:template>
+	
+	<xsl:template match="italic" mode="testing">
+		<em>
+                    <xsl:apply-templates/>
+		</em>
+	</xsl:template>
+        <xsl:template match="sub" mode="testing">
+		<sub>
+                    <xsl:apply-templates/>
+		</sub>
+	</xsl:template>
+        
+        <xsl:template match="//fig"  mode="testing">
+		<xsl:variable name="caption" select="child::label/text()"/>
+		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+                <xsl:variable name="id">
+                    <!--<xsl:value-of select="count(preceding::fig)+1" />-->
+                    <xsl:value-of select="@id" />
+                </xsl:variable>
+                <xsl:variable name="graphics" select="child::graphic/@xlink:href"/>
+                <div id="{$id}" class="fig-inline-img-set">
+                            <div class="elife-fig-image-caption-wrapper">
+                                    <div class="fig-expansion">
+                                            <div class="fig-inline-img">
+                                                    <a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
+                                                            <img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
+                                                    </a>
+                                            </div>
+                                            <xsl:apply-templates />
+                                    </div>
+                            </div>
+                </div>
+	</xsl:template>
+        
+        <xsl:template match="fig-group"  mode="testing">
+		<!-- set main figure's DOI -->
+		<xsl:variable name="data-doi" select="child::fig[1]/object-id[@pub-id-type='doi']/text()"/>
+			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
+                        <div class="fig-inline-img-set fig-inline-img-set-carousel">
+				<div class="elife-fig-slider-wrapper eLifeArticleFiguresSlider-processed">
+					<div class="elife-fig-slider">
+						<div class="elife-fig-slider-img elife-fig-slider-primary">
+						
+							<!-- use variables to set src and alt -->
+							
+							<xsl:variable name="primarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',child::fig[not(@specific-use)]/@id, '.gif')"/>
+							<xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
+                                                        <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
+							<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$primarysrc}" alt="{$primarycap}"/>
+						</div>
+						<div class="figure-carousel-inner-wrapper">
+							<div class="figure-carousel figure-carousel-">
+								<xsl:for-each select="child::fig[@specific-use]">
+									<!-- use variables to set src and alt -->
+									<xsl:variable name="secondarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',@id, '.gif')"/>
+									<xsl:variable name="secondarycap" select="child::label/text()"/>
+                                                                        <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
+									<div class="elife-fig-slider-img elife-fig-slider-secondary">
+										<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$secondarysrc}" alt="{$secondarycap}"/>
+									</div>
+								</xsl:for-each>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="elife-fig-image-caption-wrapper">
+					<xsl:apply-templates />
+				</div>
+			</div>
+	</xsl:template>
+        
+        
+        <xsl:template match="media" mode="testing">
+		<xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+		
+		<xsl:choose>
+			<xsl:when test="@mimetype = 'application'">
+				<!-- if mimetype is application -->
+				<span class="inline-linked-media-wrapper">
+					<a href="[media-{substring-before(@xlink:href,'.')}-download]">
+						<i class="icon-download-alt"></i> Download source data<span class="inline-linked-media-filename">[<xsl:value-of select="translate(translate(preceding-sibling::label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>media-<xsl:value-of select="count(preceding::media[@mimetype = 'application'])+1" />.<xsl:value-of select="substring-after(@xlink:href,'.')"/>]</span>
+                                                <!--<xsl:value-of select="concat('[', @xlink:href, ']')"></xsl:value-of>-->
+					</a>
+				</span>
+			</xsl:when>
+			<xsl:otherwise>
+				<!-- otherwise -->
+                                    <div class="media video-content">
+                                            <!-- set attribute -->
+                                            <xsl:attribute name="id">
+                                                <!-- <xsl:value-of select="concat('media-', @id)"/>-->
+                                                <xsl:value-of select="@id"/>
+                                            </xsl:attribute>
+                                            <div class="media-inline video-inline">
+                                                    <div class="elife-inline-video">
+                                                            <xsl:text>[video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline]</xsl:text>
+
+                                                            <div class="elife-video-links">
+                                                                    <span class="elife-video-link elife-video-link-download">
+                                                                            <a href="[video-{@id}-download]">Download Video</a>
+                                                                            
+                                                                    </span>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <xsl:apply-templates/>
+                                    </div>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+        
+        <xsl:template name="renderApplicationsDrop">
+            <xsl:param name="string" select="$string" />
+            <xsl:for-each select="$string/*">
+                <!--<xsl:if test="count(child::*) = 0">
+                    <xsl:apply-templates />
+                </xsl:if>
+                <xsl:if test="count(child::*) != 0">
+                    <xsl:value-of select="concat(count(child::*),' ',name(.))"/>
+                    <xsl:call-template name="renderApplicationsDrop">
+                        <xsl:with-param name="string" select="." />
+                     </xsl:call-template>
+                </xsl:if>-->
+                <xsl:if test="count(child::*) != 0">
+                   
+                    <xsl:choose>
+                        <xsl:when test="fig">
+                            <xsl:value-of select="name(.)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="name(.)"/>
+                            <xsl:apply-templates/>
+                        </xsl:otherwise>                            
+                    </xsl:choose>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:template>
 	<!-- Acknowledgement -->
 	
 	<xsl:template match="ack">
