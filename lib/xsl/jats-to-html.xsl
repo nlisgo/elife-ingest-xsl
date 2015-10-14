@@ -438,7 +438,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	<xsl:template match="table-wrap/label" mode="captionLabel">
 		<span class="table-label">
 			<xsl:apply-templates />
-		</span>                
+		</span><xsl:text> </xsl:text>
 	</xsl:template>
 	<xsl:template match="caption">
                 <xsl:choose>
@@ -460,7 +460,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	<xsl:template match="table-wrap/table">
 		
                     <table>
-                            <xsl:apply-templates select="@* | node() " />
+                            <xsl:apply-templates />
                     </table>                    	
 	</xsl:template>
 	<!-- Handle other parts of table -->
@@ -680,7 +680,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                     </span>
                                     <span class="fig-label">
                                             <xsl:value-of select="../label/text()"/>
-                                    </span>
+                                    </span><xsl:text> </xsl:text>
                                     <xsl:apply-templates />
                                     <div class="sb-div caption-clear"></div>
                             </div>
@@ -873,7 +873,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	<xsl:template match="table-wrap/table" mode="testing">
 		
                     <table>
-                            <xsl:apply-templates select="@* | node() " />
+                            <xsl:apply-templates />
                     </table>                    	
 	</xsl:template>
         
@@ -1456,13 +1456,13 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<div class="media-caption">
 			<span class="media-label">
 				<xsl:value-of select="preceding-sibling::label"/>
-			</span>
+			</span><xsl:text> </xsl:text>
 			<!--<xsl:text> </xsl:text>-->
 			<span class="caption-title">
 				<xsl:if test="child::title">
 					<xsl:apply-templates select="child::title"/>
 				</xsl:if>
-			</span>
+			</span> 
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
@@ -1535,7 +1535,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                         <xsl:text>elife-article-author-response-doi</xsl:text>
                                 </xsl:if>
                         </xsl:attribute>
-                        <strong>DOI:</strong>
+                        <strong>DOI:</strong><xsl:text> </xsl:text>
 
                         <xsl:variable name="doino" select="preceding-sibling::*//article-id" />
                         <a href="/lookup/doi/{$doino}">
