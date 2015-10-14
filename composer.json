@@ -8,7 +8,8 @@
   "require-dev": {
     "phpspec/phpspec": "~2.2",
     "phpunit/phpunit": "~4.7",
-    "symfony/var-dumper": "^2.7"
+    "symfony/var-dumper": "^2.7",
+    "zaininnari/html-minifier": "~0.4"
   },
   "autoload": {
     "psr-4": {
@@ -27,5 +28,11 @@
   },
   "config": {
     "bin-dir": "./bin"
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/zaininnari/html-minifier"
+    }
+  ]
 }

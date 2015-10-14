@@ -103,12 +103,12 @@ class ConvertXMLToHtml extends ConvertXML {
     $actual->loadHTML($this->getHtml());
     $xpath = new DOMXPath($actual);
     $elements = $xpath->query($xpath_query);
+    $output = NULL;
     if (!empty($elements) && $elements->length > 0) {
       $output = $this->getInnerHtml($elements->item(0));
-      libxml_clear_errors();
-
-      return $output;
     }
+    libxml_clear_errors();
+    return $output;
   }
 
   /**
@@ -117,6 +117,15 @@ class ConvertXMLToHtml extends ConvertXML {
    */
   public function getDoi($doi) {
     return $this->getSection("//*[@data-doi='" . $doi . "']");
+  }
+
+  /**
+   * @param string $id
+   * @param string $within
+   * @return string
+   */
+  public function getId($id, $within = "//*[@id='main-text']") {
+    return $this->getSection($within . "//*[@id='" . $id . "']");
   }
 
   /**

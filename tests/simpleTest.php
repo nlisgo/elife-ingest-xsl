@@ -5,6 +5,7 @@ use eLifeIngestXsl\ConvertXMLToBibtex;
 use eLifeIngestXsl\ConvertXMLToCitationFormat;
 use eLifeIngestXsl\ConvertXMLToHtml;
 use eLifeIngestXsl\ConvertXMLToRis;
+use zz\Html\HTMLMinify;
 
 class simpleTest extends PHPUnit_Framework_TestCase
 {
@@ -266,6 +267,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlIdSubsectionProvider
+     */
+    public function testJatsToHtmlIdSubsection($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlIdSubsectionProvider() {
+        $this->setFolders();
+        return $this->compareIdHtmlSection('subsection');
+    }
+
+    /**
      * @dataProvider xpathMatchProvider
      */
     public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected) {
@@ -314,6 +327,32 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Prepare array of actual and expected results for HTML targetted by id.
+     */
+    protected function compareIdHtmlSection($type_suffix) {
+        $suffix = '-id-' . $type_suffix;
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<id>.+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'suffix' => '-' . $match['id'] . $suffix,
+                    'id' => $match['id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getId', $section['id'], ''));
+        }
+
+        return $compares;
+    }
+
+    /**
      * Prepare array of actual and expected results for DOI HTML.
      */
     protected function compareDoiHtmlSection($fragment_suffix) {
@@ -322,11 +361,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<doi>[^\-]+)' . $suffix . '\.html$/', basename($html), $matches);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<doi>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
-                    'suffix' => '-' . $matches['doi'] . $suffix,
-                    'doi' => '10.7554/' . $matches['doi'],
+                    'suffix' => '-' . $match['doi'] . $suffix,
+                    'doi' => '10.7554/' . $match['doi'],
                 ];
             }
         }
@@ -380,11 +419,13 @@ class simpleTest extends PHPUnit_Framework_TestCase
      */
     protected function assertEqualHtml($expected, $actual)
     {
-        $from = ['/>\s+/', '/[\s]+</', '/\s+/', '/>\s+</'];
-        $to = ['>', '<', ' ', '><'];
+        $clean_expected = HTMLMinify::minify($expected, ['optimizationLevel' => HTMLMinify::OPTIMIZATION_ADVANCED]);
+        $clean_actual = HTMLMinify::minify($actual, ['optimizationLevel' => HTMLMinify::OPTIMIZATION_ADVANCED]);
+        $from = ['/\n/'];
+        $to = [''];
         $this->assertEquals(
-            preg_replace($from, $to, $expected),
-            preg_replace($from, $to, $actual)
+            preg_replace($from, $to, $clean_expected),
+            preg_replace($from, $to, $clean_actual)
         );
     }
 
