@@ -5,7 +5,6 @@ use eLifeIngestXsl\ConvertXMLToBibtex;
 use eLifeIngestXsl\ConvertXMLToCitationFormat;
 use eLifeIngestXsl\ConvertXMLToHtml;
 use eLifeIngestXsl\ConvertXMLToRis;
-use zz\Html\HTMLMinify;
 
 class simpleTest extends PHPUnit_Framework_TestCase
 {
@@ -419,13 +418,11 @@ class simpleTest extends PHPUnit_Framework_TestCase
      */
     protected function assertEqualHtml($expected, $actual)
     {
-        $clean_expected = HTMLMinify::minify($expected, ['optimizationLevel' => HTMLMinify::OPTIMIZATION_ADVANCED]);
-        $clean_actual = HTMLMinify::minify($actual, ['optimizationLevel' => HTMLMinify::OPTIMIZATION_ADVANCED]);
-        $from = ['/\n/'];
-        $to = [''];
+        $from = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/> </s'];
+        $to = ['>', '<', '\\1', '><'];
         $this->assertEquals(
-            preg_replace($from, $to, $clean_expected),
-            preg_replace($from, $to, $clean_actual)
+            preg_replace($from, $to, $expected),
+            preg_replace($from, $to, $actual)
         );
     }
 
