@@ -872,7 +872,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	<xsl:template match="table-wrap/table" mode="testing">
 		
-                    <table>
+                    <table frame="hsides" rules="groups">
                             <xsl:apply-templates />
                     </table>                    	
 	</xsl:template>
@@ -945,6 +945,11 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<sub>
                     <xsl:apply-templates/>
 		</sub>
+	</xsl:template>
+        <xsl:template match="sup" mode="testing">
+		<sup>
+                    <xsl:apply-templates/>
+		</sup>
 	</xsl:template>
         
         <xsl:template match="//fig"  mode="testing">
@@ -1030,7 +1035,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                             </xsl:attribute>
                                             <div class="media-inline video-inline">
                                                     <div class="elife-inline-video">
-                                                            <xsl:text>[video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline]</xsl:text>
+                                                            <xsl:text> [video-</xsl:text><xsl:value-of select="@id"/><xsl:text>-inline] </xsl:text>
 
                                                             <div class="elife-video-links">
                                                                     <span class="elife-video-link elife-video-link-download">
@@ -1045,7 +1050,21 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-        
+        <xsl:template match="//media/caption" mode="testing">
+		<div class="media-caption">	
+                        <span class="media-label">
+				<xsl:value-of select="preceding-sibling::label"/>
+			</span><xsl:text> </xsl:text>
+			<xsl:apply-templates mode="testing"/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="//media/label" mode="testing"/>
+	<xsl:template match="//media/caption/title" mode="testing">
+            <span class="caption-title">
+		<xsl:apply-templates/>
+            </span>
+	</xsl:template>
         <xsl:template name="renderApplicationsDrop">
             <xsl:param name="string" select="$string" />
             <xsl:for-each select="$string/*">
@@ -1458,19 +1477,17 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 				<xsl:value-of select="preceding-sibling::label"/>
 			</span><xsl:text> </xsl:text>
 			<!--<xsl:text> </xsl:text>-->
-			<span class="caption-title">
-				<xsl:if test="child::title">
-					<xsl:apply-templates select="child::title"/>
-				</xsl:if>
-			</span> 
+			
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
 	
 	<xsl:template match="//media/label"/>
 	
-	<xsl:template match="//media//title">
+	<xsl:template match="//media/caption/title">
+            <span class="caption-title">
 		<xsl:apply-templates/>
+            </span>
 	</xsl:template>
 	
 	<!-- END video handling -->
@@ -1675,6 +1692,18 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<em>
                     <xsl:apply-templates/>
 		</em>
+	</xsl:template>
+	
+	<xsl:template match="sup">
+		<sup>
+                    <xsl:apply-templates/>
+		</sup>
+	</xsl:template>
+	
+	<xsl:template match="sub">
+		<sub>
+                    <xsl:apply-templates/>
+		</sub>
 	</xsl:template>
 	
 	<!-- END - general format -->
