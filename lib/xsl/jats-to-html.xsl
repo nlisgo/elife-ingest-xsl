@@ -368,8 +368,16 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                     <xsl:value-of select="@style"/>
                             </xsl:attribute>
                     </xsl:if>
-                    <xsl:attribute name="rowspan">1</xsl:attribute>
-                    <xsl:attribute name="colspan">1</xsl:attribute>
+                    <xsl:if test="@rowspan">
+                        <xsl:attribute name="rowspan">
+                            <xsl:value-of select="@rowspan"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="@colspan">
+                        <xsl:attribute name="colspan">
+                            <xsl:value-of select="@colspan"/>
+                        </xsl:attribute>
+                    </xsl:if>
                     <xsl:apply-templates />
             </xsl:copy>
         </xsl:template>
@@ -384,6 +392,11 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	<xsl:template match="table-wrap-foot/fn">
 		<li class="fn">
+            <xsl:if test="@id">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                </xsl:attribute>
+            </xsl:if>
 			<xsl:apply-templates />
 		</li>
 	</xsl:template>
@@ -403,9 +416,9 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </xsl:template>
         <xsl:template match="//*[local-name()='math']">
             <span class="mathjax mml-math">
-                <math>
+                <xsl:text disable-output-escaping="yes">&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;</xsl:text>
                     <xsl:apply-templates />
-                </math>
+                <xsl:text disable-output-escaping="yes">&lt;/math&gt;</xsl:text>
             </span>
         </xsl:template>
         
@@ -557,7 +570,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                                     <a href="[graphic-{$graphics}-large-download]">Download figure</a>
                                             </span>
                                             <span class="elife-figure-link elife-figure-link-newtab">
-                                                    <a href="[graphic-{$graphics}-large]" target="_new">Open in new tab</a>
+                                                    <a href="[graphic-{$graphics}-large]" target="_blank">Open in new tab</a>
                                             </span>
                                     </span>
                                     <span class="fig-label">
@@ -629,7 +642,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
           
           <xsl:if test="@sec-type">
             <xsl:attribute name="class">
-              <xsl:value-of select="concat('section ', ./@sec-type)"/>
+              <xsl:value-of select="concat('section ', translate(./@sec-type, '|', '-'))"/>
             </xsl:attribute>
           </xsl:if>
           <xsl:if test="@id">
@@ -754,7 +767,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	<xsl:template match="table-wrap/table" mode="testing">
 		
-                    <table frame="hsides" rules="groups">
+                    <table>
                             <xsl:apply-templates />
                     </table>                    	
 	</xsl:template>
@@ -773,6 +786,11 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	<xsl:template match="fn" mode="testing">
 		<li class="fn">
+            <xsl:if test="@id">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                </xsl:attribute>
+            </xsl:if>
                    <!-- <xsl:if test="not(../child::fn/@id)">
                         <xsl:attribute name="id">
                             <xsl:value-of select="concat('fn-',count(preceding::fn)+1)"/>
@@ -857,37 +875,35 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<!-- set main figure's DOI -->
 		<xsl:variable name="data-doi" select="child::fig[1]/object-id[@pub-id-type='doi']/text()"/>
 			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
-                        <div class="fig-inline-img-set fig-inline-img-set-carousel">
-				<div class="elife-fig-slider-wrapper eLifeArticleFiguresSlider-processed">
-					<div class="elife-fig-slider">
-						<div class="elife-fig-slider-img elife-fig-slider-primary">
-						
-							<!-- use variables to set src and alt -->
-							
-							<xsl:variable name="primarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',child::fig[not(@specific-use)]/@id, '.gif')"/>
-							<xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
-                                                        <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
-							<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$primarysrc}" alt="{$primarycap}"/>
-						</div>
-						<div class="figure-carousel-inner-wrapper">
-							<div class="figure-carousel figure-carousel-">
-								<xsl:for-each select="child::fig[@specific-use]">
-									<!-- use variables to set src and alt -->
-									<xsl:variable name="secondarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',@id, '.gif')"/>
-									<xsl:variable name="secondarycap" select="child::label/text()"/>
-                                                                        <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
-									<div class="elife-fig-slider-img elife-fig-slider-secondary">
-										<img data-fragment-nid="" class="figure-icon-fragment-nid-" src="{$secondarysrc}" alt="{$secondarycap}"/>
-									</div>
-								</xsl:for-each>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="elife-fig-image-caption-wrapper">
-					<xsl:apply-templates />
-				</div>
-			</div>
+            <div class="fig-inline-img-set fig-inline-img-set-carousel">
+                <div class="elife-fig-slider-wrapper">
+                    <div class="elife-fig-slider">
+                        <div class="elife-fig-slider-img elife-fig-slider-primary">
+
+                            <!-- use variables to set src and alt -->
+
+                            <xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
+                            <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
+                            <img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/>
+                        </div>
+                        <div class="figure-carousel-inner-wrapper">
+                            <div class="figure-carousel">
+                                <xsl:for-each select="child::fig[@specific-use]">
+                                    <!-- use variables to set src and alt -->
+                                    <xsl:variable name="secondarycap" select="child::label/text()"/>
+                                    <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
+                                    <div class="elife-fig-slider-img elife-fig-slider-secondary">
+                                        <img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/>
+                                    </div>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="elife-fig-image-caption-wrapper">
+                    <xsl:apply-templates />
+                </div>
+            </div>
 	</xsl:template>
         
         

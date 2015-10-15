@@ -337,31 +337,31 @@ class simpleTest extends PHPUnit_Framework_TestCase
         return $nodeList;
     }
 
-  /**
-   * Prepare array of actual and expected results for affiliation HTML.
-   */
-  protected function compareAffHtmlSection() {
-    $suffix = '-aff';
-    $htmls = glob($this->html_folder . '*' . $suffix . '.html');
-    $sections = [];
+    /**
+     * Prepare array of actual and expected results for affiliation HTML.
+     */
+    protected function compareAffHtmlSection() {
+        $suffix = '-aff';
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
 
-    foreach ($htmls as $html) {
-      $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<aff_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
-      if ($found) {
-        $sections[] = [
-          'suffix' => '-' . $match['aff_id'] . $suffix,
-          'aff_id' => $match['aff_id'],
-        ];
-      }
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<aff_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'suffix' => '-' . $match['aff_id'] . $suffix,
+                    'aff_id' => $match['aff_id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAffiliation', $section['aff_id'], ''));
+        }
+
+        return $compares;
     }
-    $compares = [];
-
-    foreach ($sections as $section) {
-      $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAffiliation', $section['aff_id'], ''));
-    }
-
-    return $compares;
-  }
 
     /**
      * Prepare array of actual and expected results for HTML targetted by id.
@@ -454,13 +454,26 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Compare two HTML fragments.
      */
-    protected function assertEqualHtml($expected, $actual)
-    {
-        $from = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/> </s', '/>\s+\[/s', '/\]\s+</s'];
-        $to = ['>', '<', '\\1', '><', '>[', ']<'];
+    protected function assertEqualHtml($expected, $actual) {
+        $from = [
+            '/\>[^\S ]+/s',
+            '/[^\S ]+\</s',
+            '/(\s)+/s',
+            '/> </s',
+            '/>\s+\[/s',
+            '/\]\s+</s',
+        ];
+        $to = [
+            '>',
+            '<',
+            '\\1',
+            '><',
+            '>[',
+            ']<',
+        ];
         $this->assertEquals(
-            preg_replace($from, $to, $expected),
-            preg_replace($from, $to, $actual)
+            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $expected)),
+            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $actual))
         );
     }
 
