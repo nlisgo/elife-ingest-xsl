@@ -108,7 +108,38 @@ class ConvertXMLToHtml extends ConvertXML {
       $output = $this->getInnerHtml($elements->item(0));
     }
     libxml_clear_errors();
-    return $output;
+
+    return $this->tidyHtml($output);
+  }
+
+  public static function tidyHtml($html) {
+    // Fix self-closing tags issue.
+    $self_closing = [
+      'area',
+      'base',
+      'br',
+      'col',
+      'command',
+      'embed',
+      'hr',
+      'img',
+      'input',
+      'keygen',
+      'link',
+      'meta',
+      'param',
+      'source',
+      'track',
+      'wbr',
+    ];
+
+    $from = [
+      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)([^\/>]+)\/>/',
+    ];
+    $to = [
+      '<$1$2></$1>',
+    ];
+    return preg_replace($from, $to, $html);
   }
 
   /**
