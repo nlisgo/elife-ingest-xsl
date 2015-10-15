@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "97a095b9914d1bf1c48bfd2170f0735f",
-    "content-hash": "65566b75721915bd79790b99b4008b4e",
+    "hash": "a07836f451fc8a4f881048c677e7a08d",
+    "content-hash": "1d21bc6390ebc4c7c2d7a257183b9e30",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -578,16 +578,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.12",
+            "version": "4.8.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "00194eb95989190a73198390ceca081ad3441a7f"
+                "reference": "be067d6105286b74272facefc2697038f8807b77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/00194eb95989190a73198390ceca081ad3441a7f",
-                "reference": "00194eb95989190a73198390ceca081ad3441a7f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/be067d6105286b74272facefc2697038f8807b77",
+                "reference": "be067d6105286b74272facefc2697038f8807b77",
                 "shasum": ""
             },
             "require": {
@@ -646,7 +646,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-12 03:36:47"
+            "time": "2015-10-14 13:49:40"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1395,60 +1395,6 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2015-09-14 14:14:09"
-        },
-        {
-            "name": "zaininnari/html-minifier",
-            "version": "0.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zaininnari/html-minifier.git",
-                "reference": "5b94d85705626f9bb33b7c667bc4400088ed4ece"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zaininnari/html-minifier/zipball/5b94d85705626f9bb33b7c667bc4400088ed4ece",
-                "reference": "5b94d85705626f9bb33b7c667bc4400088ed4ece",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "satooshi/php-coveralls": "dev-master"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "zz": "src/"
-                }
-            },
-            "license": [
-                "The BSD 3-Clause License"
-            ],
-            "authors": [
-                {
-                    "name": "Google inc",
-                    "homepage": "http://www.chromium.org/blink",
-                    "role": "Author"
-                },
-                {
-                    "name": "zaininnari",
-                    "homepage": "https://github.com/zaininnari/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "The Blink HTMLTokenizer ported to PHP.",
-            "homepage": "https://github.com/zaininnari/html-minifier",
-            "keywords": [
-                "Blink",
-                "HTML minify",
-                "PHP"
-            ],
-            "support": {
-                "source": "https://github.com/zaininnari/html-minifier/tree/0.4.2",
-                "issues": "https://github.com/zaininnari/html-minifier/issues"
-            },
-            "time": "2015-08-18 14:10:55"
         }
     ],
     "aliases": [],
