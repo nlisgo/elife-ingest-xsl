@@ -112,6 +112,41 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param string $method
+   * @param string|null $argument
+   * @param string $xpath_query
+   * @return string
+   */
+  public function getHtmlXpath($method, $argument = NULL, $xpath_query = '')
+  {
+    if (empty($argument)) {
+      $argument = [];
+    }
+    elseif (is_string($argument)) {
+      $argument = [$argument];
+    }
+
+    $output = call_user_func_array([$this, $method], $argument);
+
+    if (!empty($output) && !empty($xpath_query)) {
+      libxml_use_internal_errors(TRUE);
+      $dom = new DOMDocument();
+      $dom->loadHTML('<meta http-equiv="content-type" content="text/html; charset=utf-8"><expected>' . $output . '</expected>');
+      $xpath = new DOMXPath($dom);
+      $nodeList = $xpath->query('//expected' . $xpath_query);
+      if ($nodeList->length > 0) {
+        $output = $this->getInnerHtml($nodeList->item(0));
+      }
+      else {
+        $output = '';
+      }
+      libxml_clear_errors();
+    }
+
+    return $output;
+  }
+
+  /**
    * @param string $doi
    * @return string
    */
@@ -126,6 +161,14 @@ class ConvertXMLToHtml extends ConvertXML {
    */
   public function getId($id, $within = "//*[@id='main-text']") {
     return $this->getSection($within . "//*[@id='" . $id . "']");
+  }
+
+  /**
+   * @param string $aff_id
+   * @return string
+   */
+  public function getAffiliation($aff_id) {
+    return $this->getSection("//*[@id='" . $aff_id . "']");
   }
 
   /**

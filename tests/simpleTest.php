@@ -278,6 +278,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAffProvider
+     */
+    public function testJatsToHtmlAff($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAffProvider() {
+        $this->setFolders();
+        return $this->compareAffHtmlSection();
+    }
+
+    /**
      * @dataProvider xpathMatchProvider
      */
     public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected) {
@@ -324,6 +336,32 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $nodeList = $xpath->query($xpath_query);
         return $nodeList;
     }
+
+  /**
+   * Prepare array of actual and expected results for affiliation HTML.
+   */
+  protected function compareAffHtmlSection() {
+    $suffix = '-aff';
+    $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+    $sections = [];
+
+    foreach ($htmls as $html) {
+      $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<aff_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+      if ($found) {
+        $sections[] = [
+          'suffix' => '-' . $match['aff_id'] . $suffix,
+          'aff_id' => $match['aff_id'],
+        ];
+      }
+    }
+    $compares = [];
+
+    foreach ($sections as $section) {
+      $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAffiliation', $section['aff_id'], ''));
+    }
+
+    return $compares;
+  }
 
     /**
      * Prepare array of actual and expected results for HTML targetted by id.

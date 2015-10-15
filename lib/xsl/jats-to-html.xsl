@@ -47,39 +47,8 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	
 	<!-- Author list -->
-	<xsl:template match="contrib-group[not (@content-type)]">
-		<div class="panel-separator"/>
-		<div class="panel-pane pane-elife-article-authors">
-			<div class="pane-content">
-				<div class="author-list">
-					<ul>
-						<xsl:apply-templates/>
-					</ul>
-				</div>
-				<div class="elife-institutions-list">
-					<xsl:apply-templates select="//contrib-group[not(@content-type)]/aff" mode="internal"/>
-				</div>
-			</div>
-		</div>
-		<div class="panel-separator"/>
-		<div class="panel-pane pane-elife-article-doi">
-			<div class="pane-content">
-				<div class="pane-highwire-doi">
-					<span class="highwire-doi-doi">
-						<span class="highwire-doi-pre-label label">DOI: </span>
-						<span class="elife-doi-doi">
-							<xsl:variable name="doi" select="../article-id[pub-id-type='doi']"/>
-							<a href="http://dx.doi.org/10.7554/eLife.07370">
-								<xsl:value-of select="concat('http://dx.doi.org/', $doi)"/>
-							</a>
-						</span>
-					</span>
-					<xsl:apply-templates select="//pub-date[@date-type='pub']" mode="internal"/>
-					<xsl:apply-templates select="//pub-date[@pub-type='collection']" mode="internal"/>
-				</div>
-			</div>
-		</div>
-		<div class="panel-separator"/>
+	<xsl:template match="contrib-group[not (@content-type)]">		
+                <xsl:apply-templates />
 	</xsl:template>
 	
 	<xsl:template match="contrib">
@@ -87,143 +56,8 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<xsl:variable name ="rid" select="xref[@ref-type='aff'][1]"/>
 		<!-- <xsl:variable name ="affrid" select="concat('aff', $rid)"/>-->
                 <!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->
-		<xsl:variable name="tooltip">
-                    <![CDATA[
-                    |<div class='author-tooltip'> 
-                        <div class='author-tooltip-name'> 
-                            <span class='nlm-surname'>]]>  
-                                     <xsl:value-of select="name/surname"/>
-                             <![CDATA[</span>]]>  
-                             <xsl:text> </xsl:text>
-                             <![CDATA[<span class='nlm-given-names'> ]]>  
-                                     <xsl:value-of select="name/given-names"/>
-                             <![CDATA[
-                             </span>
-                             
-                         </div>
-                         <div class='author-tooltip-affiliation'>
-                            <span class='author-tooltip-text'>]]>
-                                
-                                    <xsl:for-each select="xref[@ref-type='aff']">
-                                         <![CDATA[<span class='nlm-aff'>]]>
-                                         <xsl:variable name = "affrid" > 
-                                              <xsl:value-of select="@rid"/>
-                                         </xsl:variable>                                          
-                                        <xsl:for-each select="//aff[@id=$affrid]/node()">
-                                            <xsl:choose>
-                                                <xsl:when test="self::text()">
-                                                        <xsl:value-of select="normalize-space(.)"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <![CDATA[<span class='nlm-]]><xsl:value-of select="name()"/><![CDATA['>]]> 
-                                                        <xsl:value-of select="normalize-space(.)"/>
-                                                    <![CDATA[</span>]]> 
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:for-each>
-                                        <![CDATA[</span>]]>
-                                    </xsl:for-each>
-                                 
-                              <![CDATA[</span>
-                         </div>
-                         <div class='author-tooltip-contrib'>
-                            <span class='author-tooltip-label'>Contribution: </span>
-                            ]]>                               
-                                <xsl:for-each select="xref[(@ref-type='fn') and starts-with(@rid,'con')][1]">
-                                    <xsl:variable name = "conid" > 
-                                          <xsl:value-of select="@rid"/>
-                                     </xsl:variable>   
-                                     <xsl:for-each select="//fn[@id=$conid]/node()">
-                                        <![CDATA[<span class='author-tooltip-text'>]]>
-                                            <xsl:choose>
-                                                <xsl:when test="self::text()">
-                                                        <xsl:value-of select="normalize-space(.)"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>                                                    
-                                                        <xsl:value-of select="normalize-space(.)"/>                                                    
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        <![CDATA[</span>]]>
-                                    </xsl:for-each>
-                                </xsl:for-each>
-                                 
-                              <![CDATA[</span>
-                         </div>
-                         <div class='author-tooltip-conflict'>]]>                               
-                                <xsl:for-each select="xref[(@ref-type='fn') and starts-with(@rid,'equal-contrib')][1]">
-                                    <xsl:variable name = "confid" > 
-                                          <xsl:value-of select="@rid"/>
-                                     </xsl:variable>   
-                                     <xsl:for-each select="//fn[@id=$confid]/node()">
-                                        <![CDATA[<span class='author-tooltip-text'>]]>
-                                            <xsl:choose>
-                                                <xsl:when test="self::text()">
-                                                        <xsl:value-of select="normalize-space(.)"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>                                                    
-                                                        <xsl:value-of select="normalize-space(.)"/>                                                    
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        <![CDATA[</span>]]>
-                                    </xsl:for-each>
-                                </xsl:for-each>
-                                 
-                              <![CDATA[</span>
-                         </div>
-                         <div class='author-tooltip-equal-contrib'>                         
-                            <span class='author-tooltip-label'>Contributed equally with: </span>]]>                               
-                                <xsl:for-each select="xref[(@ref-type='fn') and starts-with(@rid,'equal-contrib')][1]">
-                                    <xsl:variable name = "confid" > 
-                                          <xsl:value-of select="@rid"/>
-                                     </xsl:variable>   
-                                     <xsl:for-each select="//fn[@id=$confid]/node()">
-                                        <![CDATA[<span class='author-tooltip-text'>]]>
-                                            <xsl:choose>
-                                                <xsl:when test="self::text()">
-                                                        <xsl:value-of select="normalize-space(.)"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>                                                    
-                                                        <xsl:value-of select="normalize-space(.)"/>                                                    
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        <![CDATA[</span>]]>
-                                    </xsl:for-each>
-                                </xsl:for-each>
-                                 
-                              <![CDATA[</span>
-                         </div>
-                    </div>
-                     ]]>                           
-                <!-- modify by arul tooltip 19-9-15 pre xslt proccess end -->
-		</xsl:variable>
-                
-		<xsl:choose>
-			<xsl:when test="@corresp">
-				<span class="elife-article-author-item corresp" data-tooltip-content="{$tooltip}" data-author-inst="">
-					<xsl:apply-templates/>
-					<a href="mailto:ardem@scripps.edu">
-						<img class="corresp-icon" src="http://cdn-site.elifesciences.org/sites/default/modules/elife/elife_article/images/corresp.png" alt="Corresponding Author"/>
-					</a>
-                                        <xsl:choose>
-                                            <xsl:when test="not(following-sibling::contrib)"></xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:text>, </xsl:text>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-				</span>
-			</xsl:when>
-			<xsl:otherwise>
-				<span class="elife-article-author-item" data-tooltip-content="{$tooltip}" data-author-inst="">
-					<xsl:apply-templates/>
-                                        <xsl:choose>
-                                            <xsl:when test="not(following-sibling::contrib)"></xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:text>, </xsl:text>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-				</span>
-			</xsl:otherwise>
-		</xsl:choose>
+		
+                <xsl:apply-templates/>
 	</xsl:template>
         
 	<!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->
@@ -241,7 +75,55 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	
 	<!-- Affiliations -->
         <xsl:key name="product" match="institution[not(@content-type)]" use="." /> 
-	<xsl:template match="contrib-group[not(@content-type)]/aff" mode="internal">
+        <xsl:template match="contrib-group[not(@content-type)]/aff">
+            <div id="{@id}">
+                <span class="nlm-aff">
+                    <xsl:apply-templates/>
+                </span>
+            </div>
+        </xsl:template>  
+        <xsl:template match="contrib-group[not(@content-type)]/aff/institution">
+             <span class="nlm-institution">
+                 <xsl:if test="@content-type">
+                    <xsl:attribute name="data-content-type">                    
+                        <xsl:value-of select="@content-type"/>
+                    </xsl:attribute>
+                 </xsl:if>
+                 <xsl:apply-templates/>
+             </span>
+        </xsl:template>  
+        <xsl:template match="contrib-group[not(@content-type)]/aff/addr-line">
+             <span class="nlm-addr-line">  
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template> 
+        <xsl:template match="addr-line/named-content">
+            <span class="nlm-named-content">  
+                <xsl:if test="@content-type">
+                    <xsl:attribute name="data-content-type">                    
+                        <xsl:value-of select="@content-type"/>
+                    </xsl:attribute>
+                 </xsl:if>
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template> 
+        <xsl:template match="contrib-group[not(@content-type)]/aff/country">
+             <span class="nlm-country">  
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template> 
+        <xsl:template match="contrib-group[not(@content-type)]/aff/x">
+            <span class="nlm-x">
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template>     
+        <xsl:template match="contrib-group[not(@content-type)]/aff//bold">
+            <span class="nlm-bold">
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template>  
+        <xsl:template match="contrib-group[not(@content-type)]/aff/email"/>
+	<!-- <xsl:template match="contrib-group[not(@content-type)]/aff" mode="internal">
 		<span class="elife-institution">
 			
                         <xsl:for-each select="(institution[not(@content-type)])[generate-id()= generate-id(key('product',.)[1])]">
@@ -261,9 +143,9 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		</span>
 		
 	</xsl:template>
-	<!-- modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma start -->
+	modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma start - ->
 	<xsl:template match="aff//named-content|aff/addr-line|aff/text()[preceding-sibling::institution[@content-type]][1]|aff/institution[@content-type]|aff/text()[preceding-sibling::addr-line][1]"/>
-	<!-- modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma end -->
+	<!- - modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma end -->
         
 	<xsl:template match="pub-date[@date-type='pub']" mode="internal">
 		<span class="highwire-doi-epubdate">
@@ -521,9 +403,9 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </xsl:template>
         <xsl:template match="//*[local-name()='math']">
             <span class="mathjax mml-math">
-                <xsl:text disable-output-escaping="yes">&lt;math xmlns:mml="http://www.w3.org/1998/Math/MathML"&gt;</xsl:text>
+                <math>
                     <xsl:apply-templates />
-                <xsl:text disable-output-escaping="yes">&lt;/math&gt;</xsl:text>
+                </math>
             </span>
         </xsl:template>
         

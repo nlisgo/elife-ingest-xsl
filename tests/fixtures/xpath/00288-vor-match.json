@@ -8,5 +8,13 @@
     "method": "getReferences",
     "xpath": "//*[@id=\"bib15\"]//*[@class=\"elife-reflink-authors\"]",
     "string": "C Jiang, YT Hwang, G Wang, JC Randell, DM Coen et al."
+  },
+  {
+    "method": "getAffiliation",
+    "arguments": [
+      "aff1"
+    ],
+    "xpath": "//*[@class=\"nlm-aff\"]",
+    "string": "Vaccine and Infectious Diseases Division, Fred Hutchinson Cancer Research Center, Seattle, United States"
   }
 ]

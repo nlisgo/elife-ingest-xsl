@@ -34,6 +34,8 @@ if (!empty($xml)) {
     'ris',
     'html',
   ];
+  $method = 'getOutput';
+  $args = [];
 
   while ($param = array_shift($_SERVER['argv'])) {
     switch ($param) {
@@ -48,6 +50,15 @@ if (!empty($xml)) {
           exit(1);
         }
         $params['type'] = $type;
+        break;
+      case '--method':
+      case '-m':
+        $method = array_shift($_SERVER['argv']);
+        break;
+      case '--args':
+      case '-a':
+        $args_string = array_shift($_SERVER['argv']);
+        $args = explode('|', $args_string);
         break;
     }
   }
@@ -70,5 +81,5 @@ if (!empty($xml)) {
       $convertxml = new \eLifeIngestXsl\ConvertXMLToHtml($xmlstring);
   }
 
-  echo $convertxml->getOutput();
+  echo call_user_func_array([$convertxml, $method], $args);
 }
