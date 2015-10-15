@@ -416,9 +416,9 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </xsl:template>
         <xsl:template match="//*[local-name()='math']">
             <span class="mathjax mml-math">
-                <math>
+                <xsl:text disable-output-escaping="yes">&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;</xsl:text>
                     <xsl:apply-templates />
-                </math>
+                <xsl:text disable-output-escaping="yes">&lt;/math&gt;</xsl:text>
             </span>
         </xsl:template>
         
