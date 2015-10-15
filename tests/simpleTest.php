@@ -418,8 +418,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
      */
     protected function assertEqualHtml($expected, $actual)
     {
-        $from = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/> </s'];
-        $to = ['>', '<', '\\1', '><'];
+        $from = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/> </s', '/>\s+\[/s', '/\]\s+</s'];
+        $to = ['>', '<', '\\1', '><', '>[', ']<'];
         $this->assertEquals(
             preg_replace($from, $to, $expected),
             preg_replace($from, $to, $actual)

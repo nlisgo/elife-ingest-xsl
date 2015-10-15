@@ -896,9 +896,6 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                             <xsl:value-of select="concat('fn-',count(preceding::fn)+1)"/>
                         </xsl:attribute>
                     </xsl:if>-->
-                    <xsl:attribute name="id">
-                            <xsl:value-of select="concat('fn-',count(preceding::fn)+1)"/>
-                        </xsl:attribute>
 			<xsl:apply-templates />
 		</li>
 	</xsl:template>
