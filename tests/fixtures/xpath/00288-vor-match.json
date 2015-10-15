@@ -14,7 +14,7 @@
     "arguments": [
       "aff1"
     ],
-    "xpath": "/*[@class=\"nlm-aff\"]",
+    "xpath": "//*[@class=\"nlm-aff\"]",
     "string": "Vaccine and Infectious Diseases Division, Fred Hutchinson Cancer Research Center, Seattle, United States"
   }
 ]

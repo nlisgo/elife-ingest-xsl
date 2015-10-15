@@ -4,7 +4,7 @@
     "arguments": [
       "aff2"
     ],
-    "xpath": "/*[@class=\"nlm-aff\"]",
+    "xpath": "//*[@class=\"nlm-aff\"]",
     "string": "School of Genetics and Microbiology, School of Natural Sciences, Smurfit Institute of Genetics and Trinity College Institute of Neuroscience, Trinity College Dublin, Dublin, Ireland and in the National Centre for Biological Sciences-TIFR, Bangalore, India"
   }
 ]
