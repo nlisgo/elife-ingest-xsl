@@ -56,40 +56,35 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
-  public function getAcknowledgements()
-  {
+  public function getAcknowledgements() {
     return $this->getSection("//*[@id='ack-1']");
   }
 
   /**
    * @return string
    */
-  public function getDecisionLetter()
-  {
+  public function getDecisionLetter() {
     return $this->getSection("//*[@id='decision-letter']");
   }
 
   /**
    * @return string
    */
-  public function getAuthorResponse()
-  {
+  public function getAuthorResponse() {
     return $this->getSection("//*[@id='author-response']");
   }
 
   /**
    * @return string
    */
-  public function getReferences()
-  {
+  public function getReferences() {
     return $this->getSection("//*[@id='references']");
   }
 
   /**
    * @return string
    */
-  public function getDatasets()
-  {
+  public function getDatasets() {
     return $this->getSection("//*[contains(concat(' ', @class, ' '), ' datasets ')]");
   }
 
@@ -112,6 +107,10 @@ class ConvertXMLToHtml extends ConvertXML {
     return $this->tidyHtml($output);
   }
 
+  /**
+   * @param string $html
+   * @return string mixed
+   */
   public static function tidyHtml($html) {
     // Fix self-closing tags issue.
     $self_closing = [
@@ -134,9 +133,11 @@ class ConvertXMLToHtml extends ConvertXML {
     ];
 
     $from = [
-      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)([^\/>]+)\/>/',
+      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)\/>/',
+      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)( [^\/>]+)\/>/',
     ];
     $to = [
+      '<$1></$1>',
       '<$1$2></$1>',
     ];
     return preg_replace($from, $to, $html);
