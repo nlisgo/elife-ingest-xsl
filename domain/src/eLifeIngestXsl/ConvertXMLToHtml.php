@@ -56,40 +56,35 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
-  public function getAcknowledgements()
-  {
+  public function getAcknowledgements() {
     return $this->getSection("//*[@id='ack-1']");
   }
 
   /**
    * @return string
    */
-  public function getDecisionLetter()
-  {
+  public function getDecisionLetter() {
     return $this->getSection("//*[@id='decision-letter']");
   }
 
   /**
    * @return string
    */
-  public function getAuthorResponse()
-  {
+  public function getAuthorResponse() {
     return $this->getSection("//*[@id='author-response']");
   }
 
   /**
    * @return string
    */
-  public function getReferences()
-  {
+  public function getReferences() {
     return $this->getSection("//*[@id='references']");
   }
 
   /**
    * @return string
    */
-  public function getDatasets()
-  {
+  public function getDatasets() {
     return $this->getSection("//*[contains(concat(' ', @class, ' '), ' datasets ')]");
   }
 
