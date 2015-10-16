@@ -107,6 +107,10 @@ class ConvertXMLToHtml extends ConvertXML {
     return $this->tidyHtml($output);
   }
 
+  /**
+   * @param string $html
+   * @return string mixed
+   */
   public static function tidyHtml($html) {
     // Fix self-closing tags issue.
     $self_closing = [
@@ -129,9 +133,11 @@ class ConvertXMLToHtml extends ConvertXML {
     ];
 
     $from = [
-      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)([^\/>]+)\/>/',
+      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)\/>/',
+      '/<(?!' . implode('|', $self_closing) . ')([a-z]+)( [^\/>]+)\/>/',
     ];
     $to = [
+      '<$1></$1>',
       '<$1$2></$1>',
     ];
     return preg_replace($from, $to, $html);
