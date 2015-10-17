@@ -497,7 +497,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		
 		<div class="fig-group" id="{concat('fig-group-', count(preceding::fig-group)+1)}" data-doi="{$data-doi}">
 			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
-                        <div class="fig-inline-img-set fig-inline-img-set-carousel">
+                        <div class="fig-inline-img-set-carousel">
 				<div class="elife-fig-slider-wrapper">
 					<div class="elife-fig-slider">
 						<div class="elife-fig-slider-img elife-fig-slider-primary">
@@ -876,7 +876,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 		<!-- set main figure's DOI -->
 		<xsl:variable name="data-doi" select="child::fig[1]/object-id[@pub-id-type='doi']/text()"/>
 			<!-- <div id="{child::fig[not(@specific-use)]/@id}" class="fig-inline-img-set fig-inline-img-set-carousel"> -->
-            <div class="fig-inline-img-set fig-inline-img-set-carousel">
+            <div class="fig-inline-img-set-carousel">
                 <div class="elife-fig-slider-wrapper">
                     <div class="elife-fig-slider">
                         <div class="elife-fig-slider-img elife-fig-slider-primary">
