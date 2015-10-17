@@ -503,11 +503,12 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 						<div class="elife-fig-slider-img elife-fig-slider-primary">
 						
 							<!-- use variables to set src and alt -->
-							
+
+                            <xsl:variable name="primaryid" select="concat('#', child::fig[not(@specific-use)]/@id)"/>
 							<xsl:variable name="primarysrc" select="concat('http://cdn-site.elifesciences.org/content/elife/4/',child::fig[not(@specific-use)]/@id, '.gif')"/>
 							<xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
                                                         <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
-							<img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/>
+                            <a href="{$primaryid}"><img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/></a>
 						</div>
 						<div class="figure-carousel-inner-wrapper">
 							<div class="figure-carousel">
@@ -517,7 +518,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 									<xsl:variable name="secondarycap" select="child::label/text()"/>
                                                                         <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
 									<div class="elife-fig-slider-img elife-fig-slider-secondary">
-										<img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/>
+										<a href="#{@id}"><img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/></a>
 									</div>
 								</xsl:for-each>
 							</div>
@@ -882,9 +883,10 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 
                             <!-- use variables to set src and alt -->
 
+                            <xsl:variable name="primaryid" select="concat('#', child::fig[not(@specific-use)]/@id)"/>
                             <xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
                             <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
-                            <img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/>
+                            <a href="{$primaryid}"><img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/></a>
                         </div>
                         <div class="figure-carousel-inner-wrapper">
                             <div class="figure-carousel">
@@ -893,7 +895,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                                     <xsl:variable name="secondarycap" select="child::label/text()"/>
                                     <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
                                     <div class="elife-fig-slider-img elife-fig-slider-secondary">
-                                        <img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/>
+                                        <a href="#{@id}"><img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/></a>
                                     </div>
                                 </xsl:for-each>
                             </div>
