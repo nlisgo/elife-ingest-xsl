@@ -33,7 +33,10 @@ Run PHPUnit tests on example citation formats:
 
 You can filter by a specific method in ```/tests/simpleTest.php```, for example:
 ```
-./bin/phpunit --filter=testJatsToHtmlDecisionLetterApply xsl templates to another JATS XML file:
+./bin/phpunit --filter=testJatsToHtmlDecisionLetter
+```
+
+Apply xsl templates to another JATS XML file:
 ```
 cat [JATS XML file] | ./scripts/convert_jats.php -t 'bib'
 cat [JATS XML file] | ./scripts/convert_jats.php -t 'ris'
@@ -59,7 +62,6 @@ cat [JATS XML file] | ./scripts/convert_jats.php -t 'html' -m 'getDoi' -a '10.75
 Retrieve markup by xpath query against the source:
 ```
 cat [JATS XML file] | ./scripts/convert_jats.php -t 'html' -m 'getSection' -a '[xpath-query]'
-```
 ```
 
 Retrieve markup by xpath query against the html:
