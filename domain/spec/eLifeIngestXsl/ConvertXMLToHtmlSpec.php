@@ -33,7 +33,7 @@ class ConvertXMLToHtmlSpec extends ObjectBehavior {
 
   public function it_might_not_have_a_digest() {
     $this->setupXML('01911-poa');
-    $this->getDigest()->shouldBeNull();
+    $this->getDigest()->shouldEqual('');
   }
 
   public function it_might_have_a_doi_section() {
@@ -41,73 +41,73 @@ class ConvertXMLToHtmlSpec extends ObjectBehavior {
     $abstract = file_get_contents(dirname(__FILE__) . '/../../../tests/fixtures/html/00288-vor-eLife.00288.001-doi-abstract.html');
     $this->getDoi('10.7554/eLife.00288.001')->shouldHaveHTML($abstract);
 
-    $this->getDoi('10.7554/eLife.00288.043')->shouldNotBeNull();
+    $this->getDoi('10.7554/eLife.00288.043')->shouldNotEqual('');
   }
 
   public function it_might_not_have_a_doi_section() {
     $this->setupXML();
-    $this->getDoi('10.7554/eLife.00288.044')->shouldBeNull();
-    $this->getDoi('10.7554/eLife.00288.099')->shouldBeNull();
+    $this->getDoi('10.7554/eLife.00288.044')->shouldEqual('');
+    $this->getDoi('10.7554/eLife.00288.099')->shouldEqual('');
   }
 
   public function it_might_have_a_references_section() {
     $this->setupXML();
-    $this->getReferences()->shouldNotBeNull();
+    $this->getReferences()->shouldNotEqual('');
   }
 
   public function it_might_not_have_a_references_section() {
     $this->setupXML('01911-poa');
-    $this->getReferences()->shouldBeNull();
+    $this->getReferences()->shouldEqual('');
   }
 
   public  function it_might_have_an_acknowledgements_section() {
     $this->setupXML();
-    $this->getAcknowledgements()->shouldNotBeNull();
+    $this->getAcknowledgements()->shouldNotEqual('');
   }
 
   public  function it_might_not_have_an_acknowledgements_section() {
     $this->setupXML('01911-poa');
-    $this->getAcknowledgements()->shouldBeNull();
+    $this->getAcknowledgements()->shouldEqual('');
   }
 
   public  function it_might_have_a_main_text_section() {
     $this->setupXML();
-    $this->getMainText()->shouldNotBeNull();
+    $this->getMainText()->shouldNotEqual('');
   }
 
   public  function it_might_not_have_a_main_text_section() {
     $this->setupXML('01911-poa');
-    $this->getMainText()->shouldBeNull();
+    $this->getMainText()->shouldEqual('');
   }
 
   public  function it_might_have_a_decision_letter() {
     $this->setupXML();
-    $this->getDecisionLetter()->shouldNotBeNull();
+    $this->getDecisionLetter()->shouldNotEqual('');
   }
 
   public  function it_might_not_have_a_decision_letter() {
     $this->setupXML('01911-poa');
-    $this->getDecisionLetter()->shouldBeNull();
+    $this->getDecisionLetter()->shouldEqual('');
   }
 
   public  function it_might_have_a_author_response() {
     $this->setupXML();
-    $this->getAuthorResponse()->shouldNotBeNull();
+    $this->getAuthorResponse()->shouldNotEqual('');
   }
 
   public  function it_might_not_have_a_author_response() {
     $this->setupXML('01911-poa');
-    $this->getAuthorResponse()->shouldBeNull();
+    $this->getAuthorResponse()->shouldEqual('');
   }
 
   public  function it_might_have_a_datasets_section() {
     $this->setupXML('03318-vor');
-    $this->getDatasets()->shouldNotBeNull();
+    $this->getDatasets()->shouldNotEqual('');
   }
 
   public  function it_might_not_have_a_datasets_section() {
     $this->setupXML();
-    $this->getDatasets()->shouldBeNull();
+    $this->getDatasets()->shouldEqual('');
   }
 
   public function getMatchers() {
