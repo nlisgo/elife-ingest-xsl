@@ -77,13 +77,13 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         <xsl:key name="product" match="institution[not(@content-type)]" use="." /> 
         <xsl:template match="contrib-group[not(@content-type)]/aff">
             <div id="{@id}">
-                <span class="nlm-aff">
+                <span class="aff">
                     <xsl:apply-templates/>
                 </span>
             </div>
         </xsl:template>  
         <xsl:template match="contrib-group[not(@content-type)]/aff/institution">
-             <span class="nlm-institution">
+             <span class="institution">
                  <xsl:if test="@content-type">
                     <xsl:attribute name="data-content-type">                    
                         <xsl:value-of select="@content-type"/>
@@ -93,12 +93,12 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
              </span>
         </xsl:template>  
         <xsl:template match="contrib-group[not(@content-type)]/aff/addr-line">
-             <span class="nlm-addr-line">  
+             <span class="addr-line">
                 <xsl:apply-templates/>
              </span>
         </xsl:template> 
         <xsl:template match="addr-line/named-content">
-            <span class="nlm-named-content">  
+            <span class="named-content">
                 <xsl:if test="@content-type">
                     <xsl:attribute name="data-content-type">                    
                         <xsl:value-of select="@content-type"/>
@@ -108,17 +108,17 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
              </span>
         </xsl:template> 
         <xsl:template match="contrib-group[not(@content-type)]/aff/country">
-             <span class="nlm-country">  
+             <span class="country">
                 <xsl:apply-templates/>
              </span>
         </xsl:template> 
         <xsl:template match="contrib-group[not(@content-type)]/aff/x">
-            <span class="nlm-x">
+            <span class="x">
                 <xsl:apply-templates/>
              </span>
         </xsl:template>     
         <xsl:template match="contrib-group[not(@content-type)]/aff//bold">
-            <span class="nlm-bold">
+            <span class="bold">
                 <xsl:apply-templates/>
              </span>
         </xsl:template>  

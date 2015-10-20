@@ -4,7 +4,7 @@
     "arguments": [
       "aff1"
     ],
-    "xpath": "//*[@class=\"nlm-aff\"]",
+    "xpath": "//*[@class=\"aff\"]",
     "string": "Sean J Morrison is an Investigator of the Howard Hughes Medical Institute, and Director of the  Children’s Research Institute at the University of Texas Southwestern Medical Center, Dallas, USA. He is also the Mary McDermott Cook Chair in Pediatric Genetics and Director of the Hamon Laboratory for Stem Cells and Cancer at UTSW, and a Cancer Prevention and Research Institute of Texas Scholar"
   }
 ]
