@@ -170,6 +170,102 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAuthorInfoGroupAuthorsProvider
+     */
+    public function testJatsToHtmlAuthorInfoGroupAuthors($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoGroupAuthorsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-group-authors', 'getAuthorInfoGroupAuthors');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlAuthorInfoContributionsProvider
+     */
+    public function testJatsToHtmlAuthorInfoContributions($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoContributionsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-contributions', 'getAuthorInfoContributions');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlAuthorInfoCorrespondenceProvider
+     */
+    public function testJatsToHtmlAuthorInfoCorrespondence($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoCorrespondenceProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-correspondence', 'getAuthorInfoCorrespondence');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlAuthorInfoAdditionalAddressProvider
+     */
+    public function testJatsToHtmlAuthorInfoAdditionalAddress($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoAdditionalAddressProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-additional-address', 'getAuthorInfoAdditionalAddress');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlAuthorInfoCompetingInterestProvider
+     */
+    public function testJatsToHtmlAuthorInfoCompetingInterest($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoCompetingInterestProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-competing-interest', 'getAuthorInfoCompetingInterest');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlAuthorInfoFundingProvider
+     */
+    public function testJatsToHtmlAuthorInfoFunding($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoFundingProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-funding', 'getAuthorInfoFunding');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlArticleInfoEthicsProvider
+     */
+    public function testJatsToHtmlArticleInfoEthics($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlArticleInfoEthicsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('article-info-ethics', 'getArticleInfoEthics');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlArticleInfoLicenseProvider
+     */
+    public function testJatsToHtmlArticleInfoLicense($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlArticleInfoLicenseProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('article-info-license', 'getArticleInfoLicense');
+    }
+
+    /**
      * @dataProvider jatsToHtmlDoiAbstractProvider
      */
     public function testJatsToHtmlDoiAbstract($expected, $actual) {
