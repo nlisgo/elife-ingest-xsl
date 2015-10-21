@@ -98,6 +98,13 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getAuthorInfoEqualContrib() {
+    return $this->getSection("//*[@id='author-info-equal-contrib']");
+  }
+
+  /**
+   * @return string
+   */
   public function getAuthorInfoCorrespondence() {
     return $this->getSection("//*[@id='author-info-correspondence']");
   }
