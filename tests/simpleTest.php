@@ -194,6 +194,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAuthorInfoEqualContribProvider
+     */
+    public function testJatsToHtmlAuthorInfoEqualContrib($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoEqualContribProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-equal-contrib', 'getAuthorInfoEqualContrib');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoCorrespondenceProvider
      */
     public function testJatsToHtmlAuthorInfoCorrespondence($expected, $actual) {
