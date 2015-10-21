@@ -122,7 +122,12 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                 <xsl:apply-templates/>
              </span>
         </xsl:template>  
-        <xsl:template match="contrib-group[not(@content-type)]/aff/email"/>
+        <xsl:template match="contrib-group[not(@content-type)]/aff/email">
+            <xsl:variable name="email">
+                <xsl:apply-templates/>
+            </xsl:variable>
+            <a href="mailto:{$email}" class="email"><xsl:copy-of select="$email"/></a>
+        </xsl:template>
 	<!-- <xsl:template match="contrib-group[not(@content-type)]/aff" mode="internal">
 		<span class="elife-institution">
 			
