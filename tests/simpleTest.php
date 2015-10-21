@@ -206,6 +206,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAuthorInfoOtherFootnotesProvider
+     */
+    public function testJatsToHtmlAuthorInfoOtherFootnotes($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorInfoOtherFootnotesProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('author-info-other-footnotes', 'getAuthorInfoOtherFootnotes');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoCorrespondenceProvider
      */
     public function testJatsToHtmlAuthorInfoCorrespondence($expected, $actual) {
