@@ -84,6 +84,62 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getAuthorInfoGroupAuthors() {
+    return $this->getSection("//*[@id='author-info-group-authors']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthorInfoContributions() {
+    return $this->getSection("//*[@id='author-info-contributions']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthorInfoCorrespondence() {
+    return $this->getSection("//*[@id='author-info-correspondence']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthorInfoAdditionalAddress() {
+    return $this->getSection("//*[@id='author-info-additional-address']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthorInfoCompetingInterest() {
+    return $this->getSection("//*[@id='author-info-competing-interest']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthorInfoFunding() {
+    return $this->getSection("//*[@id='author-info-funding']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getArticleInfoEthics() {
+    return $this->getSection("//*[@id='article-info-ethics']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getArticleInfoLicense() {
+    return $this->getSection("//*[@id='article-info-license']");
+  }
+
+  /**
+   * @return string
+   */
   public function getDatasets() {
     return $this->getSection("//*[contains(concat(' ', @class, ' '), ' datasets ')]");
   }
