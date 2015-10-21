@@ -21,7 +21,8 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	<xsl:template match="article-meta">
 		<xsl:apply-templates/>
 	</xsl:template>
-	
+        
+        
 	<xsl:template match="title-group">
 		<div class="panel-separator"/>
 		<div class="panel-pane pane-elife-article-title">
@@ -47,25 +48,117 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
 	</xsl:template>
 	
 	<!-- Author list -->
-	<xsl:template match="contrib-group[not (@content-type)]">		
+	<xsl:template match="contrib-group[not (@content-type)]">	
+             
                 <xsl:apply-templates />
+                <xsl:if test="contrib[@contrib-type='author'][not(@id)]">
+                    <div id="author-info-group-authors">
+                        <xsl:apply-templates select="contrib[@contrib-type='author'][not(@id)]" />
+                    </div>
+                </xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="contrib">
 		<!-- if it has corresp attribute add corresp class-->
 		<xsl:variable name ="rid" select="xref[@ref-type='aff'][1]"/>
 		<!-- <xsl:variable name ="affrid" select="concat('aff', $rid)"/>-->
-                <!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->
-		
+                <!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->		
                 <xsl:apply-templates/>
 	</xsl:template>
+        
+        <xsl:template match="contrib[@contrib-type='author'][not(@id)]">
+                <xsl:apply-templates select="collab"/>
+	</xsl:template>
+        
+        <xsl:template match="collab">
+            <h4 class="equal-contrib-label">
+                <xsl:apply-templates/>
+            </h4>
+            <xsl:variable name="contrib-id">
+                <xsl:apply-templates select="../contrib-id"/>
+            </xsl:variable>
+            <!--<xsl:apply-templates select="../../..//contrib"/>- ->
+            <xsl:value-of select="count(../../..//contrib[@contrib-type='author non-byline']/contrib-id[text()=$contrib-id])"/> -->
+            <xsl:if test="../../..//contrib[@contrib-type='author non-byline']/contrib-id[text()=$contrib-id]">
+                <ul>
+                    <xsl:for-each select="../../..//contrib[@contrib-type='author non-byline']/contrib-id[text()=$contrib-id]">
+                        <li>
+                            <xsl:if test="position()=1">
+                                <xsl:attribute name="class">
+                                   <xsl:value-of select="'first'"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="position()=last()">
+                                <xsl:attribute name="class">
+                                   <xsl:value-of select="'last'"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:value-of select="../name/given-names"/>
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="../name/surname"/>
+                            <xsl:text>, </xsl:text>
+                            <xsl:for-each select="../aff">                        
+                                <xsl:call-template select="../aff" name="collabaff"/>
+                                <xsl:if test="position()!=last()">
+                                    <xsl:text>; </xsl:text>
+                                </xsl:if>
+                            </xsl:for-each> 
+                        </li>
+                    </xsl:for-each> 
+                </ul>
+            </xsl:if>
+	</xsl:template>
+        
+        
+        <xsl:template name="collabaff">
+            <span class="aff">
+                <xsl:for-each select="@* | node(  )"> 
+                    <xsl:choose>
+                        <xsl:when test="name()='institution'">
+                            <span class="institution">
+                                <xsl:value-of select="."/>                                
+                            </span>
+                        </xsl:when>
+                        <xsl:when test="name()='country'">
+                            <span class="country">
+                                <xsl:value-of select="."/>
+                            </span>
+                        </xsl:when>
+                        <xsl:when test="name()='addr-line'">
+                            <span class="addr-line">
+                                <xsl:apply-templates mode="authorgroup"/>
+                            </span>
+                        </xsl:when>
+                        <xsl:when test="name()=''">
+                            <xsl:value-of select="."/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="{name()}">
+                                <xsl:value-of select="."/>
+                            </span>                         
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <!--<xsl:text>, </xsl:text>-->
+                </xsl:for-each> 
+                
+            </span>            
+        </xsl:template>
+        
+        <xsl:template match="addr-line/named-content" mode="authorgroup">
+            <span class="named-content">                
+                <xsl:apply-templates/>
+             </span>
+        </xsl:template> 
+        
+        <xsl:template match="contrib[@contrib-type='author'][not(@id)]/contrib-id"/>
+        
         
 	<!-- modify by arul tooltip 19-9-15 pre xslt proccess start -->
 	<xsl:template match="surname|given-names|name">
                 <span class="nlm-given-names">
 			<xsl:value-of select="given-names"/>
 		</span>
-        <xsl:text> </xsl:text>
+                <xsl:text> </xsl:text>
 		<span class="nlm-surname">                
                     <xsl:value-of select="surname"/>
 		</span>
@@ -73,6 +166,273 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                <xsl:value-of select="name"/>
 	</xsl:template>
 	
+        <!-- author-notes -->
+        <xsl:template match="author-notes">
+            <xsl:apply-templates/>   
+            <xsl:if test="corresp">
+                <div id="author-info-correspondence">
+                    <ul class="fn-corresp">
+                        <xsl:apply-templates select="corresp"/>   
+                    </ul>                    
+               </div>
+            </xsl:if>
+            <xsl:if test="fn[@fn-type='present-address']">
+                <div id="author-info-additional-address">
+                    <ul class="additional-address-items">                        
+                         <xsl:apply-templates select="fn[@fn-type='present-address']"/>   
+                    </ul>
+                </div>
+            </xsl:if>
+            
+            <xsl:if test="fn[@fn-type='con']|fn[@fn-type='other']">
+                <div id="author-info-contributions">
+                    <!-- <xsl:apply-templates select="fn[@fn-type='con']"/>   
+                    <xsl:apply-templates select="fn[@fn-type='other']"/>    -->
+                    <xsl:apply-templates select="ancestor::article/back/sec/fn-group[@content-type='author-contribution']"/>   
+                </div>
+            </xsl:if>
+        </xsl:template>   
+        <xsl:template match="author-notes/fn[@fn-type='con']">
+            <h4 class="equal-contrib-label">
+                <xsl:text>The following authors contributed equally to this work</xsl:text>
+                <!--<xsl:apply-templates />    -->
+            </h4>
+            <xsl:variable name="contriputeid">
+                <xsl:value-of select="@id"/>  
+            </xsl:variable>
+            <p>
+                <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">                    
+                    <xsl:value-of select="../name/given-names"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="../name/surname"/>
+                    <xsl:if test="position() != last()">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            
+            </p>
+            <!--<xsl:value-of select="count(ancestor::article/back/sec/fn-group[@content-type='author-contribution'])"/>      -->
+            
+        </xsl:template>
+        
+        <xsl:template match="fn-group[@content-type='author-contribution']">
+            <ul class="fn-con">
+                <xsl:apply-templates/>
+            </ul>            
+        </xsl:template> 
+        <xsl:template match="fn-group[@content-type='author-contribution']/fn">            
+            <li>
+                <xsl:apply-templates/>
+            </li>
+        </xsl:template>  
+        <xsl:template match="fn-group[@content-type='author-contribution']/fn/p">
+            <xsl:apply-templates/>
+        </xsl:template>
+        <xsl:template match="fn-group[@content-type='author-contribution']/title"/>
+        
+        
+        <xsl:template match="author-notes/fn[@fn-type='con']/p">
+            <xsl:apply-templates />  
+        </xsl:template>
+        
+        <xsl:template match="author-notes/fn[@fn-type='other']">
+            <h4 class="equal-contrib-label">
+                <xsl:text>The following authors are listed in alphabetical order</xsl:text>
+                <!--<xsl:apply-templates />    -->
+            </h4>
+            <xsl:variable name="contriputeid">
+                <xsl:value-of select="@id"/>  
+            </xsl:variable>
+            <p>
+                <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">                    
+                    <xsl:value-of select="../name/given-names"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="../name/surname"/>
+                    <xsl:if test="position() != last()">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            
+            </p>
+        </xsl:template>
+        
+        <xsl:template match="author-notes/fn[@fn-type='other']/p">
+            <xsl:apply-templates />  
+        </xsl:template>
+        <!--<xsl:template match="author-notes/fn[@fn-type='other']">
+            <xsl:apply-templates />            
+        </xsl:template>-->
+        
+        <xsl:template match="author-notes/fn[@fn-type='con']/label"/>
+        <xsl:template match="author-notes/fn[@fn-type='other']/label"/>
+        
+        
+        <xsl:template match="author-notes/corresp">
+            <li>
+                <xsl:apply-templates select="email"/>
+            </li>
+        </xsl:template>         
+        
+        <xsl:template match="author-notes/corresp/label"/>
+        
+        <xsl:template match="author-notes/corresp/email">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat('mailto:',.)"/>    
+                </xsl:attribute>               
+                <xsl:apply-templates/>
+            </a>            
+            <xsl:variable name="contriputeid">
+                <xsl:value-of select="../@id"/>  
+            </xsl:variable>
+            <xsl:for-each select="../../../contrib-group/contrib/xref[@rid=$contriputeid]">
+                <xsl:text> (</xsl:text>
+                <xsl:value-of select="translate(../name/given-names,'abcdefghijklmnopqrstuvwxyz. ','')"/>                
+                <xsl:value-of select="translate(../name/surname,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+                <xsl:text>)</xsl:text>
+            </xsl:for-each>
+        </xsl:template>
+        <xsl:template match="author-notes/fn[@fn-type='present-address']">
+            <li>     
+                <span class="present-address-intials">
+                    <xsl:variable name="contriputeid">
+                        <xsl:value-of select="@id"/>
+                    </xsl:variable>
+                    <!--<xsl:value-of select="$contriputeid"/> -->
+                    <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
+                        <xsl:text>--</xsl:text>
+                        <xsl:value-of select="translate(../name/given-names,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+                        <xsl:text>-</xsl:text>
+                        <xsl:value-of select="translate(../name/surname,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+                        <xsl:text>:</xsl:text>
+                    </xsl:for-each>
+                    <!--<xsl:value-of select="count(../../contrib-group/contrib/xref[@rid=$contriputeid])"/>-->
+                </span>
+                <xsl:text> Present address:</xsl:text><br/>
+                <xsl:apply-templates/>  
+            </li>   
+        </xsl:template>  
+        <xsl:template match="author-notes/fn[@fn-type='present-address']/label"/>        
+        <xsl:template match="author-notes/fn[@fn-type='present-address']/p">
+            <xsl:apply-templates/>  
+        </xsl:template> 
+        
+            
+        <!-- funding-group -->
+        <xsl:template match="funding-group">
+            <div id="author-info-funding">
+                <ul class="funding-group">
+                    <xsl:apply-templates/>
+                </ul>
+                <xsl:if test="funding-statement">
+                    <p class="funding-statement">
+                        <xsl:value-of select="funding-statement"/>
+                    </p>
+                </xsl:if>                
+            </div>
+        </xsl:template>  
+        <xsl:template match="funding-group/award-group">
+            <li>
+                <xsl:apply-templates/>
+            </li>
+        </xsl:template>
+        <xsl:template match="funding-source">
+            <span class="funding-source">
+                    <xsl:apply-templates/>
+            </span>
+        </xsl:template>  
+        <xsl:template match="funding-source/institution-wrap">
+            <xsl:apply-templates/>            
+        </xsl:template>
+        <xsl:template match="institution">
+            <span class="institution">
+                <xsl:apply-templates/>
+            </span>
+        </xsl:template>
+        
+        <xsl:template match="award-id">
+            <span class="award-id">
+                <xsl:apply-templates/>
+            </span>
+        </xsl:template>
+        
+        <xsl:template match="principal-award-recipient">
+            <span class="principal-award-recipient">
+                <xsl:apply-templates/>
+            </span>
+        </xsl:template>
+        
+        <xsl:template match="principal-award-recipient/surname|principal-award-recipient/given-names|principal-award-recipient/name">                
+                <span class="name">
+                    <xsl:value-of select="given-names"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="surname"/>
+                </span>
+               <xsl:value-of select="name"/>
+	</xsl:template>
+        
+        <xsl:template match="funding-statement" name="funding-statement">
+            <p class="funding-statement">
+                <xsl:apply-templates/>
+            </p>
+        </xsl:template>
+        
+        <xsl:template match="funding-statement"/>
+        <!-- fn-group -->
+        <xsl:template match="fn-group[@content-type='ethics-information']">
+            <div id="article-info-ethics">
+                <xsl:apply-templates/>
+            </div>
+        </xsl:template>        
+        <xsl:template match="fn-group[@content-type='ethics-information']/fn">
+            <xsl:apply-templates/>
+        </xsl:template>    
+        <xsl:template match="fn-group[@content-type='ethics-information']/title"/>
+        
+        <xsl:template match="fn-group[@content-type='competing-interest']">
+            <div id="author-info-competing-interest">
+                <ul class="fn-conflict">
+                    <xsl:apply-templates/>
+                </ul>
+            </div>
+        </xsl:template>   
+        <xsl:template match="fn-group[@content-type='competing-interest']/fn">            
+            <li>
+                <xsl:apply-templates/>
+            </li>
+        </xsl:template>  
+        <xsl:template match="fn-group[@content-type='competing-interest']/fn/p">
+            <xsl:apply-templates/>
+        </xsl:template>
+        <xsl:template match="fn-group[@content-type='competing-interest']/title"/>
+        
+        <!-- permissions -->
+        <xsl:template match="permissions">
+            <div id="article-info-license">
+                 <xsl:apply-templates/>
+            </div>
+        </xsl:template>
+        
+        <xsl:template match="permissions/copyright-statement">
+            <ul class="copyright-statement">
+                <li>
+                    <xsl:apply-templates/>
+                </li>
+           </ul>
+        </xsl:template>  
+        <xsl:template match="permissions/copyright-year|permissions/copyright-holder"/>
+        
+        <xsl:template match="license">
+            <div class="license">
+                 <xsl:apply-templates/>
+            </div>
+        </xsl:template>
+        
+        <xsl:template match="license-p">
+            <p>
+                 <xsl:apply-templates/>
+            </p>
+        </xsl:template>
 	<!-- Affiliations -->
         <xsl:key name="product" match="institution[not(@content-type)]" use="." /> 
         <xsl:template match="contrib-group[not(@content-type)]/aff">
@@ -123,34 +483,17 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
              </span>
         </xsl:template>  
         <xsl:template match="contrib-group[not(@content-type)]/aff/email">
-            <xsl:variable name="email">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="concat('mailto:',.)"/>    
+                </xsl:attribute>  
+                <xsl:attribute name="class">
+                    <xsl:value-of select="'email'"/>    
+                </xsl:attribute>  
                 <xsl:apply-templates/>
-            </xsl:variable>
-            <a href="mailto:{$email}" class="email"><xsl:copy-of select="$email"/></a>
+            </a>   
         </xsl:template>
-	<!-- <xsl:template match="contrib-group[not(@content-type)]/aff" mode="internal">
-		<span class="elife-institution">
-			
-                        <xsl:for-each select="(institution[not(@content-type)])[generate-id()= generate-id(key('product',.)[1])]">
-                            <xsl:variable name="temp1" select="name()"/>
-                            <xsl:variable name="temp2" select='concat("nlm-",$temp1)'/>
-                            <span class="{$temp2}">
-                                <xsl:value-of select="."/>   
-                            </span>
-                            <xsl:text>, </xsl:text>
-                            <span class="nlm-country">
-                                <xsl:value-of select="../country" />
-                            </span>
-                            <xsl:if test="../following-sibling::aff">
-                                    <xsl:text>; </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
-		</span>
-		
-	</xsl:template>
-	modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma start - ->
-	<xsl:template match="aff//named-content|aff/addr-line|aff/text()[preceding-sibling::institution[@content-type]][1]|aff/institution[@content-type]|aff/text()[preceding-sibling::addr-line][1]"/>
-	<!- - modify by arul tooltip 19-9-15 pre xslt proccess remove unwanted comma end -->
+	
         
 	<xsl:template match="pub-date[@date-type='pub']" mode="internal">
 		<span class="highwire-doi-epubdate">
@@ -175,7 +518,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </span>
 	</xsl:template>
 	
-	<xsl:template match="article-categories|article-id|aff|aff/label|author-notes|contrib/xref|permissions|pub-date|history|volume|elocation-id|self-uri|journal-meta|related-article|kwd-group|funding-group|custom-meta-group|contrib-group[@content-type='section']"/>
+	<xsl:template match="article-categories|article-id|aff|aff/label|contrib/xref|pub-date|history|volume|elocation-id|self-uri|journal-meta|related-article|kwd-group|custom-meta-group|contrib-group[@content-type='section']"/>
 	<!-- ==== FRONT MATTER END ==== -->
 	
 	<xsl:template match="//abstract">
@@ -214,8 +557,8 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
     
   </xsl:template>
   
-  <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"-->
-  <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"/>
+  <!-- No need to proceed sec-type="additional-information", sec-type="supplementary-material" and sec-type="datasets"
+  <xsl:template match="sec[@sec-type='additional-information']|sec[@sec-type='datasets']|sec[@sec-type='supplementary-material']"/> -->
   <xsl:template match="sec[not(@sec-type='additional-information')][not(@sec-type='datasets')][not(@sec-type='supplementary-material')]">
      
   	<div>
