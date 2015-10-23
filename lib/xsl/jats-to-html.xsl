@@ -442,14 +442,15 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </xsl:template>
 	<!-- Affiliations -->
         <xsl:key name="product" match="institution[not(@content-type)]" use="." /> 
-        <xsl:template match="contrib-group[not(@content-type)]/aff">
-            <div id="{@id}">
+        <xsl:template match="contrib-group[not(@content-type)]//aff[@id]">
+            <div>
+                <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
                 <span class="aff">
                     <xsl:apply-templates/>
                 </span>
             </div>
         </xsl:template>  
-        <xsl:template match="contrib-group[not(@content-type)]/aff/institution">
+        <xsl:template match="contrib-group[not(@content-type)]//aff/institution">
              <span class="institution">
                  <xsl:if test="@content-type">
                     <xsl:attribute name="data-content-type">                    
@@ -459,7 +460,7 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                  <xsl:apply-templates/>
              </span>
         </xsl:template>  
-        <xsl:template match="contrib-group[not(@content-type)]/aff/addr-line">
+        <xsl:template match="contrib-group[not(@content-type)]//aff/addr-line">
              <span class="addr-line">
                 <xsl:apply-templates/>
              </span>
@@ -474,22 +475,22 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                 <xsl:apply-templates/>
              </span>
         </xsl:template> 
-        <xsl:template match="contrib-group[not(@content-type)]/aff/country">
+        <xsl:template match="contrib-group[not(@content-type)]//aff/country">
              <span class="country">
                 <xsl:apply-templates/>
              </span>
         </xsl:template> 
-        <xsl:template match="contrib-group[not(@content-type)]/aff/x">
+        <xsl:template match="contrib-group[not(@content-type)]//aff/x">
             <span class="x">
                 <xsl:apply-templates/>
              </span>
         </xsl:template>     
-        <xsl:template match="contrib-group[not(@content-type)]/aff//bold">
+        <xsl:template match="contrib-group[not(@content-type)]//aff//bold">
             <span class="bold">
                 <xsl:apply-templates/>
              </span>
         </xsl:template>  
-        <xsl:template match="contrib-group[not(@content-type)]/aff/email">
+        <xsl:template match="contrib-group[not(@content-type)]//aff/email">
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="concat('mailto:',.)"/>    
