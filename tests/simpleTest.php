@@ -410,6 +410,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlReferenceProvider
+     */
+    public function testJatsToHtmlReference($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlReferenceProvider() {
+        $this->setFolders();
+        return $this->compareReferenceHtmlSection();
+    }
+
+    /**
      * @dataProvider xpathMatchProvider
      */
     public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected) {
@@ -478,6 +490,32 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
         foreach ($sections as $section) {
             $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAffiliation', $section['aff_id'], ''));
+        }
+
+        return $compares;
+    }
+
+    /**
+     * Prepare array of actual and expected results for reference HTML.
+     */
+    protected function compareReferenceHtmlSection() {
+        $suffix = '-bib';
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<bib_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'suffix' => '-' . $match['bib_id'] . $suffix,
+                    'bib_id' => $match['bib_id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getReference', $section['bib_id'], ''));
         }
 
         return $compares;

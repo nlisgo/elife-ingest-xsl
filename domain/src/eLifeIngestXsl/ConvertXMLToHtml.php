@@ -274,6 +274,14 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param string $bib_id
+   * @return string
+   */
+  public function getReference($bib_id) {
+    return $this->getSection("//*[@id='" . $bib_id . "']");
+  }
+
+  /**
    * @param DOMNode $node
    * @return string
    */
