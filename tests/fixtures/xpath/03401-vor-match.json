@@ -1,0 +1,7 @@
+[
+  {
+    "method": "getReferences",
+    "xpath": "//*[@id=\"bib9\"]//*[@class=\"elife-reflink-details\"]",
+    "string": "Harvard University Press 2009"
+  }
+]
