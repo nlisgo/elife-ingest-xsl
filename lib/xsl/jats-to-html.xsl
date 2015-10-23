@@ -185,6 +185,12 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
             </xsl:if>
             
             <xsl:if test="fn[@fn-type='con']|fn[@fn-type='other']">
+                <div id="author-info-equal-contrib">
+                    <xsl:apply-templates select="fn[@fn-type='con']"/> 
+                </div>
+                <div id="author-info-other-footnotes">
+                    <xsl:apply-templates select="fn[@fn-type='other']"/>
+                </div>
                 <div id="author-info-contributions">
                     <!-- <xsl:apply-templates select="fn[@fn-type='con']"/>   
                     <xsl:apply-templates select="fn[@fn-type='other']"/>    -->
@@ -193,9 +199,8 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
             </xsl:if>
         </xsl:template>   
         <xsl:template match="author-notes/fn[@fn-type='con']">
-            <h4 class="equal-contrib-label">
-                <xsl:text>The following authors contributed equally to this work</xsl:text>
-                <!--<xsl:apply-templates />    -->
+            <h4 class="equal-contrib-label">                
+                <xsl:apply-templates />
             </h4>
             <xsl:variable name="contriputeid">
                 <xsl:value-of select="@id"/>  
@@ -236,14 +241,14 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
         </xsl:template>
         
         <xsl:template match="author-notes/fn[@fn-type='other']">
-            <h4 class="equal-contrib-label">
-                <xsl:text>The following authors are listed in alphabetical order</xsl:text>
-                <!--<xsl:apply-templates />    -->
-            </h4>
             <xsl:variable name="contriputeid">
                 <xsl:value-of select="@id"/>  
             </xsl:variable>
-            <p>
+            <div class="foot-note" id="{$contriputeid}">           
+               <xsl:apply-templates />
+            </div>
+            
+            <!--<p>
                 <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">                    
                     <xsl:value-of select="../name/given-names"/>
                     <xsl:text> </xsl:text>
@@ -253,11 +258,13 @@ xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xs="http://www.w3.org/2001/
                     </xsl:if>
                 </xsl:for-each>
             
-            </p>
+            </p> -->
         </xsl:template>
         
         <xsl:template match="author-notes/fn[@fn-type='other']/p">
-            <xsl:apply-templates />  
+            <p>
+                <xsl:apply-templates />  
+            </p>
         </xsl:template>
         <!--<xsl:template match="author-notes/fn[@fn-type='other']">
             <xsl:apply-templates />            
