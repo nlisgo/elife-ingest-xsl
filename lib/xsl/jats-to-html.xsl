@@ -522,10 +522,6 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="ext-link" mode="testing">
-        <xsl:apply-templates select="."/>
-    </xsl:template>
-
     <!-- START handling citation objects -->
     <xsl:template match="xref">
         <xsl:choose>
@@ -1079,48 +1075,58 @@
     </xsl:template>
 
     <xsl:template match="ref/element-citation">
-        <xsl:variable name="doi" select="pub-id"/>
-        <xsl:variable name="href" select="concat('http://dx.doi.org/', $doi)"/>
+        <xsl:variable name="href">
+            <xsl:choose>
+                <xsl:when test="pub-id">
+                    <xsl:value-of select="concat('http://dx.doi.org/', pub-id)"/>
+                </xsl:when>
+                <xsl:when test=".//ext-link">
+                    <xsl:value-of select=".//ext-link"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="title">
+            <xsl:choose>
+                <xsl:when test="child::article-title">
+                    <xsl:apply-templates select="child::article-title/node()"/>
+                </xsl:when>
+                <xsl:when test="child::source">
+                    <xsl:apply-templates select="child::source/node()"/>
+                </xsl:when>
+                <xsl:when test="child::comment">
+                    <xsl:apply-templates select="child::comment/node()"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="title-type">
+            <xsl:choose>
+                <xsl:when test="child::article-title">
+                    <xsl:value-of select="'article-title'"/>
+                </xsl:when>
+                <xsl:when test="child::source">
+                    <xsl:value-of select="'source'"/>
+                </xsl:when>
+                <xsl:when test="child::comment">
+                    <xsl:value-of select="'comment'"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
 
         <div class="elife-reflink-main">
             <cite class="elife-reflink-title">
-                <!-- If publication-type is journal, then <a> tag is needed. Otherwise (book), No need for <a> tag -->
                 <xsl:choose>
-                    <xsl:when test="@publication-type = 'journal' and pub-id != ''">
+                    <xsl:when test="$href != ''">
                         <a href="{$href}" target="_blank">
-                            <span class="nlm-article-title">
-                                <xsl:apply-templates select="child::article-title/node()"/>
+                            <span class="nlm-{$title-type}">
+                                <xsl:copy-of select="$title"/>
                             </span>
                         </a>
                     </xsl:when>
-                    <xsl:when test="@publication-type = 'journal' and string(pub-id) = ''">
-                        <span class="nlm-article-title">
-                            <xsl:apply-templates select="child::article-title/node()"/>
+                    <xsl:otherwise>
+                        <span class="nlm-{$title-type}">
+                            <xsl:copy-of select="$title"/>
                         </span>
-                    </xsl:when>
-                    <xsl:when test="@publication-type = 'book'">
-                        <xsl:choose>
-                            <!-- if article-title exists, make it as title.
-                                 Otherwise, make source -->
-                            <xsl:when test="child::article-title">
-                                <span class="nlm-article-title">
-                                    <xsl:apply-templates select="child::article-title/node()"/>
-                                </span>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <span class="nlm-source">
-                                    <xsl:apply-templates select="child::source/node()"/>
-                                </span>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="@publication-type = 'web'">
-                        <a href="{$href}">
-                            <span class="nlm-comment">
-                                <xsl:apply-templates select="child::comment/node()"/>
-                            </span>
-                        </a>
-                    </xsl:when>
+                    </xsl:otherwise>
                 </xsl:choose>
             </cite>
 
@@ -1241,33 +1247,27 @@
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="child::year">
+                    <xsl:text> </xsl:text>
                     <span class="elife-reflink-details-year">
                         <xsl:apply-templates select="child::year/node()"/>
                     </span>
                 </xsl:if>
 
-                <!-- DOI in references -->
-
-                <!-- check whether pib-id or ex-link exist. -->
-                <xsl:if test="child::pub-id">
+                <xsl:if test="$href != ''">
                     <div class="elife-reflink-doi-cited-wrapper">
-                        <xsl:variable name="doivalue" select="child::pub-id/node()"></xsl:variable>
-                        <span class="elife-reflink-details-doi">
-                            <a href="{concat('http://dx.doi.org/', $doivalue)}">
-                                <xsl:value-of select="concat('http://dx.doi.org/', $doivalue)"/>
-                            </a>
+                        <span>
+                            <xsl:attribute name="class">
+                                <xsl:choose>
+                                    <xsl:when test="pub-id">
+                                        <xsl:value-of select="'elife-reflink-details-doi'"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="'elife-reflink-details-uri'"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <a href="{$href}"><xsl:value-of select="$href"/></a>
                         </span>
-                    </div>
-                </xsl:if>
-                <xsl:if test="child::ext-link">
-                    <div class="elife-reflink-doi-cited-wrapper">
-                        <xsl:variable name="doivalue" select="child::ext-link/node()"></xsl:variable>
-                        <span class="elife-reflink-details-doi">
-                            <a href="{concat('http://dx.doi.org/', $doivalue)}">
-                                <xsl:value-of select="concat('http://dx.doi.org/', $doivalue)"/>
-                            </a>
-                        </span>
-
                     </div>
                 </xsl:if>
 
@@ -1488,7 +1488,7 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
