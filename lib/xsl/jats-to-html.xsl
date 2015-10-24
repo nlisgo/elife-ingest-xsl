@@ -420,6 +420,12 @@
         </span>
     </xsl:template>
 
+    <xsl:template match="aff//italic">
+        <span class="italic">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
     <xsl:template match="aff/email">
         <xsl:variable name="email">
             <xsl:apply-templates/>
@@ -514,6 +520,10 @@
                 <xsl:apply-templates/>
             </a>
         </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="ext-link" mode="testing">
+        <xsl:apply-templates select="."/>
     </xsl:template>
 
     <!-- START handling citation objects -->
@@ -1432,6 +1442,10 @@
         <span class="boxed-text-label">
             <xsl:apply-templates/>
         </span>
+    </xsl:template>
+
+    <xsl:template match="inline-graphic">
+        <a href="[inline-graphic-{@xlink:href}-large]" class="figure-expand-popup"><img src="[inline-graphic-{@xlink:href}-medium]" alt="Embedded Image"/></a>
     </xsl:template>
 
     <!-- START - general format -->
