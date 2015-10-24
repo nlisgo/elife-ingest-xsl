@@ -486,6 +486,12 @@
             <xsl:apply-templates select="@* | node()"/>
         </xsl:element>
     </xsl:template>
+
+    <xsl:template match="app//sec/title">
+        <xsl:element name="h{count(ancestor::sec) + 3}">
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:element>
+    </xsl:template>
     <!-- END transforming sections to heading levels -->
 
     <xsl:template match="p">
@@ -654,6 +660,15 @@
 
     <xsl:template match="inline-formula">
         <span class="inline-formula">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
+    <xsl:template match="disp-formula">
+        <span class="disp-formula">
+            <xsl:if test="@id">
+                <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates/>
         </span>
     </xsl:template>
@@ -829,6 +844,7 @@
         <div class="elife-article-decision-letter" id='main-text'>
             <div class="article fulltext-view">
                 <xsl:apply-templates mode="testing"/>
+                <xsl:call-template name="appendices-main-text"/>
             </div>
         </div>
     </xsl:template>
@@ -1448,6 +1464,22 @@
         [inline-graphic-<xsl:value-of select="@xlink:href"/>]
     </xsl:template>
 
+    <xsl:template name="appendices-main-text">
+        <xsl:apply-templates select="//back/app-group/app" mode="testing"/>
+    </xsl:template>
+
+    <xsl:template match="app" mode="testing">
+        <div class="section app">
+            <xsl:if test="@id">
+                <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="title">
+                <h2><xsl:value-of select="title"/></h2>
+            </xsl:if>
+            <xsl:apply-templates mode="testing"/>
+        </div>
+    </xsl:template>
+
     <!-- START - general format -->
 
     <!-- list elements start-->
@@ -1488,11 +1520,13 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link | app/title | disp-formula" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
     <!-- nodes to remove -->
+    <xsl:template match="disp-formula/label"/>
+    <xsl:template match="app/title"/>
     <xsl:template match="fn-group[@content-type='competing-interest']/title"/>
     <xsl:template match="permissions/copyright-year | permissions/copyright-holder"/>
     <xsl:template match="fn-group[@content-type='author-contribution']/title"/>
