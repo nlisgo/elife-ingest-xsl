@@ -1445,7 +1445,7 @@
     </xsl:template>
 
     <xsl:template match="inline-graphic">
-        <a href="[inline-graphic-{@xlink:href}-large]" class="figure-expand-popup"><img src="[inline-graphic-{@xlink:href}-medium]" alt="Embedded Image"/></a>
+        [inline-graphic-<xsl:value-of select="@xlink:href"/>]
     </xsl:template>
 
     <!-- START - general format -->
