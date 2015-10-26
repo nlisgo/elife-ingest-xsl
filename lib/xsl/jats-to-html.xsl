@@ -11,6 +11,20 @@
         </xsl:copy>
     </xsl:template>
 
+    <xsl:template match="article-meta/title-group/article-title">
+        <div id="article-title">
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+
+    <xsl:template match="custom-meta-group">
+        <xsl:if test="custom-meta[@specific-use='meta-only']/meta-name[text()='Author impact statement']/following-sibling::meta-value">
+            <div id="impact-statement">
+                <xsl:apply-templates select="custom-meta[@specific-use='meta-only']/meta-name[text()='Author impact statement']/following-sibling::meta-value/node()"/>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
     <!-- Author list -->
     <xsl:template match="contrib-group[not(@content-type)]">
         <xsl:apply-templates/>

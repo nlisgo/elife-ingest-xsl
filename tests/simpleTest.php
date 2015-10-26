@@ -86,6 +86,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlTitleProvider
+     */
+    public function testJatsToHtmlTitle($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlTitleProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('title', 'getTitle');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlImpactStatementProvider
+     */
+    public function testJatsToHtmlImpactStatement($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlImpactStatementProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('impact-statement', 'getImpactStatement');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAbstractProvider
      */
     public function testJatsToHtmlAbstract($expected, $actual) {
