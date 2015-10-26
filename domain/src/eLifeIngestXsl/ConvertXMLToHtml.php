@@ -304,6 +304,14 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param string $equ_id
+   * @return string
+   */
+  public function getEquation($equ_id) {
+    return $this->getSection("//*[@id='" . $equ_id . "']");
+  }
+
+  /**
    * @param DOMNode $node
    * @return string
    */
