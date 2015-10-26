@@ -35,6 +35,20 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getTitle() {
+    return $this->getSection("//*[@id='article-title']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getImpactStatement() {
+    return $this->getSection("//*[@id='impact-statement']");
+  }
+
+  /**
+   * @return string
+   */
   public function getAbstract() {
     return $this->getSection("//*[@id='abstract']");
   }
@@ -271,6 +285,30 @@ class ConvertXMLToHtml extends ConvertXML {
    */
   public function getAffiliation($aff_id) {
     return $this->getSection("//*[@id='" . $aff_id . "']");
+  }
+
+  /**
+   * @param string $bib_id
+   * @return string
+   */
+  public function getReference($bib_id) {
+    return $this->getSection("//*[@id='" . $bib_id . "']");
+  }
+
+  /**
+   * @param string $app_id
+   * @return string
+   */
+  public function getAppendix($app_id) {
+    return $this->getSection("//*[@id='" . $app_id . "']");
+  }
+
+  /**
+   * @param string $equ_id
+   * @return string
+   */
+  public function getEquation($equ_id) {
+    return $this->getSection("//*[@id='" . $equ_id . "']");
   }
 
   /**
