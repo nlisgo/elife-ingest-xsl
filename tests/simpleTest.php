@@ -86,6 +86,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlTitleProvider
+     */
+    public function testJatsToHtmlTitle($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlTitleProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('title', 'getTitle');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlImpactStatementProvider
+     */
+    public function testJatsToHtmlImpactStatement($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlImpactStatementProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('impact-statement', 'getImpactStatement');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAbstractProvider
      */
     public function testJatsToHtmlAbstract($expected, $actual) {
@@ -410,6 +434,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAppProvider
+     */
+    public function testJatsToHtmlApp($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAppProvider() {
+        $this->setFolders();
+        return $this->compareAppHtmlSection();
+    }
+
+    /**
+     * @dataProvider jatsToHtmlEquProvider
+     */
+    public function testJatsToHtmlEqu($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlEquProvider() {
+        $this->setFolders();
+        return $this->compareEquHtmlSection();
+    }
+
+    /**
      * @dataProvider jatsToHtmlReferenceProvider
      */
     public function testJatsToHtmlReference($expected, $actual) {
@@ -491,6 +539,60 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
         foreach ($sections as $section) {
             $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAffiliation', $section['aff_id'], '', $section['prefix']));
+        }
+
+        return $compares;
+    }
+
+    /**
+     * Prepare array of actual and expected results for appendix HTML.
+     */
+    protected function compareAppHtmlSection() {
+        $suffix = '-app';
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<app_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'prefix' => $match['filename'],
+                    'suffix' => '-' . $match['app_id'] . $suffix,
+                    'app_id' => $match['app_id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getAppendix', $section['app_id'], '', $section['prefix']));
+        }
+
+        return $compares;
+    }
+
+    /**
+     * Prepare array of actual and expected results for equation HTML.
+     */
+    protected function compareEquHtmlSection() {
+        $suffix = '-equ';
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<equ_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'prefix' => $match['filename'],
+                    'suffix' => '-' . $match['equ_id'] . $suffix,
+                    'equ_id' => $match['equ_id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getEquation', $section['equ_id'], '', $section['prefix']));
         }
 
         return $compares;
