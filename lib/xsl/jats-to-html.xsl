@@ -5,6 +5,10 @@
 
     <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
+    <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+    <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'"/>
+    <xsl:variable name="allcase" select="concat($smallcase, $uppercase)"/>
+
     <xsl:template match="@* | node()">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
@@ -234,8 +238,8 @@
         </xsl:variable>
         <xsl:for-each select="../../../contrib-group/contrib/xref[@rid=$contriputeid]">
             <xsl:text> (</xsl:text>
-            <xsl:value-of select="translate(../name/given-names,'abcdefghijklmnopqrstuvwxyz. ','')"/>
-            <xsl:value-of select="translate(../name/surname,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+            <xsl:value-of select="translate(../name/given-names, concat($smallcase, '. '), '')"/>
+            <xsl:value-of select="translate(../name/surname, concat($smallcase, '. '), '')"/>
             <xsl:text>)</xsl:text>
         </xsl:for-each>
     </xsl:template>
@@ -249,9 +253,9 @@
                 <!--<xsl:value-of select="$contriputeid"/> -->
                 <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
                     <xsl:text>--</xsl:text>
-                    <xsl:value-of select="translate(../name/given-names,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+                    <xsl:value-of select="translate(../name/given-names, concat($smallcase, '. '), '')"/>
                     <xsl:text>-</xsl:text>
-                    <xsl:value-of select="translate(../name/surname,'abcdefghijklmnopqrstuvwxyz. ','')"/>
+                    <xsl:value-of select="translate(../name/surname, concat($smallcase, '. '), '')"/>
                     <xsl:text>:</xsl:text>
                 </xsl:for-each>
                 <!--<xsl:value-of select="count(../../contrib-group/contrib/xref[@rid=$contriputeid])"/>-->
@@ -457,7 +461,7 @@
             <xsl:choose>
                 <xsl:when test="./title">
                     <xsl:attribute name="id">
-                        <xsl:value-of select="translate(translate(./title, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>
+                        <xsl:value-of select="translate(translate(./title, $uppercase, $smallcase), ' ', '-')"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
@@ -684,6 +688,11 @@
                 <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
+            <xsl:if test="label">
+                <span class="disp-formula-label">
+                    <xsl:value-of select="label/text()"/>
+                </span>
+            </xsl:if>
         </span>
     </xsl:template>
 
@@ -693,85 +702,6 @@
             <xsl:apply-templates/>
             <xsl:text disable-output-escaping="yes">&lt;/math&gt;</xsl:text>
         </span>
-    </xsl:template>
-
-    <xsl:template match="mml:mtext">
-        <xsl:choose>
-            <xsl:when
-                    test="string-length(text())=1 and string-length(translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',''))=0">
-                <mi>
-                    <xsl:variable name="normaltest"
-                                  select="translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ','')"/>
-                    <xsl:attribute name="mathvariant">
-                        <xsl:choose>
-                            <xsl:when test="@mathvariant and string-length($normaltest)!=0">
-                                <xsl:value-of select="@mathvariant"/>
-                            </xsl:when>
-                            <xsl:when test="string-length($normaltest)=0">
-                                <xsl:text>normal</xsl:text>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:text>normals</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <xsl:apply-templates/>
-                </mi>
-            </xsl:when>
-            <xsl:when
-                    test="string-length(text())=1 and string-length(translate(.,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',''))!=0">
-                <xsl:choose>
-                    <xsl:when test="position()=2">
-                        <mrow>
-                            <mo>
-                                <xsl:apply-templates/>
-                            </mo>
-                        </mrow>
-                    </xsl:when>
-                    <xsl:when test="position()=(last()-2)">
-                        <mrow>
-                            <mo>
-                                <xsl:apply-templates/>
-                            </mo>
-                        </mrow>
-                    </xsl:when>
-                    <xsl:when test="following-sibling::*[1]='='">
-                        <mrow>
-                            <mo>
-                                <xsl:apply-templates/>
-                            </mo>
-                        </mrow>
-                    </xsl:when>
-                    <xsl:when test="preceding-sibling::*[1]='='">
-                        <mrow>
-                            <mo>
-                                <xsl:apply-templates/>
-                            </mo>
-                        </mrow>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <mi>
-                            <xsl:if test="@mathvariant">
-                                <xsl:attribute name="mathvariant">
-                                    <xsl:value-of select="@mathvariant"/>
-                                </xsl:attribute>
-                            </xsl:if>
-                            <xsl:apply-templates/>
-                        </mi>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>
-                <mtext>
-                    <xsl:if test="@mathvariant">
-                        <xsl:attribute name="mathvariant">
-                            <xsl:value-of select="@mathvariant"/>
-                        </xsl:attribute>
-                    </xsl:if>
-                    <xsl:apply-templates/>
-                </mtext>
-            </xsl:otherwise>
-        </xsl:choose>
     </xsl:template>
 
     <!-- END Table Handling -->
@@ -1033,7 +963,7 @@
                         <i class="icon-download-alt"></i>
                         Download source data<span class="inline-linked-media-filename">
                             [<xsl:value-of
-                                select="translate(translate(preceding-sibling::label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ' ', '-')"/>media-<xsl:value-of
+                                select="translate(translate(preceding-sibling::label, $uppercase, $smallcase), ' ', '-')"/>media-<xsl:value-of
                                 select="count(preceding::media[@mimetype = 'application'])+1"/>.<xsl:value-of
                                 select="substring-after(@xlink:href,'.')"/>]
                         </span>
@@ -1086,7 +1016,7 @@
     <xsl:template match="ref">
         <article class="elife-reflinks-reflink" id="{@id}">
             <xsl:attribute name="data-original">
-                <xsl:value-of select="translate(@id,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ','')"/>
+                <xsl:value-of select="translate(@id, $allcase, '')"/>
             </xsl:attribute>
             <xsl:variable name="slno" select="translate(@id, 'bib', '')"/>
             <div class="elife-reflink-indicators">
