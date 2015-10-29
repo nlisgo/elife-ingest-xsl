@@ -448,6 +448,10 @@
         <xsl:variable name="email">
             <xsl:apply-templates/>
         </xsl:variable>
+        <!-- if parent contains more than just email then it should have a space before email -->
+        <xsl:if test="string(..) != text() and not(contains(string(..), concat(' ', text())))">
+            <xsl:text> </xsl:text>
+        </xsl:if>
         <a href="mailto:{$email}" class="email">
             <xsl:copy-of select="$email"/>
         </a>
