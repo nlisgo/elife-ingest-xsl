@@ -1449,7 +1449,51 @@
 
     <!-- list elements start-->
 
-    <xsl:template match="list/list-item">
+    <xsl:template match="list">
+        <xsl:choose>
+            <xsl:when test="@list-type = 'simple' or @list-type = 'bullet'">
+                <ul>
+                    <xsl:attribute name="class">
+                        <xsl:choose>
+                            <xsl:when test="@list-type = 'simple'">
+                                <xsl:value-of select="'list-simple'"/>
+                            </xsl:when>
+                            <xsl:when test="@list-type = 'bullet'">
+                                <xsl:value-of select="'list-unord'"/>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:apply-templates/>
+                </ul>
+            </xsl:when>
+            <xsl:otherwise>
+                <ol>
+                    <xsl:attribute name="class">
+                        <xsl:choose>
+                            <xsl:when test="@list-type = 'order'">
+                                <xsl:value-of select="'list-ord'"/>
+                            </xsl:when>
+                            <xsl:when test="@list-type = 'roman-lower'">
+                                <xsl:value-of select="'list-romanlower'"/>
+                            </xsl:when>
+                            <xsl:when test="@list-type = 'roman-upper'">
+                                <xsl:value-of select="'list-romanupper'"/>
+                            </xsl:when>
+                            <xsl:when test="@list-type = 'alpha-lower'">
+                                <xsl:value-of select="'list-alphalower'"/>
+                            </xsl:when>
+                            <xsl:when test="@list-type = 'alpha-upper'">
+                                <xsl:value-of select="'list-alphaupper'"/>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:apply-templates/>
+                </ol>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="list-item">
         <li>
             <xsl:apply-templates/>
         </li>
@@ -1485,11 +1529,12 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link | app/title | disp-formula" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link | app/title | disp-formula | list | list-item" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
     <!-- nodes to remove -->
+    <xsl:template match="aff/label"/>
     <xsl:template match="disp-formula/label"/>
     <xsl:template match="app/title"/>
     <xsl:template match="fn-group[@content-type='competing-interest']/title"/>
