@@ -1146,72 +1146,89 @@
             <!-- move all other elements into details div
                 and comma separate
             -->
-            <div class="elife-reflink-details">
-                <xsl:if test="child::source and (@publication-type='journal')">
-                    <span class="elife-reflink-details-journal">
-                        <span class="nlm-source">
-                            <xsl:apply-templates select="child::source/node()"/>
-                        </span>
-                    </span>
-                    <xsl:if test="child::source/following-sibling::*">
-                        <xsl:text>, </xsl:text>
-                    </xsl:if>
+            <xsl:variable name="class">
+                <xsl:if test="@publication-type">
+                    <xsl:value-of select="'elife-reflink-details-journal'"/>
                 </xsl:if>
-                <!-- For book, if article-title exists, source alowed here.
-                     If article-title doesn't exists, then source to be moved at the top(title).
-                     So, source will not be allowed here -->
-                <xsl:if test="child::article-title and child::source and (@publication-type='book')">
-                    <span class="elife-reflink-details-journal">
-                        <span class="nlm-source">
-                            <xsl:apply-templates select="child::source/node()"/>
-                        </span>
-                    </span>
-                    <xsl:if test="child::source/following-sibling::*">
-                        <xsl:text>, </xsl:text>
-                    </xsl:if>
+            </xsl:variable>
+            <xsl:variable name="includes">
+                <xsl:if test="child::article-title and child::source">
+                    <xsl:value-of select="'source|'"/>
                 </xsl:if>
                 <xsl:if test="child::publisher-name">
+                    <xsl:value-of select="'publisher-name|'"/>
+                </xsl:if>
+                <xsl:if test="child::publisher-loc">
+                    <xsl:value-of select="'publisher-loc|'"/>
+                </xsl:if>
+                <xsl:if test="child::volume">
+                    <xsl:value-of select="'volume|'"/>
+                </xsl:if>
+                <xsl:if test="child::fpage">
+                    <xsl:value-of select="'fpage|'"/>
+                </xsl:if>
+                <xsl:if test="child::lpage">
+                    <xsl:value-of select="'lpage|'"/>
+                </xsl:if>
+                <xsl:if test="child::year">
+                    <xsl:value-of select="'year|'"/>
+                </xsl:if>
+            </xsl:variable>
+            <div class="elife-reflink-details">
+                <xsl:if test="contains($includes, 'source|')">
+                    <span>
+                        <xsl:if test="$class != ''">
+                            <xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
+                        </xsl:if>
+                        <span class="nlm-source">
+                            <xsl:apply-templates select="child::source/node()"/>
+                        </span>
+                    </span>
+                </xsl:if>
+                <xsl:if test="contains($includes, 'publisher-name|')">
+                    <xsl:if test="not(starts-with($includes, 'publisher-name|'))">
+                        <xsl:text>, </xsl:text>
+                    </xsl:if>
                     <span class="elife-reflink-details-pub-name">
                         <span class="nlm-publisher-name">
                             <xsl:apply-templates select="child::publisher-name/node()"/>
                         </span>
                     </span>
-                    <xsl:if test="child::publisher-loc">
+                </xsl:if>
+                <xsl:if test="contains($includes, 'publisher-loc|')">
+                    <xsl:if test="not(starts-with($includes, 'publisher-loc|'))">
                         <xsl:text>, </xsl:text>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="child::publisher-loc">
                     <span class="elife-reflink-details-pub-loc">
                         <span class="nlm-publisher-loc">
                             <xsl:apply-templates select="child::publisher-loc/node()"/>
                         </span>
                     </span>
-                    <xsl:if test="child::publisher-loc/following-sibling::*">
+                </xsl:if>
+                <xsl:if test="contains($includes, 'volume|')">
+                    <xsl:if test="not(starts-with($includes, 'volume|'))">
                         <xsl:text>, </xsl:text>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="child::volume">
                     <span class="elife-reflink-details-volume">
                         <xsl:apply-templates select="child::volume/node()"/>
                     </span>
-                    <xsl:if test="child::volume/following-sibling::*">
+                </xsl:if>
+                <xsl:if test="contains($includes, 'fpage|')">
+                    <xsl:if test="not(starts-with($includes, 'fpage|'))">
                         <xsl:text>, </xsl:text>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="child::fpage">
                     <span class="elife-reflink-details-pages">
                         <xsl:apply-templates select="child::fpage/node()"/>
-                        <xsl:if test="child::lpage">
+                        <xsl:if test="contains($includes, 'lpage|')">
                             <xsl:text>-</xsl:text>
-                            <xsl:value-of select="child::lpage/text()"/>
+                            <xsl:apply-templates select="child::lpage/node()"/>
                         </xsl:if>
                     </span>
-                    <xsl:if test="child::fpage/following-sibling::*">
+                </xsl:if>
+                <xsl:if test="contains($includes, 'year|')">
+                    <xsl:if test="not(starts-with($includes, 'year|'))">
                         <xsl:text>, </xsl:text>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="child::year">
-                    <xsl:text> </xsl:text>
                     <span class="elife-reflink-details-year">
                         <xsl:apply-templates select="child::year/node()"/>
                     </span>
