@@ -1116,7 +1116,7 @@
                             <xsl:variable name="hrefvalue"
                                           select="concat('http://scholar.google.com/scholar?q=&quot;author:', $fullname, '&quot;')"/>
                             <span class="elife-reflink-author">
-                                <a href="{$hrefvalue}">
+                                <a href="{$hrefvalue}" target="_blank">
                                     <xsl:value-of select="$fullname"/>
                                 </a>
                             </span>
@@ -1247,7 +1247,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
-                            <a href="{$href}"><xsl:value-of select="$href"/></a>
+                            <a href="{$href}" target="_blank"><xsl:value-of select="$href"/></a>
                         </span>
                     </div>
                 </xsl:if>
