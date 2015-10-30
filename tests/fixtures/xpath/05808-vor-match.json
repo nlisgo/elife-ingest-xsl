@@ -1,0 +1,8 @@
+[
+  {
+    "method": "getMainText",
+    "arguments": [],
+    "xpath": "//ol[@class=\"list-ord\"][1]",
+    "html": "<ol class=\"list-ord\"><li><p>The resting [Ca<sup>2+</sup>] is 50 nM.</p></li><li><p>The brightness of both indicators at maximal [Ca<sup>2+</sup>] is equal.</p></li><li><p>The detection system does not add additional noise sources.</p></li><li><p>The baseline fluorescence is calculated as the average of 50 time points.</p></li></ol>"
+  }
+]
