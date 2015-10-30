@@ -472,12 +472,16 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider xpathMatchProvider
      */
-    public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected) {
+    public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected, $type) {
         $actual_html = $this->getActualHtml($file);
         $section = call_user_func_array([$actual_html, $method], $arguments);
-        $found = $this->runXpath($section, $xpath);
-        $this->assertGreaterThanOrEqual(1, $found->length);
-        $this->assertEquals($expected, trim($found->item(0)->nodeValue));
+        $actual = $this->runXpath($section, $xpath, $type);
+        if ($type == 'string') {
+            $this->assertEquals($expected, $actual);
+        }
+        else {
+            $this->assertEqualHtml($expected, $actual);
+        }
     }
 
     public function xpathMatchProvider() {
@@ -500,7 +504,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
                         $query->method,
                         (!empty($query->arguments)) ? $query->arguments : [],
                         $query->xpath,
-                        $query->string,
+                        (isset($query->string)) ? $query->string : $query->html,
+                        (isset($query->string)) ? 'string' : 'html',
                     ];
                 }
             }
@@ -509,12 +514,20 @@ class simpleTest extends PHPUnit_Framework_TestCase
         return $provider;
     }
 
-    protected function runXpath($html, $xpath_query) {
+    protected function runXpath($html, $xpath_query, $type = 'string') {
         $domDoc = new DOMDocument();
         $domDoc->loadHTML('<meta http-equiv="content-type" content="text/html; charset=utf-8"><actual>' . $html . '</actual>');
         $xpath = new DOMXPath($domDoc);
         $nodeList = $xpath->query($xpath_query);
-        return $nodeList;
+        $this->assertGreaterThanOrEqual(1, $nodeList->length);
+        if ($type == 'string') {
+            $output = $nodeList->item(0)->nodeValue;
+        }
+        else {
+            $output = $domDoc->saveHTML($nodeList->item(0));
+        }
+
+        return trim($output);
     }
 
     /**
