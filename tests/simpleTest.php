@@ -494,7 +494,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $provider = [];
 
         foreach ($jsons as $json) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-' . $suffix . '\.json/', basename($json), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-' . $suffix . '\.json/', basename($json), $match);
             if ($found) {
                 $queries = file_get_contents($json);
                 $queries = json_decode($queries);
@@ -539,7 +539,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<aff_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<aff_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
@@ -566,7 +566,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<app_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<app_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
@@ -593,7 +593,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<equ_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<equ_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
@@ -620,7 +620,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<bib_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<bib_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
@@ -647,7 +647,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<id>.+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<id>.+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
@@ -674,7 +674,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $sections = [];
 
         foreach ($htmls as $html) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-[^\-]+)\-(?P<doi>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<doi>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
             if ($found) {
                 $sections[] = [
                     'prefix' => $match['filename'],
