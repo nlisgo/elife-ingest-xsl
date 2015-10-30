@@ -1,0 +1,10 @@
+[
+  {
+    "method": "getAffiliation",
+    "arguments": [
+      "aff1"
+    ],
+    "xpath": "//*[@class=\"aff\"]",
+    "string": "eLife, Cambridge, United Kingdom production@elifesciences.org"
+  }
+]
