@@ -907,13 +907,23 @@
         <xsl:variable name="id">
             <xsl:value-of select="@id"/>
         </xsl:variable>
+        <xsl:variable name="graphic-type">
+            <xsl:choose>
+                <xsl:when test="starts-with($caption, 'Animation')">
+                    <xsl:value-of select="'animation'"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'graphic'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="graphics" select="child::graphic/@xlink:href"/>
         <div id="{$id}" class="fig-inline-img-set">
             <div class="elife-fig-image-caption-wrapper">
                 <div class="fig-expansion">
                     <div class="fig-inline-img">
-                        <a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
-                            <img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
+                        <a href="[{$graphic-type}-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
+                            <img data-img="[{$graphic-type}-{$graphics}-small]" src="[{$graphic-type}-{$graphics}-medium]" alt="{$caption}"/>
                         </a>
                     </div>
                     <xsl:apply-templates/>
@@ -1426,7 +1436,31 @@
     </xsl:template>
 
     <xsl:template match="inline-graphic">
-        [inline-graphic-<xsl:value-of select="@xlink:href"/>]
+        <xsl:variable name="ig-variant">
+            <xsl:choose>
+                <xsl:when test="//article/@article-type = 'research-article'">
+                    <xsl:value-of select="'research-'"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'nonresearch-'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="ancestor::boxed-text">
+                    <xsl:value-of select="'box'"/>
+                </xsl:when>
+                <xsl:when test="ancestor::fig">
+                    <xsl:value-of select="'fig'"/>
+                </xsl:when>
+                <xsl:when test="ancestor::table-wrap">
+                    <xsl:value-of select="'table'"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'other'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        [inline-graphic-<xsl:value-of select="@xlink:href"/>-<xsl:value-of select="$ig-variant"/>]
     </xsl:template>
 
     <xsl:template name="appendices-main-text">
