@@ -740,7 +740,7 @@
                     <!-- three options -->
                     <span class="elife-figure-links">
                         <span class="elife-figure-link elife-figure-link-download">
-                            <a href="[graphic-{$graphics}-large-download]">Download figure</a>
+                            <a href="[graphic-{$graphics}-large]"><xsl:attribute name="download"/>Download figure</a>
                         </span>
                         <span class="elife-figure-link elife-figure-link-newtab">
                             <a href="[graphic-{$graphics}-large]" target="_blank">Open in new tab</a>
@@ -963,7 +963,7 @@
             <xsl:when test="@mimetype = 'application'">
                 <!-- if mimetype is application -->
                 <span class="inline-linked-media-wrapper">
-                    <a href="[media-{substring-before(@xlink:href,'.')}-download]">
+                    <a href="[media-{substring-before(@xlink:href,'.')}]"><xsl:attribute name="download"/>
                         <i class="icon-download-alt"></i>
                         Download source data<span class="inline-linked-media-filename">
                             [<xsl:value-of
@@ -988,7 +988,7 @@
 
                             <div class="elife-video-links">
                                 <span class="elife-video-link elife-video-link-download">
-                                    <a href="[video-{@id}-download]">Download Video</a>
+                                    <a href="[video-{@id}-download]"><xsl:attribute name="download"/>Download Video</a>
 
                                 </span>
                             </div>
