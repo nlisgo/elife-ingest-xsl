@@ -733,6 +733,16 @@
 
     <!-- fig caption -->
     <xsl:template match="fig//caption">
+        <xsl:variable name="graphic-type">
+            <xsl:choose>
+                <xsl:when test="starts-with(../label/text(), 'Animation')">
+                    <xsl:value-of select="'animation'"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'graphic'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:choose>
             <xsl:when test="not(parent::supplementary-material)">
                 <div class="fig-caption">
@@ -740,10 +750,10 @@
                     <!-- three options -->
                     <span class="elife-figure-links">
                         <span class="elife-figure-link elife-figure-link-download">
-                            <a href="[graphic-{$graphics}-large]"><xsl:attribute name="download"/>Download figure</a>
+                            <a href="[{$graphic-type}-{$graphics}-large]"><xsl:attribute name="download"/>Download figure</a>
                         </span>
                         <span class="elife-figure-link elife-figure-link-newtab">
-                            <a href="[graphic-{$graphics}-large]" target="_blank">Open in new tab</a>
+                            <a href="[{$graphic-type}-{$graphics}-large]" target="_blank">Open in new tab</a>
                         </span>
                     </span>
                     <span class="fig-label">
