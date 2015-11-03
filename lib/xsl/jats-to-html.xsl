@@ -983,7 +983,7 @@
             <xsl:when test="@mimetype = 'application'">
                 <!-- if mimetype is application -->
                 <span class="inline-linked-media-wrapper">
-                    <a href="[media-{substring-before(@xlink:href,'.')}]"><xsl:attribute name="download"/>
+                    <a href="[media-{@xlink:href}]"><xsl:attribute name="download"/>
                         <i class="icon-download-alt"></i>
                         Download source data<span class="inline-linked-media-filename">
                             [<xsl:value-of
