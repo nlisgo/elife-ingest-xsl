@@ -194,6 +194,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlDatasetsProvider
+     */
+    public function testJatsToHtmlDatasets($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDatasetsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('datasets', 'getDatasets');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoGroupAuthorsProvider
      */
     public function testJatsToHtmlAuthorInfoGroupAuthors($expected, $actual) {
@@ -458,6 +470,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlDataroProvider
+     */
+    public function testJatsToHtmlDataro($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDataroProvider() {
+        $this->setFolders();
+        return $this->compareDataroHtmlSection();
+    }
+
+    /**
      * @dataProvider jatsToHtmlReferenceProvider
      */
     public function testJatsToHtmlReference($expected, $actual) {
@@ -606,6 +630,33 @@ class simpleTest extends PHPUnit_Framework_TestCase
 
         foreach ($sections as $section) {
             $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getEquation', $section['equ_id'], '', $section['prefix']));
+        }
+
+        return $compares;
+    }
+
+    /**
+     * Prepare array of actual and expected results for related object HTML.
+     */
+    protected function compareDataroHtmlSection() {
+        $suffix = '-dataro';
+        $htmls = glob($this->html_folder . '*' . $suffix . '.html');
+        $sections = [];
+
+        foreach ($htmls as $html) {
+            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-(?P<dataro_id>[^\-]+)' . $suffix . '\.html$/', basename($html), $match);
+            if ($found) {
+                $sections[] = [
+                    'prefix' => $match['filename'],
+                    'suffix' => '-' . $match['dataro_id'] . $suffix,
+                    'dataro_id' => $match['dataro_id'],
+                ];
+            }
+        }
+        $compares = [];
+
+        foreach ($sections as $section) {
+            $compares = array_merge($compares, $this->compareHtmlSection($section['suffix'], 'getDataset', $section['dataro_id'], '', $section['prefix']));
         }
 
         return $compares;
