@@ -190,7 +190,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getDatasets() {
-    return $this->getSection("//*[contains(concat(' ', @class, ' '), ' datasets ')]");
+    return $this->getSection("//*[@id='datasets']");
   }
 
   /**
@@ -345,6 +345,14 @@ class ConvertXMLToHtml extends ConvertXML {
    */
   public function getEquation($equ_id) {
     return $this->getSection("//*[@id='" . $equ_id . "']", 1);
+  }
+
+  /**
+   * @param string $dataset_id
+   * @return string
+   */
+  public function getDataset($dataset_id) {
+    return $this->getSection("//*[@id='" . $dataset_id . "']");
   }
 
   /**
