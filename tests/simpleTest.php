@@ -290,6 +290,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlArticleInfoIdentificationProvider
+     */
+    public function testJatsToHtmlArticleInfoIdentification($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlArticleInfoIdentificationProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('article-info-identification', 'getArticleInfoIdentification');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlArticleInfoHistoryProvider
+     */
+    public function testJatsToHtmlArticleInfoHistory($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlArticleInfoHistoryProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('article-info-history', 'getArticleInfoHistory');
+    }
+
+    /**
      * @dataProvider jatsToHtmlArticleInfoEthicsProvider
      */
     public function testJatsToHtmlArticleInfoEthics($expected, $actual) {
