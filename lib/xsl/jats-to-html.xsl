@@ -333,6 +333,50 @@
 
     <xsl:template match="funding-statement"/>
     <!-- fn-group -->
+    <xsl:template name="article-info-identification">
+        <xsl:variable name="doi" select="//article-meta/article-id[@pub-id-type='doi']"/>
+        <div>
+            <xsl:attribute name="id"><xsl:value-of select="'article-info-identification'"/></xsl:attribute>
+            <div>
+                <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-doi'"/></xsl:attribute>
+                <span class="info-label">DOI</span> <span class="info-content"><a href="/lookup/doi/{$doi}"><xsl:value-of select="$doi"/></a></span>
+            </div>
+            <div>
+                <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-citeas'"/></xsl:attribute>
+                <span class="info-label">Cite this as</span> <span class="info-content"><xsl:call-template name="citation"/></span>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="article-info-history">
+        <div>
+            <xsl:attribute name="id"><xsl:value-of select="'article-info-history'"/></xsl:attribute>
+            <ul>
+                <xsl:attribute name="class"><xsl:value-of select="'publication-history'"/></xsl:attribute>
+                <xsl:for-each select="//history/date[@date-type]">
+                    <xsl:apply-templates select="." mode="publication-history-item"/>
+                </xsl:for-each>
+                <xsl:apply-templates select="//article-meta/pub-date[@date-type]" mode="publication-history-item">
+                    <xsl:with-param name="date-type" select="'published'"/>
+                </xsl:apply-templates>
+            </ul>
+        </div>
+    </xsl:template>
+    <xsl:template match="date | pub-date" mode="publication-history-item">
+        <xsl:param name="date-type" select="string(@date-type)"/>
+        <li>
+            <xsl:attribute name="class"><xsl:value-of select="$date-type"/></xsl:attribute>
+            <span>
+                <xsl:attribute name="class"><xsl:value-of select="concat($date-type, '-label')"/></xsl:attribute>
+                <xsl:call-template name="camel-case-word"><xsl:with-param name="text" select="$date-type"/></xsl:call-template>
+            </span>
+            <xsl:variable name="month-long">
+                <xsl:call-template name="month-long">
+                    <xsl:with-param name="month"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:value-of select="concat(' ', $month-long, ' ', day, ', ', year, '.')"/>
+        </li>
+    </xsl:template>
     <xsl:template match="fn-group[@content-type='ethics-information']">
         <div id="article-info-ethics">
             <xsl:apply-templates/>
@@ -805,6 +849,8 @@
                 <xsl:call-template name="appendices-main-text"/>
             </div>
         </div>
+        <xsl:call-template name="article-info-identification"/>
+        <xsl:call-template name="article-info-history"/>
     </xsl:template>
 
     <xsl:template
@@ -1598,5 +1644,85 @@
     <xsl:template match="sub-article//article-title"/>
     <xsl:template match="sub-article//article-id"/>
     <xsl:template match="object-id | table-wrap/label"/>
+
+    <xsl:template name="camel-case-word">
+        <xsl:param name="text"/>
+        <xsl:value-of select="translate(substring($text, 1, 1), $smallcase, $uppercase)" /><xsl:value-of select="translate(substring($text, 2, string-length($text)-1), $uppercase, $smallcase)" />
+    </xsl:template>
+
+    <xsl:template name="month-long">
+        <xsl:param name="month"/>
+        <xsl:variable name="month-int" select="number(month)"/>
+        <xsl:choose>
+            <xsl:when test="$month-int = 1">
+                <xsl:value-of select="'January'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 2">
+                <xsl:value-of select="'February'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 3">
+                <xsl:value-of select="'March'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 4">
+                <xsl:value-of select="'April'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 5">
+                <xsl:value-of select="'May'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 6">
+                <xsl:value-of select="'June'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 7">
+                <xsl:value-of select="'July'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 8">
+                <xsl:value-of select="'August'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 9">
+                <xsl:value-of select="'September'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 10">
+                <xsl:value-of select="'October'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 11">
+                <xsl:value-of select="'November'"/>
+            </xsl:when>
+            <xsl:when test="$month-int = 12">
+                <xsl:value-of select="'December'"/>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="citation">
+        <xsl:variable name="year"><xsl:call-template name="year"/></xsl:variable>
+        <xsl:variable name="volume"><xsl:call-template name="volume"/></xsl:variable>
+        <xsl:value-of select="concat(//journal-meta/journal-title-group/journal-title, ' ', $year, ';', $volume, ':', //article-meta/elocation-id)"/>
+    </xsl:template>
+
+    <xsl:template name="year">
+        <xsl:choose>
+            <xsl:when test="//article-meta/pub-date[@date-type='pub']/year">
+                <xsl:value-of select="//article-meta/pub-date[@date-type='pub']/year"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="//article-meta/permissions/copyright-year"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="volume">
+        <xsl:variable name="value">
+            <xsl:choose>
+                <xsl:when test="//article-meta/volume">
+                    <xsl:value-of select="//article-meta/volume"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="year"><call-template name="year"/></xsl:variable>
+                    <xsl:value-of select="$year - 2011"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="$value"/>
+    </xsl:template>
 
 </xsl:stylesheet>

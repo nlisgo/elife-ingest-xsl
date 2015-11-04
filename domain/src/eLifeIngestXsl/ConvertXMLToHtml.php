@@ -154,6 +154,20 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getArticleInfoIdentification() {
+    return $this->getSection("//*[@id='article-info-identification']");
+  }
+
+  /**
+   * @return string
+   */
+  public function getArticleInfoHistory() {
+    return $this->getSection("//*[@id='article-info-history']");
+  }
+
+  /**
+   * @return string
+   */
   public function getArticleInfoEthics() {
     return $this->getSection("//*[@id='article-info-ethics']");
   }
