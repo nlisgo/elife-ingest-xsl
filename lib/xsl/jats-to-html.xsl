@@ -386,6 +386,14 @@
         <xsl:apply-templates/>
     </xsl:template>
     <xsl:template match="fn-group[@content-type='ethics-information']/title"/>
+    <xsl:template match="contrib" mode="article-info-reviewing-editor">
+        <div id="article-info-reviewing-editor">
+            <div>
+                <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-reviewingeditor-text'"/></xsl:attribute>
+                <xsl:apply-templates select="node()"/>
+            </div>
+        </div>
+    </xsl:template>
 
     <xsl:template match="fn-group[@content-type='competing-interest']">
         <div id="author-info-competing-interest">
@@ -851,6 +859,7 @@
         </div>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
+        <xsl:apply-templates select="//sub-article//contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
     </xsl:template>
 
     <xsl:template

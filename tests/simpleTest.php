@@ -326,6 +326,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlArticleInfoReviewingEditorProvider
+     */
+    public function testJatsToHtmlArticleInfoReviewingEditor($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlArticleInfoReviewingEditorProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('article-info-reviewing-editor', 'getArticleInfoReviewingEditor');
+    }
+
+    /**
      * @dataProvider jatsToHtmlArticleInfoLicenseProvider
      */
     public function testJatsToHtmlArticleInfoLicense($expected, $actual) {
