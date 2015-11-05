@@ -675,7 +675,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Prepare array of actual and expected results for HTML targetted by id.
+     * Prepare array of actual and expected results for HTML targeted by id.
      */
     protected function compareIdHtmlSection($type_suffix) {
         $suffix = '-id-' . $type_suffix;
