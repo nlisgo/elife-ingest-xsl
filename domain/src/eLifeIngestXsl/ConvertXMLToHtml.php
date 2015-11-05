@@ -195,21 +195,28 @@ class ConvertXMLToHtml extends ConvertXML {
 
   /**
    * @param string $xpath_query
+   * @param int $limit
    * @return string
    */
-  public function getSection($xpath_query) {
+  public function getSection($xpath_query, $limit = 0) {
     libxml_use_internal_errors(TRUE);
     $actual = new DOMDocument();
     $actual->loadHTML($this->getHtml());
     $xpath = new DOMXPath($actual);
     $elements = $xpath->query($xpath_query);
-    $output = NULL;
+    $output = [];
     if (!empty($elements) && $elements->length > 0) {
-      $output = $this->getInnerHtml($elements->item(0));
+      $break = ($limit > 0) ? $limit : $elements->length;
+      foreach ($elements as $i => $element) {
+        if ($i >= $break) {
+          break;
+        }
+        $output[] = $this->getInnerHtml($element);
+      }
     }
     libxml_clear_errors();
 
-    return $this->tidyHtml($output);
+    return $this->tidyHtml(implode("\n", $output));
   }
 
   /**
@@ -288,7 +295,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getDoi($doi) {
-    return $this->getSection("//*[@data-doi='" . $doi . "']");
+    return $this->getSection("//*[@data-doi='" . $doi . "'][not(ancestor::*[@id='main-text'])]", 1);
   }
 
   /**
@@ -305,7 +312,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getAffiliation($aff_id) {
-    return $this->getSection("//*[@id='" . $aff_id . "']");
+    return $this->getSection("(//*[@id='" . $aff_id . "'])", 1);
   }
 
   /**
@@ -313,7 +320,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getReference($bib_id) {
-    return $this->getSection("//*[@id='" . $bib_id . "']");
+    return $this->getSection("(//*[@id='" . $bib_id . "'])", 1);
   }
 
   /**
@@ -321,7 +328,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getAppendix($app_id) {
-    return $this->getSection("//*[@id='" . $app_id . "']");
+    return $this->getSection("(//*[@id='" . $app_id . "'])", 1);
   }
 
   /**
@@ -329,7 +336,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getEquation($equ_id) {
-    return $this->getSection("//*[@id='" . $equ_id . "']");
+    return $this->getSection("//*[@id='" . $equ_id . "']", 1);
   }
 
   /**
