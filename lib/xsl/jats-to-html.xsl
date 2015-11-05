@@ -1086,31 +1086,16 @@
 
     <xsl:template match="ref-list">
         <div id="references">
-            <div class="elife-reflinks-links">
+            <ol class="elife-reflinks-links">
                 <xsl:apply-templates/>
-            </div>
+            </ol>
         </div>
     </xsl:template>
 
     <xsl:template match="ref">
-        <article class="elife-reflinks-reflink" id="{@id}">
-            <xsl:attribute name="data-original">
-                <xsl:value-of select="translate(@id, $allcase, '')"/>
-            </xsl:attribute>
-            <xsl:variable name="slno" select="translate(@id, 'bib', '')"/>
-            <div class="elife-reflink-indicators">
-                <div class="elife-reflink-indicators-left">
-                    <div class="elife-reflink-indicator-number">
-                        <span data-counter="{$slno}">
-                            <xsl:value-of select="(count(preceding::ref)+1)"/>
-                        </span>
-                    </div>
-
-                </div>
-
-            </div>
+        <li class="elife-reflinks-reflink" id="{@id}">
             <xsl:apply-templates/>
-        </article>
+        </li>
     </xsl:template>
 
     <xsl:template match="ref/element-citation">
