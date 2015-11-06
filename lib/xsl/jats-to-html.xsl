@@ -9,6 +9,11 @@
     <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'"/>
     <xsl:variable name="allcase" select="concat($smallcase, $uppercase)"/>
 
+    <xsl:template match="/">
+        <xsl:call-template name="author-affiliation-details"/>
+        <xsl:apply-templates select="@* | node()"/>
+    </xsl:template>
+
     <xsl:template match="@* | node()">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
@@ -361,6 +366,28 @@
             </ul>
         </div>
     </xsl:template>
+    <xsl:template name="author-affiliation-details">
+        <div>
+            <xsl:attribute name="id"><xsl:value-of select="'author-affiliation-details'"/></xsl:attribute>
+            <xsl:for-each select="//article-meta//contrib-group/contrib[@contrib-type='author']">
+                <div>
+                    <xsl:attribute name="id"><xsl:value-of select="concat('author-affiliation-details-', position())"/></xsl:attribute>
+                    <xsl:for-each select="aff[not(@id)] | xref[@ref-type='aff'][@rid]">
+                        <xsl:if test="position() > 1"><xsl:text>; </xsl:text></xsl:if>
+                        <xsl:choose>
+                            <xsl:when test="name() = 'aff'">
+                                <xsl:apply-templates select="." mode="affiliation-details"/>
+                            </xsl:when>
+                            <xsl:when test="name() = 'xref'">
+                                <xsl:variable name="rid" select="@rid"/>
+                                <xsl:apply-templates select="//aff[@id=$rid]" mode="affiliation-details"/>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </div>
+            </xsl:for-each>
+        </div>
+    </xsl:template>
     <xsl:template match="date | pub-date" mode="publication-history-item">
         <xsl:param name="date-type" select="string(@date-type)"/>
         <li>
@@ -442,6 +469,12 @@
                 <xsl:apply-templates/>
             </span>
         </div>
+    </xsl:template>
+
+    <xsl:template match="aff" mode="affiliation-details">
+        <span class="aff">
+            <xsl:apply-templates/>
+        </span>
     </xsl:template>
 
     <xsl:template match="aff/institution">
