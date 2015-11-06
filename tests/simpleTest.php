@@ -470,6 +470,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlAuthorAffiliationProvider
+     */
+    public function testJatsToHtmlAuthorAffiliation($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlAuthorAffiliationProvider() {
+        $this->setFolders();
+        return $this->compareTargetedHtmlSection('author-affiliation', 'getAuthorAffiliation');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAppProvider
      */
     public function testJatsToHtmlApp($expected, $actual) {

@@ -308,6 +308,14 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param int $author_pos
+   * @return string
+   */
+  public function getAuthorAffiliation($author_pos) {
+    return $this->getSection("//*[@id='author-affiliation-details-" . $author_pos . "']");
+  }
+
+  /**
    * @param string $aff_id
    * @return string
    */
