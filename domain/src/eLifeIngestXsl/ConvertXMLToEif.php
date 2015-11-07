@@ -11,6 +11,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
   private $filename = NULL;
   private $updated_date = NULL;
   private $validator = '';
+  private $bypass_validation = FALSE;
 
   /**
    * @param XMLString $xml
@@ -18,9 +19,13 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
    */
   public function __construct(XMLString $xml) {
     parent::__construct($xml, 'eif');
-    $realpath = realpath(dirname(__FILE__));
     // @todo - elife - nlisgo - there has to be a better way to reference validator.js
-    $this->validator = '`which node` ' . $realpath . '/../../../bower_components/elife-eif-schema/validator.js';
+    $path_to_validator = realpath(dirname(__FILE__)) . '/../../../bower_components/elife-eif-schema/validator.js';
+
+    // If validator library is installed then set path to the validator.
+    if (file_exists($path_to_validator)) {
+      $this->validator = '`which node` ' . $path_to_validator;
+    }
   }
 
   public function setVersion($version) {
@@ -66,17 +71,22 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
   }
 
   public function validate($json) {
-    $process = new Process($this->validator, NULL, NULL, $json);
-    $process->setTimeout(2);
-    $process->run();
+    if (!empty($this->validator) && !$this->bypass_validation) {
+      $process = new Process($this->validator, NULL, NULL, $json);
+      $process->setTimeout(2);
+      $process->run();
 
-    if ($process->isSuccessful()) {
-      return TRUE;
+      if ($process->isSuccessful()) {
+        return TRUE;
+      }
+      else {
+        throw new Exception(
+          $process->getOutput()
+        );
+      }
     }
     else {
-      throw new Exception(
-        $process->getOutput()
-      );
+      return TRUE;
     }
   }
 
