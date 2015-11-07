@@ -74,10 +74,12 @@ generate_xslt_output() {
     # for each jats xml file create a citation format of each type
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
-        for FORMAT in "${FORMATS[@]}"; do
-            echo "Generating xslt output for $filename in the $FORMAT format ..."
-            cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t $FORMAT -a "${filename%.*}" > $DESTFOLDER/${filename%.*}.$(format_ext $FORMAT)
-        done
+        if [[ "${filename%.*}" != *-dev ]]; then
+            for FORMAT in "${FORMATS[@]}"; do
+                echo "Generating xslt output for $filename in the $FORMAT format ..."
+                cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t $FORMAT -a "${filename%.*}" > $DESTFOLDER/${filename%.*}.$(format_ext $FORMAT)
+            done
+        fi
     done
 }
 
