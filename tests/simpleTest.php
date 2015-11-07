@@ -707,15 +707,15 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider htmlXpathMatchProvider
      */
-    public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected, $type) {
+    public function testJatsToHtmlXpathMatch($file, $method, $arguments, $xpath, $expected, $type, $message = '') {
         $actual_html = $this->getActualHtml($file);
         $section = call_user_func_array([$actual_html, $method], $arguments);
         $actual = $this->runXpath($section, $xpath, $type);
         if ($type == 'string') {
-            $this->assertEquals($expected, $actual);
+            $this->assertEquals($expected, $actual, $message);
         }
         else {
-            $this->assertEqualHtml($expected, $actual);
+            $this->assertEqualHtml($expected, $actual, $message);
         }
     }
 
@@ -741,6 +741,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
                         $query->xpath,
                         (isset($query->string)) ? $query->string : $query->html,
                         (isset($query->string)) ? 'string' : 'html',
+                        (isset($query->description)) ? $query->description : '',
                     ];
                 }
             }
@@ -845,7 +846,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Compare two HTML fragments.
      */
-    protected function assertEqualHtml($expected, $actual) {
+    protected function assertEqualHtml($expected, $actual, $message = '') {
         $from = [
             '/\>[^\S ]+/s',
             '/[^\S ]+\</s',
@@ -864,7 +865,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
         ];
         $this->assertEquals(
             ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $expected)),
-            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $actual))
+            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $actual)),
+            $message
         );
     }
 
