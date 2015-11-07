@@ -9,15 +9,17 @@ SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
 SOURCEFOLDER="$SCRIPTPATH/../tests/fixtures/jats"
 DESTFOLDER="$SCRIPTPATH/../tests/tmp"
+FORMATSTR="all"
 
 #########################
 # The command line help #
 #########################
 display_help() {
-    echo "Usage: $(basename "$0") [-h] [-s <source folder>] [-d <destination folder>]"
+    echo "Usage: $(basename "$0") [-h] [-s <source folder>] [-d <destination folder>] [-f <format>]"
     echo
     echo "   -s  set the source folder (default: $SOURCEFOLDER)"
     echo "   -d  set the destination folder (default: $DESTFOLDER)"
+    echo "   -f  set the format (default: $FORMATSTR)"
     exit 1
 }
 
@@ -40,6 +42,10 @@ do
           DESTFOLDER="$2"
            shift 2
            ;;
+      -f | --format)
+          FORMATSTR="$2"
+           shift 2
+           ;;
       -*)
           echo "Error: Unknown option: $1" >&2
           ## or call function display_help
@@ -58,14 +64,39 @@ generate_xslt_output() {
     fi
     mkdir $DESTFOLDER
 
+    if [ "$FORMATSTR" = "all" ]; then
+        FORMATSTR="eif,bib,ris,html"
+    fi
+
+    IFS=,
+    FORMATS=($FORMATSTR)
+
     # for each jats xml file create a citation format of each type
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
-        echo "Generating xslt output for $filename ..."
-        cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t 'bib' > $DESTFOLDER/${filename%.*}.bib
-        cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t 'ris' > $DESTFOLDER/${filename%.*}.ris
-        cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t 'html' > $DESTFOLDER/${filename%.*}.html
+        for FORMAT in "${FORMATS[@]}"; do
+            echo "Generating xslt output for $filename in the $FORMAT format ..."
+            cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t $FORMAT -a "${filename%.*}" > $DESTFOLDER/${filename%.*}.$(format_ext $FORMAT)
+        done
     done
 }
+
+control_c() {
+    echo "interrupt caught, exiting. this script can be run multiple times ..."
+    exit $?
+}
+
+format_ext() {
+    local in=$1; shift
+    local ext="txt"
+    if [ "$in" = "eif" ]; then
+        ext="json"
+    elif [ -n $in ]; then
+        ext=$in
+    fi
+    echo $ext
+}
+
+trap control_c SIGINT
 
 time generate_xslt_output

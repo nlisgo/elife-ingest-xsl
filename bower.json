@@ -1,0 +1,6 @@
+{
+  "name": "elife-ingest-xsl",
+  "dependencies": {
+    "elife-eif-schema": "git@github.com:elifesciences/elife-eif-schema.git"
+  }
+}

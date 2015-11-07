@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "351ac76c23282d103487e3d38499ce36",
-    "content-hash": "b22d419c87db8f40a676621bc492997b",
+    "hash": "fb8301c8f053506d9614939d6caba03c",
+    "content-hash": "a939e22434561f67e94bb4383d7789d5",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -59,9 +59,170 @@
                 "validation"
             ],
             "time": "2015-08-21 16:50:17"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v2.7.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "4a959dd4e19c2c5d7512689413921e0a74386ec7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/4a959dd4e19c2c5d7512689413921e0a74386ec7",
+                "reference": "4a959dd4e19c2c5d7512689413921e0a74386ec7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-10-23 14:47:27"
         }
     ],
     "packages-dev": [
+        {
+            "name": "atelierspierrot/library",
+            "version": "v1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/atelierspierrot/library.git",
+                "reference": "cc108f02d35eedc2f6e11aaf7215efefa4224581"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/atelierspierrot/library/zipball/cc108f02d35eedc2f6e11aaf7215efefa4224581",
+                "reference": "cc108f02d35eedc2f6e11aaf7215efefa4224581",
+                "shasum": ""
+            },
+            "require": {
+                "atelierspierrot/patterns": "1.*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "1.4.*",
+                "phpunit/phpunit": "3.7.*",
+                "psr/log": "dev-master",
+                "sami/sami": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Library": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Pierre Cassat",
+                    "email": "me@e-piwi.fr",
+                    "homepage": "http://github.com/piwi"
+                },
+                {
+                    "name": "Les Ateliers Pierrot & contributors",
+                    "email": "contact@ateliers-pierrot.fr",
+                    "homepage": "http://www.ateliers-pierrot.fr/"
+                }
+            ],
+            "description": "The PHP library package of Les Ateliers Pierrot.",
+            "homepage": "http://github.com/atelierspierrot/library",
+            "keywords": [
+                "helpers",
+                "library"
+            ],
+            "time": "2015-01-30 14:53:24"
+        },
+        {
+            "name": "atelierspierrot/patterns",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/atelierspierrot/patterns.git",
+                "reference": "88cb3fdf65d1911fd4e89cf10bd8ae283983f6e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/atelierspierrot/patterns/zipball/88cb3fdf65d1911fd4e89cf10bd8ae283983f6e4",
+                "reference": "88cb3fdf65d1911fd4e89cf10bd8ae283983f6e4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "1.4.*",
+                "sami/sami": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Patterns": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Les Ateliers Pierrot & contributors",
+                    "email": "contact@ateliers-pierrot.fr",
+                    "homepage": "http://www.ateliers-pierrot.fr/"
+                },
+                {
+                    "name": "Pierre Cassat",
+                    "homepage": "http://github.com/piwi"
+                }
+            ],
+            "description": "A set of PHP classic interfaces and abstract classes patterns.",
+            "homepage": "http://github.com/atelierspierrot/patterns",
+            "keywords": [
+                "design patterns",
+                "patterns",
+                "php"
+            ],
+            "time": "2015-03-08 10:46:14"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
@@ -1236,55 +1397,6 @@
                 }
             ],
             "description": "Symfony Finder Component",
-            "homepage": "https://symfony.com",
-            "time": "2015-09-19 19:59:23"
-        },
-        {
-            "name": "symfony/process",
-            "version": "v2.7.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/process.git",
-                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
-                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "~2.7"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Process\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
             "time": "2015-09-19 19:59:23"
         },

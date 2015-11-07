@@ -30,6 +30,7 @@ if (!empty($xml)) {
 
   $params = [];
   $types = [
+    'eif',
     'bib',
     'ris',
     'html',
@@ -71,6 +72,9 @@ if (!empty($xml)) {
   $xmlstring = \eLifeIngestXsl\ConvertXML\XMLString::fromString($xml);
 
   switch ($params['type']) {
+    case 'eif':
+      $convertxml = new \eLifeIngestXsl\ConvertXMLToEif($xmlstring);
+      break;
     case 'bib':
       $convertxml = new \eLifeIngestXsl\ConvertXMLToBibtex($xmlstring);
       break;
