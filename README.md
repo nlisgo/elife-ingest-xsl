@@ -5,10 +5,10 @@ git clone git@github.com:elifesciences/elife-ingest-xsl.git
 cd elife-ingest-xsl
 ```
 
-Install dependencies with composer:
+Install dependencies:
 
 ```
-composer install
+./setup.sh
 ```
 
 Generate example template output formats:

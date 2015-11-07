@@ -17,11 +17,11 @@ cache:
   directories:
     - bin
     - vendor
+    - bower_components
     - $HOME/.composer/cache
 
 install:
-  - travis_retry composer self-update && composer --version
-  - travis_retry composer install --prefer-dist --no-interaction
+  - ./setup.sh
 
 script:
 # Disable phpspec run for now

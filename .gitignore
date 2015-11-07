@@ -1,3 +1,4 @@
 tests/tmp
 bin
 vendor
+bower_components
