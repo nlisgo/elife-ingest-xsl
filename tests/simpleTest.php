@@ -825,7 +825,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
      * @return mixed The same data with all object keys ordered in a
      *               deterministic way.
      */
-    private function normaliseEifJson($element) {
+    private function normaliseEifJson($element, $detect_ordinals = TRUE) {
         if (is_array($element)) {
             foreach ($element as &$item) {
                 $item = $this->normaliseEifJson($item);
@@ -833,28 +833,32 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
         elseif (is_object($element)) {
             $element = get_object_vars($element);
-            $ordinals = [];
-            $type = NULL;
-            foreach ($element as $i => $value) {
-                // If ordinal is not found in each key with the same prefix then
-                // consider as if no ordinals had been detected and allow the
-                // object keys to be normalised.
-                $ordinal_found = preg_match('/^(?P<type>[^0-9]*)[0-9]+$/', $i, $match);
-                if (!$ordinal_found || (!is_null($type) && $type != $match['type'])) {
-                    $ordinals = [];
-                    break;
+            if (count($element) > 1) {
+                $ordinals = [];
+                if ($detect_ordinals) {
+                    $type = NULL;
+                    foreach ($element as $i => $value) {
+                        // If ordinal is not found in each key with the same prefix then
+                        // consider as if no ordinals had been detected and allow the
+                        // object keys to be normalised.
+                        $ordinal_found = preg_match('/^(?P<type>[^0-9]*)[0-9]+$/', $i, $match);
+                        if (!$ordinal_found || (!is_null($type) && $type != $match['type'])) {
+                            $ordinals = [];
+                            break;
+                        }
+                        $type = $match['type'];
+                        $ordinals[] = [$i => $value];
+                    }
                 }
-                $type = $match['type'];
-                $ordinals[] = [$i => $value];
-            }
-            // Sort element by keys if ordinal is not detected.
-            if (empty($ordinals)) {
-                ksort($element);
-                $element = (object) $element;
-            }
-            // If ordinals are detected than apply an array.
-            else {
-                $element = $ordinals;
+                // Sort element by keys if ordinal is not detected.
+                if (empty($ordinals)) {
+                    ksort($element);
+                    $element = (object) $element;
+                }
+                // If ordinals are detected than apply an array.
+                else {
+                    $element = $ordinals;
+                }
             }
             foreach ($element as &$item) {
                 $item = $this->normaliseEifJson($item);
