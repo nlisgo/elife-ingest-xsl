@@ -90,7 +90,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
      * @dataProvider jatsToEifProvider
      */
     public function testJatsToEif($expected, $actual) {
-        $this->assertEquals($expected, $actual);
+        $this->assertEifJsonEquals($expected, $actual);
     }
 
     public function jatsToEifProvider() {
@@ -104,8 +104,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $file = basename($eif, '.' . $ext);
             $convert = $this->convertEifFormat($file);
             $compares[] = [
-                $this->prepareEifForComparison(json_decode(file_get_contents($eif))),
-                $this->prepareEifForComparison(json_decode($convert->getOutput())),
+                json_decode(file_get_contents($eif)),
+                json_decode($convert->getOutput()),
             ];
         }
 
@@ -129,7 +129,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(count($expected), count($actual));
         foreach ($expected as $key => $needle) {
             $this->assertArrayHasKey($key, $actual);
-            $this->assertEquals($expected[$key], $actual[$key], $message);
+            $this->assertEifJsonEquals($expected[$key], $actual[$key], $message);
         }
     }
 
@@ -148,128 +148,15 @@ class simpleTest extends PHPUnit_Framework_TestCase
                 $queries = json_decode(file_get_contents($json));
                 foreach ($queries as $query) {
                     $provider[] = [
-                        $this->prepareEifForComparison((!empty($query->data) ? $query->data : $query)),
-                        $this->prepareEifForComparison(json_decode($this->convertEifFormat($match['filename'])->getOutput())),
-                        (!empty($query->data) && !empty($query->description) ? $query->description : '')
+                        (!empty($query->data) ? $query->data : $query),
+                        json_decode($this->convertEifFormat($match['filename'])->getOutput()),
+                        (!empty($query->data) && !empty($query->description) ? $query->description : ''),
                     ];
                 }
             }
         }
 
         return $provider;
-    }
-
-    protected function prepareEifForComparison($json) {
-        $prepare_contributors = function($contributors) {
-            foreach ($contributors as $contrib_pos => $contrib) {
-                $contrib = get_object_vars($contrib);
-                foreach ($contrib as $k => $value) {
-                    if ($k == 'references') {
-                        // Preserve order of values in references section.
-                        $value = get_object_vars($value);
-                        ksort($value);
-                    }
-                    if ($k == 'affiliations') {
-                        // Preserve order of affiliations but sort the
-                        // affiliation values.
-                        foreach ($value as $aff_pos => $aff) {
-                            $aff = get_object_vars($aff);
-                            ksort($aff);
-                            $value[$aff_pos] = $aff;
-                        }
-                    }
-                    $contrib[$k] = $value;
-                }
-                ksort($contrib);
-                $contributors[$contrib_pos] = $contrib;
-            }
-            return json_decode(json_encode($contributors), FALSE);
-        };
-        $prepare_fragments = function($fragments) use ($prepare_contributors, &$prepare_fragments) {
-            // Preserve order of fragments but order the values within a
-            // fragment.
-            foreach ($fragments as $frag_pos => $frag) {
-                $frag = get_object_vars($frag);
-                // Preserve the order of contributors, if present.
-                if (!empty($frag['contributors'])) {
-                    $frag['contributors'] = $prepare_contributors($frag['contributors']);
-                }
-                // Move on to next level of fragments (e.g. figure supplement).
-                if (!empty($frag['fragments'])) {
-                    $frag['fragments'] = $prepare_fragments($frag['fragments']);
-                }
-                ksort($frag);
-                $fragments[$frag_pos] = $frag;
-            }
-            return $fragments;
-        };
-        // Order the keyword and category types but preserve the order of the
-        // values.
-        foreach (['keywords', 'categories'] as $cat_type) {
-            if (!empty($json->{$cat_type})) {
-                $cats = get_object_vars($json->{$cat_type});
-                ksort($cats);
-                $json->{$cat_type} = json_decode(json_encode($cats), FALSE);
-            }
-        }
-        // Contributors must appear in a fixed order but the some contributor
-        // values can be sorted for easier comparison.
-        if (!empty($json->contributors)) {
-            $json->contributors = $prepare_contributors($json->contributors);
-        }
-        if (!empty($json->referenced)) {
-            $referenced = get_object_vars($json->referenced);
-            // Preserve order of referenced keys but the value of non-string
-            // key-values can be sorted for easier comparison.
-            foreach (['affiliation', 'funding', 'related-object'] as $ref_sec) {
-                if (!empty($referenced[$ref_sec])) {
-                    $ref_sec_values = get_object_vars($referenced[$ref_sec]);
-                    foreach ($ref_sec_values as $ref_id => $ref_values) {
-                        $ref_values = get_object_vars($ref_values);
-                        ksort($ref_values);
-                        $referenced[$ref_sec]->{$ref_id} = $ref_values;
-                    }
-                }
-            }
-            ksort($referenced);
-            $json->referenced = json_decode(json_encode($referenced), FALSE);
-        }
-        if (!empty($json->citations)) {
-            $citations = get_object_vars($json->citations);
-            // Citations must appear in a fixed order but the some citation
-            // values can be sorted for easier comparison.
-            foreach ($citations as $bib_id => $citation) {
-                $citation = get_object_vars($citation);
-                // Preserve order of authors but sort the author values.
-                if (!empty($citation['authors'])) {
-                    foreach ($citation['authors'] as $author_pos => $author) {
-                        $author = get_object_vars($author);
-                        ksort($author);
-                        $authors[$author_pos] = $author;
-                    }
-                    ksort($citation['authors']);
-                }
-                ksort($citation);
-                $citations[$bib_id] = $citation;
-            }
-            $json->citations = json_decode(json_encode($citations), FALSE);
-        }
-        if (!empty($json->fragments)) {
-            $json->fragments = $prepare_fragments($json->fragments);
-        }
-        // Preserve the order of related articles but sort the values within a
-        // related article object.
-        if (!empty($json->{'related-articles'})) {
-            foreach ($json->{'related-articles'} as $rel_pos => $rel) {
-                $rel = get_object_vars($rel);
-                ksort($rel);
-                $json->{'related-articles'}[$rel_pos] = $rel;
-            }
-        }
-
-        $json = get_object_vars($json);
-        ksort($json);
-        return json_decode(json_encode($json), FALSE);
     }
 
     /**
@@ -881,5 +768,98 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
 
         return trim($innerHTML);
+    }
+
+    /**
+     * Asserts that two Eif JSON structures are equal.
+     *
+     * @param  object|array $expected
+     * @param  object|array $actual
+     * @param  string $message
+     */
+    public function assertEifJsonEquals($expected, $actual, $message = '') {
+        $expected = $this->normaliseEifJson($expected);
+        $actual = $this->normaliseEifJson($actual);
+        $this->assertEquals($expected, $actual, $message);
+    }
+
+    /**
+     * Brings the keys of objects to a deterministic order to enable comparison
+     * of Eif JSON structures
+     *
+     * If an ordinal is detected in the keys of an object than for comparison we
+     * are converting these to an array. The structure of the objects that we
+     * are comparing are different to the original but it will throw a
+     * meaningful error message. Otherwise, there is no way to detect the
+     * difference between:
+     *
+     * "citations": {
+     *   "bib1": {},
+     *   "bib2": {}
+     * }
+     *
+     * and
+     *
+     * "citations": {
+     *   "bib2": {},
+     *   "bib1": {}
+     * }
+     *
+     * For comparison purposes if an ordinal is detected then we care about the
+     * difference so in the normalisation process the above is converted to:
+     *
+     * "citations": [
+     *   {"bib1": {}},
+     *   {"bib2": {}}
+     * ]
+     *
+     * and
+     *
+     * "citations": [
+     *   {"bib2": {}},
+     *   {"bib1": {}}
+     * ]
+     *
+     * @param mixed $element The element to normalise.
+     *
+     * @return mixed The same data with all object keys ordered in a
+     *               deterministic way.
+     */
+    private function normaliseEifJson($element) {
+        if (is_array($element)) {
+            foreach ($element as &$item) {
+                $item = $this->normaliseEifJson($item);
+            }
+        }
+        elseif (is_object($element)) {
+            $element = get_object_vars($element);
+            $ordinals = [];
+            $type = NULL;
+            foreach ($element as $i => $value) {
+                // If ordinal is not found in each key with the same prefix then
+                // consider as if no ordinals had been detected and allow the
+                // object keys to be normalised.
+                $ordinal_found = preg_match('/^(?P<type>[^0-9]*)[0-9]+$/', $i, $match);
+                if (!$ordinal_found || (!is_null($type) && $type != $match['type'])) {
+                    $ordinals = [];
+                    break;
+                }
+                $type = $match['type'];
+                $ordinals[] = [$i => $value];
+            }
+            // Sort element by keys if ordinal is not detected.
+            if (empty($ordinals)) {
+                ksort($element);
+                $element = (object) $element;
+            }
+            // If ordinals are detected than apply an array.
+            else {
+                $element = $ordinals;
+            }
+            foreach ($element as &$item) {
+                $item = $this->normaliseEifJson($item);
+            }
+        }
+        return $element;
     }
 }
