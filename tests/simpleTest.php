@@ -797,6 +797,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Asserts that two Eif JSON structures are equal.
      *
+     * Adapted from example code in https://github.com/lanthaler/JsonLD
+     *
      * @param  object|array $expected
      * @param  object|array $actual
      * @param  string $message
@@ -805,6 +807,32 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $expected = $this->normaliseEifJson($expected);
         $actual = $this->normaliseEifJson($actual);
         $this->assertEquals($expected, $actual, $message);
+    }
+
+    /**
+     * Brings the keys of objects to a deterministic order to enable comparison
+     * of Eif JSON structures
+     *
+     * @param mixed $element The element to normalise.
+     *
+     * @return mixed The same data with all object keys ordered in a
+     *               deterministic way.
+     */
+    private function normaliseEifJson($element) {
+        if (is_array($element)) {
+            foreach ($element as &$item) {
+                $item = $this->normaliseEifJson($item);
+            }
+        }
+        elseif (is_object($element)) {
+            $element = get_object_vars($element);
+            ksort($element);
+            $element = (object) $element;
+            foreach ($element as &$item) {
+                $item = $this->normaliseEifJson($item);
+            }
+        }
+        return $element;
     }
 
     /**
@@ -849,10 +877,10 @@ class simpleTest extends PHPUnit_Framework_TestCase
      * @return mixed The same data with all object keys ordered in a
      *               deterministic way.
      */
-    private function normaliseEifJson($element, $detect_ordinals = TRUE) {
+    private function normaliseEifJsonWithOrdinals($element, $detect_ordinals = TRUE) {
         if (is_array($element)) {
             foreach ($element as &$item) {
-                $item = $this->normaliseEifJson($item);
+                $item = $this->normaliseEifJsonWithOrdinals($item);
             }
         }
         elseif (is_object($element)) {
@@ -885,7 +913,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
                 }
             }
             foreach ($element as &$item) {
-                $item = $this->normaliseEifJson($item);
+                $item = $this->normaliseEifJsonWithOrdinals($item);
             }
         }
         return $element;
