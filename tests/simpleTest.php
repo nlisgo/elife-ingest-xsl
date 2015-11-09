@@ -268,6 +268,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlDatasetsProvider
+     */
+    public function testJatsToHtmlDatasets($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDatasetsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('datasets', 'getDatasets');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoGroupAuthorsProvider
      */
     public function testJatsToHtmlAuthorInfoGroupAuthors($expected, $actual) {
@@ -577,6 +589,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     public function jatsToHtmlEquProvider() {
         $this->setFolders();
         return $this->compareTargetedHtmlSection('equ', 'getEquation');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDataroProvider
+     */
+    public function testJatsToHtmlDataro($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDataroProvider() {
+        $this->setFolders();
+        return $this->compareTargetedHtmlSection('dataro', 'getDataset');
     }
 
     /**

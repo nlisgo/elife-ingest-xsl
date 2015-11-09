@@ -139,6 +139,57 @@
         <xsl:value-of select="name"/>
     </xsl:template>
 
+    <!-- ==== Data set start ==== -->
+    <xsl:template match="sec[@sec-type='datasets']">
+        <div id="datasets">
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+    <xsl:template match="sec[@sec-type='datasets']/title"/>
+    <xsl:template match="related-object">
+        <span class="{name()}">
+            <xsl:if test="@id">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/surname | related-object/given-names | related-object/name">       
+        <span class="name">
+            <xsl:value-of select="surname"/>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="given-names"/>
+        </span>        
+        <xsl:value-of select="name"/>
+    </xsl:template>
+    <xsl:template match="related-object/year">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/source">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/x">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/comment">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/object-id">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
     <!-- author-notes -->
     <xsl:template match="author-notes">
         <xsl:apply-templates/>
@@ -588,7 +639,7 @@
         </div>
     </xsl:template>
 
-    <xsl:template match="sec/title">
+    <xsl:template match="sec[not(@sec-type='datasets')]/title">
         <xsl:element name="h{count(ancestor::sec) + 1}">
             <xsl:apply-templates select="@* | node()"/>
         </xsl:element>
@@ -624,12 +675,36 @@
 
     <xsl:template match="ext-link">
         <xsl:if test="@ext-link-type = 'uri'">
-            <a href="{@xlink:href}">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="starts-with(@xlink:href, 'www.')">
+                            <xsl:value-of select="concat('http://', @xlink:href)"/>
+                        </xsl:when>
+                        <xsl:when test="starts-with(@xlink:href, 'doi:')">
+                            <xsl:value-of select="concat('http://dx.doi.org/', substring-after(@xlink:href, 'doi:'))"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@xlink:href"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:attribute name="target"><xsl:value-of select="'_blank'"/></xsl:attribute>
                 <xsl:apply-templates/>
             </a>
         </xsl:if>
         <xsl:if test="@ext-link-type = 'doi'">
-            <a href="/lookup/doi/{@xlink:href}">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="starts-with(@xlink:href, '10.7554/')">
+                            <xsl:value-of select="concat('/lookup/doi/', @xlink:href)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat('http://dx.doi.org/', @xlink:href)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
                 <xsl:apply-templates/>
             </a>
         </xsl:if>
