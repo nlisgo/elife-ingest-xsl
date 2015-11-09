@@ -138,6 +138,70 @@
         <xsl:text>, </xsl:text>
         <xsl:value-of select="name"/>
     </xsl:template>
+    
+    <!-- ==== Data set start ==== -->
+    <xsl:template match="sec[@sec-type='datasets']">
+        <div id="datasets">
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+    <xsl:template match="sec[@sec-type='datasets']/title"/>
+    <xsl:template match="related-object">
+        <span class="{name()}">
+            <xsl:if test="@id">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/surname | related-object/given-names | related-object/name">       
+        <span class="name">
+            <xsl:value-of select="surname"/>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="given-names"/>
+        </span>        
+        <xsl:value-of select="name"/>
+    </xsl:template>
+    <xsl:template match="related-object/year">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/source">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/x">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/comment">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/object-id">
+        <span class="{name()}">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    
+    <xsl:template match="related-object//ext-link">
+        <xsl:if test="@ext-link-type = 'uri'">
+            <a href="{@xlink:href}" target="_blank">
+                <xsl:apply-templates/>
+            </a>
+        </xsl:if>
+        <xsl:if test="@ext-link-type = 'doi'">
+            <a href="/lookup/doi/{@xlink:href}">
+                <xsl:apply-templates/>
+            </a>
+        </xsl:if>
+    </xsl:template>
 
     <!-- author-notes -->
     <xsl:template match="author-notes">
@@ -470,7 +534,7 @@
             </span>
         </div>
     </xsl:template>
-
+    
     <xsl:template match="aff" mode="affiliation-details">
         <span class="aff">
             <xsl:apply-templates/>
@@ -588,7 +652,7 @@
         </div>
     </xsl:template>
 
-    <xsl:template match="sec/title">
+    <xsl:template match="sec[not(@sec-type='datasets')]/title">
         <xsl:element name="h{count(ancestor::sec) + 1}">
             <xsl:apply-templates select="@* | node()"/>
         </xsl:element>
@@ -1671,7 +1735,7 @@
     <xsl:template match="sub-article//article-title"/>
     <xsl:template match="sub-article//article-id"/>
     <xsl:template match="object-id | table-wrap/label"/>
-
+    
     <xsl:template name="camel-case-word">
         <xsl:param name="text"/>
         <xsl:value-of select="translate(substring($text, 1, 1), $smallcase, $uppercase)" /><xsl:value-of select="translate(substring($text, 2, string-length($text)-1), $uppercase, $smallcase)" />
