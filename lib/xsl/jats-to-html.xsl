@@ -138,7 +138,7 @@
         <xsl:text>, </xsl:text>
         <xsl:value-of select="name"/>
     </xsl:template>
-    
+
     <!-- ==== Data set start ==== -->
     <xsl:template match="sec[@sec-type='datasets']">
         <div id="datasets">
@@ -188,19 +188,6 @@
         <span class="{name()}">
             <xsl:apply-templates/>
         </span>
-    </xsl:template>
-    
-    <xsl:template match="related-object//ext-link">
-        <xsl:if test="@ext-link-type = 'uri'">
-            <a href="{@xlink:href}" target="_blank">
-                <xsl:apply-templates/>
-            </a>
-        </xsl:if>
-        <xsl:if test="@ext-link-type = 'doi'">
-            <a href="/lookup/doi/{@xlink:href}">
-                <xsl:apply-templates/>
-            </a>
-        </xsl:if>
     </xsl:template>
 
     <!-- author-notes -->
@@ -534,7 +521,7 @@
             </span>
         </div>
     </xsl:template>
-    
+
     <xsl:template match="aff" mode="affiliation-details">
         <span class="aff">
             <xsl:apply-templates/>
@@ -688,12 +675,36 @@
 
     <xsl:template match="ext-link">
         <xsl:if test="@ext-link-type = 'uri'">
-            <a href="{@xlink:href}">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="starts-with(@xlink:href, 'www.')">
+                            <xsl:value-of select="concat('http://', @xlink:href)"/>
+                        </xsl:when>
+                        <xsl:when test="starts-with(@xlink:href, 'doi:')">
+                            <xsl:value-of select="concat('http://dx.doi.org/', substring-after(@xlink:href, 'doi:'))"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@xlink:href"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:attribute name="target"><xsl:value-of select="'_blank'"/></xsl:attribute>
                 <xsl:apply-templates/>
             </a>
         </xsl:if>
         <xsl:if test="@ext-link-type = 'doi'">
-            <a href="/lookup/doi/{@xlink:href}">
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="starts-with(@xlink:href, '10.7554/')">
+                            <xsl:value-of select="concat('/lookup/doi/', @xlink:href)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat('http://dx.doi.org/', @xlink:href)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
                 <xsl:apply-templates/>
             </a>
         </xsl:if>
@@ -1735,7 +1746,7 @@
     <xsl:template match="sub-article//article-title"/>
     <xsl:template match="sub-article//article-id"/>
     <xsl:template match="object-id | table-wrap/label"/>
-    
+
     <xsl:template name="camel-case-word">
         <xsl:param name="text"/>
         <xsl:value-of select="translate(substring($text, 1, 1), $smallcase, $uppercase)" /><xsl:value-of select="translate(substring($text, 2, string-length($text)-1), $uppercase, $smallcase)" />
