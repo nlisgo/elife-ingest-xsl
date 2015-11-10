@@ -13,6 +13,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     private $bib_folder = '';
     private $ris_folder = '';
     private $eif_folder = '';
+    private $eif_jats_folder = '';
     private $html_folder = '';
 
     public function setUp()
@@ -27,6 +28,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $this->bib_folder = $realpath . '/fixtures/bib/';
             $this->ris_folder = $realpath . '/fixtures/ris/';
             $this->eif_folder = $realpath . '/fixtures/eif/';
+            $this->eif_jats_folder = $realpath . '/fixtures/eif-jats/';
             $this->html_folder = $realpath . '/fixtures/html/';
         }
     }
@@ -117,7 +119,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
      * @return ConvertXMLToEif
      */
     protected function convertEifFormat($file) {
-        return new ConvertXMLToEif(XMLString::fromString(file_get_contents($this->jats_folder . $file . '.xml')));
+        return new ConvertXMLToEif(XMLString::fromString(file_get_contents($this->eif_jats_folder . $file . '.xml')));
     }
 
     /**
@@ -143,14 +145,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $provider = [];
 
         foreach ($jsons as $json) {
-            $found = preg_match('/^(?P<filename>[0-9]{5}\-v[0-9]+\-[^\-]+)\-' . $suffix . '\.json/', basename($json), $match);
+            $found = preg_match('/^(?P<filename>elife\-[0-9]{5}\-v[0-9]+)\-' . $suffix . '\.json/', basename($json), $match);
             if ($found) {
                 $queries = json_decode(file_get_contents($json));
                 foreach ($queries as $query) {
                     $provider[] = [
-                        (!empty($query->data) ? $query->data : $query),
+                        $query->data,
                         json_decode($this->convertEifFormat($match['filename'])->getOutput()),
-                        (!empty($query->data) && !empty($query->description) ? $query->description : ''),
+                        !empty($query->description) ? $query->description : '',
                     ];
                 }
             }
