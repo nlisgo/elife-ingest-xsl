@@ -16,6 +16,12 @@
         </xsl:choose>
     </xsl:variable>
 
+    <xsl:template match="@* | node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
     <xsl:template match="/">
         <xsl:text>{&#10;</xsl:text>
         <xsl:call-template name="item">
@@ -1543,8 +1549,12 @@
         <xsl:value-of select="normalize-space($output)"/>
     </xsl:template>
 
-    <xsl:template match="bold"><xsl:text disable-output-escaping="yes">&lt;strong&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/strong&gt;</xsl:text></xsl:template>
+    <xsl:template match="bold | italic | sup | sub">
+        <xsl:text disable-output-escaping="yes">&lt;</xsl:text><xsl:value-of select="name()"/><xsl:text disable-output-escaping="yes">&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/</xsl:text><xsl:value-of select="name()"/><xsl:text disable-output-escaping="yes">&gt;</xsl:text>
+    </xsl:template>
+
+    <!-- <xsl:template match="bold"><xsl:text disable-output-escaping="yes">&lt;strong&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/strong&gt;</xsl:text></xsl:template>
     <xsl:template match="italic"><xsl:text disable-output-escaping="yes">&lt;em&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/em&gt;</xsl:text></xsl:template>
     <xsl:template match="sup"><xsl:text disable-output-escaping="yes">&lt;sup&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/sup&gt;</xsl:text></xsl:template>
-    <xsl:template match="sub"><xsl:text disable-output-escaping="yes">&lt;sub&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/sub&gt;</xsl:text></xsl:template>
+    <xsl:template match="sub"><xsl:text disable-output-escaping="yes">&lt;sub&gt;</xsl:text><xsl:apply-templates/><xsl:text disable-output-escaping="yes">&lt;/sub&gt;</xsl:text></xsl:template> -->
 </xsl:stylesheet>
