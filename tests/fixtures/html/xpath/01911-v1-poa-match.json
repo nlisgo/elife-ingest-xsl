@@ -1,0 +1,10 @@
+[
+  {
+    "method": "getAuthorAffiliation",
+    "arguments": [
+      "1"
+    ],
+    "xpath": "//*[@class=\"aff\"]",
+    "string": "Department of Biomedicine, Aarhus University, Aarhus, Denmark"
+  }
+]
