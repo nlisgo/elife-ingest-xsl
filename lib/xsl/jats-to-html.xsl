@@ -11,6 +11,9 @@
 
     <xsl:template match="/">
         <xsl:call-template name="author-affiliation-details"/>
+        <xsl:call-template name="article-info-identification"/>
+        <xsl:call-template name="article-info-history"/>
+        <xsl:apply-templates select="//article-meta/contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
         <xsl:apply-templates select="@* | node()"/>
     </xsl:template>
 
@@ -156,13 +159,16 @@
             <xsl:apply-templates/>
         </span>
     </xsl:template>
-    <xsl:template match="related-object/surname | related-object/given-names | related-object/name">       
+    <xsl:template match="related-object/name">
         <span class="name">
             <xsl:value-of select="surname"/>
             <xsl:text> </xsl:text>
             <xsl:value-of select="given-names"/>
-        </span>        
-        <xsl:value-of select="name"/>
+            <xsl:if test="suffix">
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="suffix"/>
+            </xsl:if>
+        </span>
     </xsl:template>
     <xsl:template match="related-object/year">
         <span class="{name()}">
@@ -177,6 +183,11 @@
     <xsl:template match="related-object/x">
         <span class="{name()}">
             <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/etal">
+        <span class="{name()}">
+            <xsl:text>et al.</xsl:text>
         </span>
     </xsl:template>
     <xsl:template match="related-object/comment">
@@ -215,10 +226,10 @@
             <div id="author-info-other-footnotes">
                 <xsl:apply-templates select="fn[@fn-type='other']"/>
             </div>
-            <div id="author-info-contributions">
-                <xsl:apply-templates select="ancestor::article/back/sec/fn-group[@content-type='author-contribution']"/>
-            </div>
         </xsl:if>
+        <div id="author-info-contributions">
+            <xsl:apply-templates select="ancestor::article/back/sec/fn-group[@content-type='author-contribution']"/>
+        </div>
     </xsl:template>
 
     <xsl:template match="author-notes/fn[@fn-type='con']">
@@ -464,7 +475,7 @@
         <xsl:apply-templates/>
     </xsl:template>
     <xsl:template match="fn-group[@content-type='ethics-information']/title"/>
-    <xsl:template match="contrib" mode="article-info-reviewing-editor">
+    <xsl:template match="contrib[@contrib-type='editor']" mode="article-info-reviewing-editor">
         <div id="article-info-reviewing-editor">
             <div>
                 <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-reviewingeditor-text'"/></xsl:attribute>
@@ -640,7 +651,7 @@
     </xsl:template>
 
     <xsl:template match="sec[not(@sec-type='datasets')]/title">
-        <xsl:element name="h{count(ancestor::sec) + 1}">
+        <xsl:element name="h{count(ancestor::sec) + 2}">
             <xsl:apply-templates select="@* | node()"/>
         </xsl:element>
     </xsl:template>
@@ -761,7 +772,16 @@
         <xsl:choose>
             <!-- if article-title exists, make it as title.
                      Otherwise, make source -->
-            <xsl:when test="not(parent::boxed-text)">
+            <xsl:when test="parent::table-wrap">
+                <xsl:if test="following-sibling::graphic">
+                    <xsl:variable name="caption" select="parent::table-wrap/label/text()"/>
+                    <xsl:variable name="graphics" select="following-sibling::graphic/@xlink:href"/>
+                    <div class="fig-inline-img">
+                        <a href="[graphic-{$graphics}-large]" class="figure-expand-popup" title="{$caption}">
+                            <img data-img="[graphic-{$graphics}-small]" src="[graphic-{$graphics}-medium]" alt="{$caption}"/>
+                        </a>
+                    </div>
+                </xsl:if>
                 <div class="table-caption">
                     <xsl:apply-templates select="parent::table-wrap/label" mode="captionLabel"/>
                     <xsl:apply-templates/>
@@ -965,9 +985,6 @@
                 <xsl:call-template name="appendices-main-text"/>
             </div>
         </div>
-        <xsl:call-template name="article-info-identification"/>
-        <xsl:call-template name="article-info-history"/>
-        <xsl:apply-templates select="//sub-article//contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
     </xsl:template>
 
     <xsl:template
@@ -1212,6 +1229,19 @@
                 <xsl:when test="pub-id">
                     <xsl:value-of select="concat('http://dx.doi.org/', pub-id)"/>
                 </xsl:when>
+                <xsl:when test=".//ext-link/@xlink:href">
+                    <xsl:value-of select=".//ext-link/@xlink:href"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="hreftext">
+            <xsl:choose>
+                <xsl:when test="pub-id">
+                    <xsl:value-of select="concat('http://dx.doi.org/', pub-id)"/>
+                </xsl:when>
+                <xsl:when test=".//ext-link/@xlink:href = concat('http://dx.doi.org/', .//ext-link)">
+                    <xsl:value-of select=".//ext-link/@xlink:href"/>
+                </xsl:when>
                 <xsl:when test=".//ext-link">
                     <xsl:value-of select=".//ext-link"/>
                 </xsl:when>
@@ -1402,7 +1432,7 @@
                     </span>
                 </xsl:if>
 
-                <xsl:if test="$href != ''">
+                <xsl:if test="$href != '' and $hreftext != ''">
                     <div class="elife-reflink-doi-cited-wrapper">
                         <span>
                             <xsl:attribute name="class">
@@ -1415,7 +1445,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
-                            <a href="{$href}" target="_blank"><xsl:value-of select="$href"/></a>
+                            <a href="{$href}" target="_blank"><xsl:value-of select="$hreftext"/></a>
                         </span>
                     </div>
                 </xsl:if>
@@ -1535,7 +1565,7 @@
         </div>
     </xsl:template>
 
-    <xsl:template match="sub-article//name/given-names | sub-article//name/surname">
+    <xsl:template match="contrib[@contrib-type='editor']/name/given-names | contrib[@contrib-type='editor']/name/surname">
         <span class="nlm-given-names">
             <xsl:value-of select="given-names"/>
         </span>
@@ -1547,21 +1577,21 @@
         <xsl:value-of select="name"/>
     </xsl:template>
 
-    <xsl:template match="sub-article//aff">
+    <xsl:template match="contrib[@contrib-type='editor']//aff">
         <xsl:apply-templates/>
         <xsl:if test="following-sibling::*">
             <xsl:text>, </xsl:text>
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="sub-article//role">
+    <xsl:template match="contrib[@contrib-type='editor']//role">
         <span class="nlm-role">
             <xsl:apply-templates/>
         </span>
         <xsl:text>, </xsl:text>
     </xsl:template>
 
-    <xsl:template match="sub-article//institution | sub-article//country">
+    <xsl:template match="contrib[@contrib-type='editor']//institution | contrib[@contrib-type='editor']//country">
         <span class="nlm-{name()}">
             <xsl:apply-templates/>
         </span>
@@ -1631,7 +1661,7 @@
                 <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
             </xsl:if>
             <xsl:if test="title">
-                <h2><xsl:value-of select="title"/></h2>
+                <h3><xsl:value-of select="title"/></h3>
             </xsl:if>
             <xsl:apply-templates mode="testing"/>
         </div>
@@ -1746,6 +1776,8 @@
     <xsl:template match="sub-article//article-title"/>
     <xsl:template match="sub-article//article-id"/>
     <xsl:template match="object-id | table-wrap/label"/>
+    <xsl:template match="funding-group//institution-wrap/institution-id"/>
+    <xsl:template match="table-wrap/graphic"/>
 
     <xsl:template name="camel-case-word">
         <xsl:param name="text"/>

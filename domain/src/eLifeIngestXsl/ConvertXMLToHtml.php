@@ -247,10 +247,13 @@ class ConvertXMLToHtml extends ConvertXML {
     $from = [
       '/<(?!' . implode('|', $self_closing) . ')([a-z]+)\/>/',
       '/<(?!' . implode('|', $self_closing) . ')([a-z]+)( [^\/>]+)\/>/',
+      // @todo - elife - nlisgo - some spacing introduced in POA xml is causing display issues. This seems to address it. But there may be better approaches.
+      '/\n\t+/',
     ];
     $to = [
       '<$1></$1>',
       '<$1$2></$1>',
+      '',
     ];
     return preg_replace($from, $to, $html);
   }
