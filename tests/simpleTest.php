@@ -670,7 +670,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
         $nodeList = $xpath->query($xpath_query);
         $this->assertGreaterThanOrEqual(1, $nodeList->length);
         if ($type == 'string') {
-            $output = $nodeList->item(0)->nodeValue;
+            $output = preg_replace('/\n/', '', $nodeList->item(0)->nodeValue);
         }
         else {
             $output = $domDoc->saveHTML($nodeList->item(0));
