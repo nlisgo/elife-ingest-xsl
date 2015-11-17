@@ -1229,6 +1229,19 @@
                 <xsl:when test="pub-id">
                     <xsl:value-of select="concat('http://dx.doi.org/', pub-id)"/>
                 </xsl:when>
+                <xsl:when test=".//ext-link/@xlink:href">
+                    <xsl:value-of select=".//ext-link/@xlink:href"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="hreftext">
+            <xsl:choose>
+                <xsl:when test="pub-id">
+                    <xsl:value-of select="concat('http://dx.doi.org/', pub-id)"/>
+                </xsl:when>
+                <xsl:when test=".//ext-link/@xlink:href = concat('http://dx.doi.org/', .//ext-link)">
+                    <xsl:value-of select=".//ext-link/@xlink:href"/>
+                </xsl:when>
                 <xsl:when test=".//ext-link">
                     <xsl:value-of select=".//ext-link"/>
                 </xsl:when>
@@ -1419,7 +1432,7 @@
                     </span>
                 </xsl:if>
 
-                <xsl:if test="$href != ''">
+                <xsl:if test="$href != '' and $hreftext != ''">
                     <div class="elife-reflink-doi-cited-wrapper">
                         <span>
                             <xsl:attribute name="class">
@@ -1432,7 +1445,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
-                            <a href="{$href}" target="_blank"><xsl:value-of select="$href"/></a>
+                            <a href="{$href}" target="_blank"><xsl:value-of select="$hreftext"/></a>
                         </span>
                     </div>
                 </xsl:if>
