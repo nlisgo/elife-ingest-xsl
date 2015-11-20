@@ -1748,13 +1748,19 @@
         </sub>
     </xsl:template>
 
+    <xsl:template match="disp-quote">
+        <xsl:text disable-output-escaping="yes">&lt;blockquote class="disp-quote"&gt;</xsl:text>
+            <xsl:apply-templates/>
+        <xsl:text disable-output-escaping="yes">&lt;/blockquote&gt;</xsl:text>
+    </xsl:template>
+    
     <!-- END - general format -->
 
     <xsl:template match="sub-article//title-group | sub-article/front-stub | fn-group[@content-type='competing-interest']/fn/p">
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link | app/title | disp-formula | list | list-item" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | sub | sup | sec/title | ext-link | app/title | disp-formula | list | list-item | disp-quote" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
