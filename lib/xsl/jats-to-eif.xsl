@@ -193,8 +193,17 @@
             <xsl:value-of select="'&#10;'"/>
             <xsl:text>]</xsl:text>
         </xsl:if>
-        <xsl:if test="//article-categories/subj-group[@subj-group-type='heading']/subject">
+        <xsl:if test="//article-categories/subj-group[@subj-group-type='sub-display-channel']/subject">
             <xsl:if test="//article-categories/subj-group[@subj-group-type='display-channel']/subject">
+                <xsl:text>,&#10;</xsl:text>
+            </xsl:if>
+            <xsl:text>"sub-display-channel": [</xsl:text>
+            <xsl:apply-templates select="//article-categories/subj-group[@subj-group-type='sub-display-channel']/subject"/>
+            <xsl:value-of select="'&#10;'"/>
+            <xsl:text>]</xsl:text>
+        </xsl:if>
+        <xsl:if test="//article-categories/subj-group[@subj-group-type='heading']/subject">
+            <xsl:if test="//article-categories/subj-group[@subj-group-type='display-channel']/subject | //article-categories/subj-group[@subj-group-type='sub-display-channel']/subject">
                 <xsl:text>,&#10;</xsl:text>
             </xsl:if>
             <xsl:text>"heading": [</xsl:text>
