@@ -1084,10 +1084,15 @@
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div class="boxed-text">
+                <div>
+                    <xsl:attribute name="class">
+                        <xsl:value-of select="'boxed-text'"/>
+                        <xsl:if test="//article/@article-type != 'research-article' and .//inline-graphic">
+                            <xsl:value-of select="' insight-image'"/>
+                        </xsl:if>
+                    </xsl:attribute>
                     <xsl:apply-templates/>
                 </div>
-
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
