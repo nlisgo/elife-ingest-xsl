@@ -1297,46 +1297,44 @@
             <xsl:if test="person-group[@person-group-type='author']">
                 <div class="elife-reflink-authors">
                     <xsl:for-each select="person-group[@person-group-type='author']">
-                        <xsl:for-each select="child::name">
-                            <xsl:variable name="givenname" select="child::given-names"/>
-                            <xsl:variable name="surname" select="child::surname"/>
-                            <xsl:variable name="suffix" select="child::suffix"/>
-                            <xsl:variable name="fullname">
-                                <xsl:choose>
-                                    <xsl:when test="string($suffix) != ''">
-                                        <xsl:value-of select="concat($givenname, ' ', $surname, ' ', $suffix)"/>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="concat($givenname, ' ', $surname)"/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:variable>
-                            <xsl:variable name="hrefvalue"
-                                          select="concat('http://scholar.google.com/scholar?q=&quot;author:', $fullname, '&quot;')"/>
-                            <span class="elife-reflink-author">
-                                <a href="{$hrefvalue}" target="_blank">
-                                    <xsl:value-of select="$fullname"/>
-                                </a>
-                            </span>
-                            <!-- if next name exists then add comma(,) -->
-                            <xsl:if test="following-sibling::name">
+                        <xsl:for-each select="name | collab">
+                            <xsl:if test="position() != 1">
                                 <xsl:text>, </xsl:text>
                             </xsl:if>
-                            <!-- for etal exists, then add ( et al.) -->
-                            <xsl:if test="position() = last() and following-sibling::etal">
-                                <xsl:text> et al. </xsl:text>
-                            </xsl:if>
+                            <xsl:choose>
+                                <xsl:when test="name() = 'name'">
+                                    <xsl:variable name="givenname" select="given-names"/>
+                                    <xsl:variable name="surname" select="surname"/>
+                                    <xsl:variable name="suffix" select="suffix"/>
+                                    <xsl:variable name="fullname">
+                                        <xsl:choose>
+                                            <xsl:when test="string($suffix) != ''">
+                                                <xsl:value-of select="concat($givenname, ' ', $surname, ' ', $suffix)"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="concat($givenname, ' ', $surname)"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <xsl:variable name="hrefvalue" select="concat('http://scholar.google.com/scholar?q=&quot;author:', $fullname, '&quot;')"/>
+                                    <span class="elife-reflink-author">
+                                        <a href="{$hrefvalue}" target="_blank">
+                                            <xsl:value-of select="$fullname"/>
+                                        </a>
+                                    </span>
+                                </xsl:when>
+                                <xsl:when test="name() = 'collab'">
+                                    <span class="elife-reflink-author">
+                                        <span class="nlm-collab">
+                                            <xsl:apply-templates/>
+                                        </span>
+                                    </span>
+                                </xsl:when>
+                            </xsl:choose>
                         </xsl:for-each>
-                        <!-- Handle collab -->
-                        <xsl:for-each select="child::collab">
-                            <span class="nlm-collab">
-                                <xsl:apply-templates/>
-                            </span>
-                            <!-- if next name exists then add comma(,) -->
-                            <xsl:if test="following-sibling::collab">
-                                <xsl:text>, </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
+                        <xsl:if test="etal">
+                            <xsl:text> et al. </xsl:text>
+                        </xsl:if>
                     </xsl:for-each>
                 </div>
             </xsl:if>
