@@ -282,6 +282,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlMetatagsProvider
+     */
+    public function testJatsToHtmlMetatags($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlMetatagsProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('metatags', 'getMetatags');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoGroupAuthorsProvider
      */
     public function testJatsToHtmlAuthorInfoGroupAuthors($expected, $actual) {

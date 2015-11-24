@@ -194,6 +194,13 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @return string
+   */
+  public function getMetatags() {
+    return $this->getSection("//*[@id='metatags']");
+  }
+
+  /**
    * @param string $xpath_query
    * @param int $limit
    * @return string
@@ -247,12 +254,15 @@ class ConvertXMLToHtml extends ConvertXML {
     $from = [
       '/<(?!' . implode('|', $self_closing) . ')([a-z]+)\/>/',
       '/<(?!' . implode('|', $self_closing) . ')([a-z]+)( [^\/>]+)\/>/',
+      // Make sure metatags appear on a new line.
+      '/(>)(<meta )/',
       // @todo - elife - nlisgo - some spacing introduced in POA xml is causing display issues. This seems to address it. But there may be better approaches.
       '/\n\t+/',
     ];
     $to = [
       '<$1></$1>',
       '<$1$2></$1>',
+      "$1\n$2",
       '',
     ];
     return preg_replace($from, $to, $html);
