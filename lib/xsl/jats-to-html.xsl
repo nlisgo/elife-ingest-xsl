@@ -10,6 +10,7 @@
     <xsl:variable name="allcase" select="concat($smallcase, $uppercase)"/>
 
     <xsl:template match="/">
+        <xsl:call-template name="metatags"/>
         <xsl:call-template name="author-affiliation-details"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
@@ -21,6 +22,144 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template name="metatags">
+        <div id="metatags">
+            <xsl:if test="//article-meta/permissions">
+                <meta name="DC.Rights">
+                    <xsl:attribute name="content">
+                        <xsl:value-of select="//article-meta/permissions/copyright-statement"/><xsl:text>. </xsl:text><xsl:value-of select="//article-meta/permissions/license"/>
+                    </xsl:attribute>
+                </meta>
+            </xsl:if>
+            <xsl:for-each select="//article-meta/contrib-group/contrib">
+                <meta name="DC.Contributor">
+                    <xsl:attribute name="content">
+                        <xsl:choose>
+                            <xsl:when test="name">
+                                <xsl:value-of select="concat(name/given-names, ' ', name/surname)"/>
+                                <xsl:if test="name/suffix">
+                                    <xsl:value-of select="concat(' ', name/suffix)"/>
+                                </xsl:if>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:attribute>
+                </meta>
+            </xsl:for-each>
+            <xsl:for-each select="//funding-group/award-group">
+                <meta name="citation_funding_source">
+                    <xsl:attribute name="content">
+                        <xsl:value-of select="concat('citation_funder=', .//institution, ';citation_grant_number=', award-id, ';citation_grant_recipient=')"/>
+                        <xsl:value-of select="concat(principal-award-recipient/name/given-names, ' ', principal-award-recipient/name/surname)"/>
+                        <xsl:for-each select="principal-award-recipient/name/suffix">
+                            <xsl:value-of select="concat(' ', .)"/>
+                        </xsl:for-each>
+                    </xsl:attribute>
+                </meta>
+            </xsl:for-each>
+            <xsl:for-each select="//article-meta/contrib-group/contrib">
+                <xsl:variable name="type" select="@contrib-type"/>
+                <meta name="citation_{$type}">
+                    <xsl:attribute name="content">
+                        <xsl:choose>
+                            <xsl:when test="name">
+                                <xsl:value-of select="concat(name/given-names, ' ', name/surname)"/>
+                                <xsl:if test="name/suffix">
+                                    <xsl:value-of select="concat(' ', name/suffix)"/>
+                                </xsl:if>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:attribute>
+                </meta>
+                <xsl:for-each select="aff[not(@id)] | xref[@ref-type='aff'][@rid]">
+                    <xsl:choose>
+                        <xsl:when test="name() = 'aff'">
+                            <xsl:for-each select="institution | email">
+                                <meta name="citation_{$type}_{name()}">
+                                    <xsl:attribute name="content">
+                                        <xsl:value-of select="."/>
+                                    </xsl:attribute>
+                                </meta>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:when test="name() = 'xref'">
+                            <xsl:variable name="rid" select="@rid"/>
+                            <xsl:for-each select="//aff[@id=$rid]/institution | //aff[@id=$rid]/email">
+                                <meta name="citation_{$type}_{name()}">
+                                    <xsl:attribute name="content">
+                                        <xsl:value-of select="."/>
+                                    </xsl:attribute>
+                                </meta>
+                            </xsl:for-each>
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:for-each>
+                <xsl:if test="xref[@ref-type='corresp'][@rid]">
+                    <xsl:variable name="rid" select="xref[@ref-type='corresp']/@rid"/>
+                    <xsl:if test="//corresp[@id=$rid]/email">
+                        <meta name="citation_{$type}_email">
+                            <xsl:attribute name="content">
+                                <xsl:value-of select="//corresp[@id=$rid]/email"/>
+                            </xsl:attribute>
+                        </meta>
+                    </xsl:if>
+                </xsl:if>
+                <xsl:if test="contrib-id[@contrib-id-type='orcid']">
+                    <meta name="citation_{$type}_orcid">
+                        <xsl:attribute name="content">
+                            <xsl:value-of select="contrib-id[@contrib-id-type='orcid']"/>
+                        </xsl:attribute>
+                    </meta>
+                </xsl:if>
+            </xsl:for-each>
+            <xsl:for-each select="//ref-list/ref">
+                <xsl:variable name="citation_journal" select="element-citation[@publication-type='journal']/source"/>
+                <xsl:variable name="citation_string">
+                    <xsl:if test="$citation_journal">
+                        <xsl:value-of select="concat(';citation_journal_title=', $citation_journal)"/>
+                    </xsl:if>
+                    <xsl:for-each select=".//person-group[@person-group-type='author']/name | .//person-group[@person-group-type='author']/collab">
+                        <xsl:choose>
+                            <xsl:when test="name() = 'name'">
+                                <xsl:value-of select="concat(';citation_author=', given-names, '. ', surname)"/>
+                                <xsl:if test="suffix">
+                                    <xsl:value-of select="concat(' ', suffix)"/>
+                                </xsl:if>
+                            </xsl:when>
+                            <xsl:when test="name() = 'collab'">
+                                <xsl:value-of select="concat(';citation_author=', .)"/>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:for-each select=".//article-title | element-citation[not(@publication-type='journal')]/source">
+                        <xsl:value-of select="concat(';citation_title=', .)"/>
+                    </xsl:for-each>
+                    <xsl:if test=".//fpage">
+                        <xsl:value-of select="concat(';citation_pages=', .//fpage)"/>
+                        <xsl:if test=".//lpage">
+                            <xsl:value-of select="concat('-', .//lpage)"/>
+                        </xsl:if>
+                    </xsl:if>
+                    <xsl:if test=".//volume">
+                        <xsl:value-of select="concat(';citation_volume=', .//volume)"/>
+                    </xsl:if>
+                    <xsl:if test=".//year">
+                        <xsl:value-of select="concat(';citation_year=', .//year)"/>
+                    </xsl:if>
+                    <xsl:if test=".//pub-id[@pub-id-type='doi']">
+                        <xsl:value-of select="concat(';citation_doi=', .//pub-id[@pub-id-type='doi'])"/>
+                    </xsl:if>
+                </xsl:variable>
+                <xsl:if test="string-length($citation_string)>1">
+                    <meta name="citation_reference">
+                        <xsl:attribute name="content">
+                            <xsl:value-of select="substring-after($citation_string, ';')"/>
+                        </xsl:attribute>
+                    </meta>
+                </xsl:if>
+            </xsl:for-each>
+        </div>
     </xsl:template>
 
     <xsl:template match="article-meta/title-group/article-title">
