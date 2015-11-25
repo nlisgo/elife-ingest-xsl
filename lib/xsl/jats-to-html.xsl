@@ -43,6 +43,9 @@
                                     <xsl:value-of select="concat(' ', name/suffix)"/>
                                 </xsl:if>
                             </xsl:when>
+                            <xsl:when test="collab">
+                                <xsl:value-of select="collab"/>
+                            </xsl:when>
                         </xsl:choose>
                     </xsl:attribute>
                 </meta>
@@ -58,7 +61,7 @@
                     </xsl:attribute>
                 </meta>
             </xsl:for-each>
-            <xsl:for-each select="//article-meta/contrib-group/contrib">
+            <xsl:for-each select="//article-meta/contrib-group/contrib[@contrib-type='author'] | //article-meta/contrib-group/contrib[@contrib-type='editor']">
                 <xsl:variable name="type" select="@contrib-type"/>
                 <meta name="citation_{$type}">
                     <xsl:attribute name="content">
@@ -68,6 +71,9 @@
                                 <xsl:if test="name/suffix">
                                     <xsl:value-of select="concat(' ', name/suffix)"/>
                                 </xsl:if>
+                            </xsl:when>
+                            <xsl:when test="collab">
+                                <xsl:value-of select="collab"/>
                             </xsl:when>
                         </xsl:choose>
                     </xsl:attribute>
