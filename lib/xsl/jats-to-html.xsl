@@ -11,6 +11,7 @@
 
     <xsl:template match="/">
         <xsl:call-template name="metatags"/>
+        <xsl:call-template name="dc-descriptions"/>
         <xsl:call-template name="author-affiliation-details"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
@@ -1055,6 +1056,46 @@
         <xsl:variable name="data-doi" select="child::fig[1]/object-id[@pub-id-type='doi']/text()"/>
         <div class="fig-group" id="{concat('fig-group-', count(preceding::fig-group)+1)}" data-doi="{$data-doi}">
             <xsl:apply-templates select="." mode="testing"/>
+        </div>
+    </xsl:template>
+
+    <xsl:template name="dc-descriptions">
+        <div id="dc-description">
+            <xsl:if test="//abstract[@abstract-type='executive-summary']">
+                <xsl:variable name="dc-description-digest">
+                    <xsl:for-each select="//abstract[@abstract-type='executive-summary']/p">
+                        <xsl:if test="not(ext-link[@ext-link-type='doi'])">
+                            <xsl:value-of select="concat(' ', .)"/>
+                        </xsl:if>
+                    </xsl:for-each>
+                </xsl:variable>
+                <xsl:value-of select="substring-after($dc-description-digest, ' ')"/>
+            </xsl:if>
+        </div>
+        <xsl:for-each select="//fig | //table-wrap | //boxed-text | //supplementary-material | //media[not(@mimetype='application')]">
+            <xsl:if test="object-id[@pub-id-type='doi']">
+                <xsl:variable name="data-doi" select="object-id[@pub-id-type='doi']/text()"/>
+                <xsl:apply-templates select="." mode="dc-description">
+                    <xsl:with-param name="doi" select="$data-doi"/>
+                </xsl:apply-templates>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template match="fig | table-wrap | boxed-text | supplementary-material | media" mode="dc-description">
+        <xsl:param name="doi"/>
+        <xsl:variable name="data-dc-description">
+            <xsl:if test="caption/title">
+                <xsl:value-of select="concat(' ', caption/title)"/>
+            </xsl:if>
+            <xsl:for-each select="caption/p">
+                <xsl:if test="not(ext-link[@ext-link-type='doi'])">
+                    <xsl:value-of select="concat(' ', .)"/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <div data-dc-description="{$doi}">
+            <xsl:value-of select="substring-after($data-dc-description, ' ')"/>
         </div>
     </xsl:template>
 
