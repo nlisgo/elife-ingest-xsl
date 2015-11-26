@@ -975,6 +975,11 @@
                     <xsl:value-of select="@colspan"/>
                 </xsl:attribute>
             </xsl:if>
+            <xsl:if test="@align">
+                <xsl:attribute name="class">
+                    <xsl:value-of select="concat('table-', @align)"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
