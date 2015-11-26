@@ -1089,7 +1089,7 @@
                 <xsl:value-of select="concat(' ', caption/title)"/>
             </xsl:if>
             <xsl:for-each select="caption/p">
-                <xsl:if test="not(ext-link[@ext-link-type='doi'])">
+                <xsl:if test="not(ext-link[@ext-link-type='doi']) and not(.//object-id[@pub-id-type='doi'])">
                     <xsl:value-of select="concat(' ', .)"/>
                 </xsl:if>
             </xsl:for-each>
