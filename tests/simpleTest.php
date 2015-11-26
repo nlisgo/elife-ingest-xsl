@@ -294,6 +294,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlDcDescriptionProvider
+     */
+    public function testJatsToHtmlDcDescription($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('dc-description', 'getDcDescription');
+    }
+
+    /**
      * @dataProvider jatsToHtmlAuthorInfoGroupAuthorsProvider
      */
     public function testJatsToHtmlAuthorInfoGroupAuthors($expected, $actual) {
@@ -546,6 +558,78 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlDcDescriptionFigProvider
+     */
+    public function testJatsToHtmlDcDescriptionFig($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionFigProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('fig');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDcDescriptionFigGroupProvider
+     */
+    public function testJatsToHtmlDcDescriptionFigGroup($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionFigGroupProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('fig-group');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDcDescriptionTableWrapProvider
+     */
+    public function testJatsToHtmlDcDescriptionTableWrap($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionTableWrapProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('table-wrap');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDcDescriptionBoxedTextProvider
+     */
+    public function testJatsToHtmlDcDescriptionBoxedText($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionBoxedTextProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('boxed-text');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDcDescriptionSupplementaryMaterialProvider
+     */
+    public function testJatsToHtmlDcDescriptionSupplementaryMaterial($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionSupplementaryMaterialProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('supplementary-material');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlDcDescriptionMediaProvider
+     */
+    public function testJatsToHtmlDcDescriptionMedia($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlDcDescriptionMediaProvider() {
+        $this->setFolders();
+        return $this->compareDcDescriptionHtmlSection('media');
+    }
+
+    /**
      * @dataProvider jatsToHtmlIdSubsectionProvider
      */
     public function testJatsToHtmlIdSubsection($expected, $actual) {
@@ -703,6 +787,13 @@ class simpleTest extends PHPUnit_Framework_TestCase
      */
     protected function compareDoiHtmlSection($fragment_suffix) {
         return $this->compareTargetedHtmlSection('doi-' . $fragment_suffix, 'getDoi', '10.7554/');
+    }
+
+    /**
+     * Prepare array of actual and expected results for DC.Description HTML.
+     */
+    protected function compareDcDescriptionHtmlSection($fragment_suffix) {
+        return $this->compareTargetedHtmlSection('dc-description-' . $fragment_suffix, 'getDcDescription', '10.7554/');
     }
 
     /**

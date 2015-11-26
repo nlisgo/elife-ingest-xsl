@@ -201,6 +201,19 @@ class ConvertXMLToHtml extends ConvertXML {
   }
 
   /**
+   * @param string|NULL $doi
+   * @return string
+   */
+  public function getDcDescription($doi = NULL) {
+    if (is_null($doi)) {
+      return $this->getSection("//*[@id='dc-description']");
+    }
+    else {
+      return $this->getSection("//*[@data-dc-description='" . $doi . "']");
+    }
+  }
+
+  /**
    * @param string $xpath_query
    * @param int $limit
    * @return string
