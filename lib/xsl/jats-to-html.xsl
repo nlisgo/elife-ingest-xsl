@@ -999,12 +999,18 @@
         </li>
     </xsl:template>
 
-    <xsl:template match="named-content[@content-type='author-callout-style1']">
-        <span class="named-content author-callout-style1">
+    <xsl:template match="named-content">
+        <span>
+            <xsl:attribute name="class">
+                <xsl:value-of select="name()"/>
+                <xsl:if test="@content-type">
+                    <xsl:value-of select="concat(' ', @content-type)"/>
+                </xsl:if>
+            </xsl:attribute>
             <xsl:apply-templates/>
         </span>
     </xsl:template>
-
+    
     <xsl:template match="inline-formula">
         <span class="inline-formula">
             <xsl:apply-templates/>
