@@ -98,6 +98,13 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getOriginalArticle() {
+    return $this->getSection("//*[@id='original-article']");
+  }
+
+  /**
+   * @return string
+   */
   public function getAuthorInfoGroupAuthors() {
     return $this->getSection("//*[@id='author-info-group-authors']");
   }
