@@ -1109,13 +1109,24 @@
 
     <xsl:template name="dc-descriptions">
         <div id="dc-description">
-            <xsl:if test="//abstract[@abstract-type='executive-summary']">
+            <xsl:if test="//abstract[@abstract-type='executive-summary'] | //abstract[not(@abstract-type)]">
                 <xsl:variable name="dc-description-digest">
-                    <xsl:for-each select="//abstract[@abstract-type='executive-summary']/p">
-                        <xsl:if test="not(ext-link[@ext-link-type='doi'])">
-                            <xsl:value-of select="concat(' ', .)"/>
-                        </xsl:if>
-                    </xsl:for-each>
+                    <xsl:choose>
+                        <xsl:when test="//abstract[@abstract-type='executive-summary']">
+                            <xsl:for-each select="//abstract[@abstract-type='executive-summary']/p">
+                                <xsl:if test="not(ext-link[@ext-link-type='doi'])">
+                                    <xsl:value-of select="concat(' ', .)"/>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="//abstract[not(@abstract-type)]/p">
+                                <xsl:if test="not(ext-link[@ext-link-type='doi'])">
+                                    <xsl:value-of select="concat(' ', .)"/>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:variable>
                 <xsl:value-of select="substring-after($dc-description-digest, ' ')"/>
             </xsl:if>
