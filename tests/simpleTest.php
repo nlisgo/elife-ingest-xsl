@@ -270,6 +270,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlOriginalArticleProvider
+     */
+    public function testJatsToHtmlOriginalArticle($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlOriginalArticleProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('original-article', 'getOriginalArticle');
+    }
+
+    /**
      * @dataProvider jatsToHtmlDatasetsProvider
      */
     public function testJatsToHtmlDatasets($expected, $actual) {

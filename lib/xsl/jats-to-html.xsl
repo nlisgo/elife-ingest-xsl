@@ -12,6 +12,7 @@
     <xsl:template match="/">
         <xsl:call-template name="metatags"/>
         <xsl:call-template name="dc-descriptions"/>
+        <xsl:call-template name="original-article"/>
         <xsl:call-template name="author-affiliation-details"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
@@ -23,6 +24,53 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template name="original-article">
+        <div id="original-article">
+            <xsl:if test="//history//*[@publication-type='journal']">
+                <xsl:text>date=</xsl:text><xsl:value-of select="//history//*[@publication-type='journal']/year"/>
+                <xsl:if test="//history//*[@publication-type='journal']/month">
+                    <xsl:value-of select="concat('-', //history//*[@publication-type='journal']/month)"/>
+                    <xsl:if test="//history//*[@publication-type='journal']/day">
+                        <xsl:value-of select="concat('-', //history//*[@publication-type='journal']/day)"/>
+                    </xsl:if>
+                </xsl:if>
+                <xsl:text>&#10;title=</xsl:text><xsl:apply-templates select="//history//*[@publication-type='journal']/article-title"/>
+                <xsl:if test="//history//*[@publication-type='journal']/person-group">
+                    <xsl:text>&#10;author=</xsl:text>
+                    <xsl:for-each select="//history//*[@publication-type='journal']/person-group/*">
+                        <xsl:if test="position() > 1"><xsl:text>|</xsl:text></xsl:if>
+                        <xsl:choose>
+                            <xsl:when test="name() = 'name'">
+                                <xsl:value-of select="concat(given-names, ' ', surname)"/>
+                                <xsl:if test="suffix">
+                                    <xsl:value-of select="concat(' ', suffix)"/>
+                                </xsl:if>
+                            </xsl:when>
+                            <xsl:when test="name() = 'etal'">
+                                <xsl:value-of select="name()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </xsl:if>
+                <xsl:if test="//history//*[@publication-type='journal']/source">
+                    <xsl:text>&#10;citeas=</xsl:text>
+                    <xsl:value-of disable-output-escaping="yes" select="concat('&lt;i&gt;', //history//*[@publication-type='journal']/source, '&lt;/i&gt;')"/>
+                    <xsl:value-of select="concat(' ', //history//*[@publication-type='journal']/year, ';', //history//*[@publication-type='journal']/volume, ':', //history//*[@publication-type='journal']/fpage)"/>
+                    <xsl:if test="//history//*[@publication-type='journal']/lpage">
+                        <xsl:value-of select="concat('-', //history//*[@publication-type='journal']/lpage)"/>
+                    </xsl:if>
+                </xsl:if>
+                <xsl:if test="//history//*[@publication-type='journal']/pub-id[@pub-id-type='doi']">
+                    <xsl:text>&#10;doi=</xsl:text>
+                    <xsl:value-of select="//history//*[@publication-type='journal']/pub-id[@pub-id-type='doi']"/>
+                </xsl:if>
+            </xsl:if>
+        </div>
     </xsl:template>
 
     <xsl:template name="metatags">
@@ -1953,7 +2001,7 @@
     
     <!-- END - general format -->
 
-    <xsl:template match="sub-article//title-group | sub-article/front-stub | fn-group[@content-type='competing-interest']/fn/p">
+    <xsl:template match="sub-article//title-group | sub-article/front-stub | fn-group[@content-type='competing-interest']/fn/p | //history//*[@publication-type='journal']/article-title">
         <xsl:apply-templates/>
     </xsl:template>
 
