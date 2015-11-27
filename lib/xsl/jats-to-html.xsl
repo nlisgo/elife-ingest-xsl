@@ -78,7 +78,7 @@
             <xsl:if test="//article-meta/permissions">
                 <meta name="DC.Rights">
                     <xsl:attribute name="content">
-                        <xsl:value-of select="//article-meta/permissions/copyright-statement"/><xsl:text>. </xsl:text><xsl:value-of select="//article-meta/permissions/license"/>
+                        <xsl:value-of select="//article-meta/permissions/copyright-statement"/><xsl:text>. </xsl:text><xsl:value-of select="translate(//article-meta/permissions/license, '&#10;&#9;', '')"/>
                     </xsl:attribute>
                 </meta>
             </xsl:if>
