@@ -1186,7 +1186,7 @@
                     <!-- three options -->
                     <span class="elife-figure-links">
                         <span class="elife-figure-link elife-figure-link-download">
-                            <a href="[{$graphic-type}-{$graphics}-large]"><xsl:attribute name="download"/>Download figure</a>
+                            <a href="[{$graphic-type}-{$graphics}-download]"><xsl:attribute name="download"/>Download figure</a>
                         </span>
                         <span class="elife-figure-link elife-figure-link-newtab">
                             <a href="[{$graphic-type}-{$graphics}-large]" target="_blank">Open in new tab</a>
@@ -1422,15 +1422,17 @@
     <xsl:template match="media" mode="testing">
         <xsl:choose>
             <xsl:when test="@mimetype = 'application'">
+                <xsl:variable name="media-download-href"><xsl:value-of select="concat(substring-before(@xlink:href, '.'), '-download.', substring-after(@xlink:href, '.'))"/></xsl:variable>
                 <!-- if mimetype is application -->
                 <span class="inline-linked-media-wrapper">
-                    <a href="[media-{@xlink:href}]"><xsl:attribute name="download"/>
+                    <a href="[media-{$media-download-href}]">
+                        <xsl:attribute name="download"/>
                         <i class="icon-download-alt"></i>
                         Download source data<span class="inline-linked-media-filename">
                             [<xsl:value-of
                                 select="translate(translate(preceding-sibling::label, $uppercase, $smallcase), ' ', '-')"/>media-<xsl:value-of
-                                select="count(preceding::media[@mimetype = 'application'])+1"/>.<xsl:value-of
-                                select="substring-after(@xlink:href,'.')"/>]
+                                select="count(preceding::media[@mimetype = 'application']) + 1"/>.<xsl:value-of
+                                select="substring-after(@xlink:href, '.')"/>]
                         </span>
                     </a>
                 </span>
