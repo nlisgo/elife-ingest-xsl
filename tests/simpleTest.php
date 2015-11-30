@@ -198,6 +198,18 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlCcLinkProvider
+     */
+    public function testJatsToHtmlCcLink($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlCcLinkProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('cc-link', 'getCcLink');
+    }
+
+    /**
      * @dataProvider jatsToHtmlMainTextProvider
      */
     public function testJatsToHtmlMainText($expected, $actual) {

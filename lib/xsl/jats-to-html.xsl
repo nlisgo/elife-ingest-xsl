@@ -12,6 +12,7 @@
     <xsl:template match="/">
         <xsl:call-template name="metatags"/>
         <xsl:call-template name="dc-descriptions"/>
+        <xsl:call-template name="cc-link"/>
         <xsl:call-template name="original-article"/>
         <xsl:call-template name="author-affiliation-details"/>
         <xsl:call-template name="article-info-identification"/>
@@ -24,6 +25,14 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template name="cc-link">
+        <div id="cc-link">
+            <xsl:if test="//article-meta/permissions/license[@xlink:href]">
+                <xsl:value-of select="//article-meta/permissions/license/@xlink:href"/>
+            </xsl:if>
+        </div>
     </xsl:template>
 
     <xsl:template name="original-article">
