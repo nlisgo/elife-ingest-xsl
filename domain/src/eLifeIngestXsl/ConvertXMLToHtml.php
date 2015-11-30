@@ -56,6 +56,13 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getCcLink() {
+    return $this->getSection("//*[@id='cc-link']");
+  }
+
+  /**
+   * @return string
+   */
   public function getMainText() {
     return $this->getSection("//*[@id='main-text']");
   }
