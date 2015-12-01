@@ -1167,7 +1167,7 @@
                         </xsl:with-param>
                         <xsl:with-param name="key">dept</xsl:with-param>
                         <xsl:with-param name="value">
-                            <xsl:apply-templates select="institution[@content-type='dept']" mode="formatting"/>
+                            <xsl:apply-templates select="institution[@content-type='dept'][1]" mode="formatting"/>
                         </xsl:with-param>
                     </xsl:call-template>
                     <xsl:call-template name="item">
@@ -1183,7 +1183,7 @@
                         </xsl:with-param>
                         <xsl:with-param name="key">institution</xsl:with-param>
                         <xsl:with-param name="value">
-                            <xsl:apply-templates select="institution[not(@content-type='dept')]" mode="formatting"/>
+                            <xsl:apply-templates select="institution[not(@content-type='dept')][1]" mode="formatting"/>
                         </xsl:with-param>
                     </xsl:call-template>
                     <xsl:call-template name="item">
@@ -1198,7 +1198,7 @@
                             </xsl:choose>
                         </xsl:with-param>
                         <xsl:with-param name="key">city</xsl:with-param>
-                        <xsl:with-param name="value" select="addr-line/named-content[@content-type='city']"/>
+                        <xsl:with-param name="value" select="addr-line/named-content[@content-type='city'][1]"/>
                     </xsl:call-template>
                     <xsl:call-template name="item">
                         <xsl:with-param name="prefix">
@@ -1212,7 +1212,7 @@
                             </xsl:choose>
                         </xsl:with-param>
                         <xsl:with-param name="key">country</xsl:with-param>
-                        <xsl:with-param name="value" select="country"/>
+                        <xsl:with-param name="value" select="country[1]"/>
                     </xsl:call-template>
                     <xsl:call-template name="item">
                         <xsl:with-param name="prefix">
@@ -1226,7 +1226,7 @@
                             </xsl:choose>
                         </xsl:with-param>
                         <xsl:with-param name="key">email</xsl:with-param>
-                        <xsl:with-param name="value" select="email"/>
+                        <xsl:with-param name="value" select="email[1]"/>
                     </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
