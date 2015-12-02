@@ -436,23 +436,23 @@
     </xsl:template>
 
     <xsl:template match="author-notes/fn[@fn-type='con']">
-        <h4 class="equal-contrib-label">
-            <xsl:apply-templates/>
-        </h4>
-        <xsl:variable name="contriputeid">
-            <xsl:value-of select="@id"/>
-        </xsl:variable>
-        <p>
-            <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
-                <xsl:value-of select="../name/given-names"/>
-                <xsl:text> </xsl:text>
-                <xsl:value-of select="../name/surname"/>
-                <xsl:if test="position() != last()">
-                    <xsl:text>, </xsl:text>
-                </xsl:if>
-            </xsl:for-each>
-
-        </p>
+        <section class="equal-contrib">
+            <h4 class="equal-contrib-label">
+                <xsl:apply-templates/>
+            </h4>
+            <xsl:variable name="contriputeid">
+                <xsl:value-of select="@id"/>
+            </xsl:variable>
+            <ul class="equal-contrib-list">
+                <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
+                    <li>
+                        <xsl:value-of select="../name/given-names"/>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="../name/surname"/>
+                    </li>
+                </xsl:for-each>
+            </ul>
+        </section>
     </xsl:template>
 
     <xsl:template match="fn-group[@content-type='author-contribution']">
