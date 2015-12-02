@@ -1,0 +1,12 @@
+[
+  {
+    "method": "getDecisionLetter",
+    "xpath": "//*[@class=\"elife-article-decision-reviewingeditor\"]",
+    "string": "Eduardo Franco, Reviewing editor, McGill University, Canada"
+  },
+  {
+    "method": "getArticleInfoReviewingEditor",
+    "xpath": "//*[@class=\"elife-article-info-reviewingeditor-text\"]",
+    "string": "Eduardo Franco, Reviewing editor, McGill University, Canada"
+  }
+]
