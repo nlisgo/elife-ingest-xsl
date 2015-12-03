@@ -5,6 +5,10 @@
 
     <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
+    <xsl:variable name="upperspecchars" select="'ÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ'"/>
+    <xsl:variable name="uppernormalchars" select="'AAAAEEEEIIIIOOOOUUUU'"/>
+    <xsl:variable name="smallspecchars" select="'áàâäéèêëíìîïóòôöúùûü'"/>
+    <xsl:variable name="smallnormalchars" select="'aaaaeeeeiiiioooouuuu'"/>
     <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
     <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'"/>
     <xsl:variable name="allcase" select="concat($smallcase, $uppercase)"/>
@@ -15,6 +19,7 @@
         <xsl:call-template name="cc-link"/>
         <xsl:call-template name="original-article"/>
         <xsl:call-template name="author-affiliation-details"/>
+        <xsl:call-template name="author-info-correspondence"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
         <xsl:apply-templates select="//article-meta/contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
@@ -25,6 +30,29 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template name="author-info-correspondence">
+        <xsl:choose>
+            <xsl:when test="//author-notes/corresp">
+                <div id="author-info-correspondence">
+                    <ul class="fn-corresp">
+                        <xsl:apply-templates select="//author-notes/corresp"/>
+                    </ul>
+                </div>
+            </xsl:when>
+            <xsl:when test="//contrib[@contrib-type='author'][@corresp='yes']//email">
+                <div id="author-info-correspondence">
+                    <ul class="fn-corresp">
+                        <xsl:for-each select="//contrib[@contrib-type='author'][@corresp='yes']//email">
+                            <li>
+                                <xsl:apply-templates select="." mode="corresp"/>
+                            </li>
+                        </xsl:for-each>
+                    </ul>
+                </div>
+            </xsl:when>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template name="cc-link">
@@ -407,13 +435,6 @@
     <!-- author-notes -->
     <xsl:template match="author-notes">
         <xsl:apply-templates/>
-        <xsl:if test="corresp">
-            <div id="author-info-correspondence">
-                <ul class="fn-corresp">
-                    <xsl:apply-templates select="corresp"/>
-                </ul>
-            </div>
-        </xsl:if>
         <xsl:if test="fn[@fn-type='present-address']">
             <div id="author-info-additional-address">
                 <ul class="additional-address-items">
@@ -431,7 +452,7 @@
             </div>
         </xsl:if>
         <div id="author-info-contributions">
-            <xsl:apply-templates select="ancestor::article/back/sec/fn-group[@content-type='author-contribution']"/>
+            <xsl:apply-templates select="ancestor::article/back//fn-group[@content-type='author-contribution']"/>
         </div>
     </xsl:template>
 
@@ -492,11 +513,11 @@
 
     <xsl:template match="author-notes/corresp">
         <li>
-            <xsl:apply-templates select="email"/>
+            <xsl:apply-templates select="email" mode="corresp"/>
         </li>
     </xsl:template>
 
-    <xsl:template match="author-notes/corresp/email">
+    <xsl:template match="email" mode="corresp">
         <a>
             <xsl:attribute name="href">
                 <xsl:value-of select="concat('mailto:',.)"/>
@@ -506,12 +527,33 @@
         <xsl:variable name="contriputeid">
             <xsl:value-of select="../@id"/>
         </xsl:variable>
-        <xsl:for-each select="../../../contrib-group/contrib/xref[@rid=$contriputeid]">
+        <xsl:variable name="given-names">
+            <xsl:choose>
+                <xsl:when test="../../../contrib-group/contrib/xref[@rid=$contriputeid][1]/../name/given-names">
+                    <xsl:value-of select="../../../contrib-group/contrib/xref[@rid=$contriputeid][1]/../name/given-names"/>
+                </xsl:when>
+                <xsl:when test="ancestor::contrib/name/given-names">
+                    <xsl:value-of select="ancestor::contrib/name/given-names"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="surname">
+            <xsl:choose>
+                <xsl:when test="../../../contrib-group/contrib/xref[@rid=$contriputeid][1]/../name/surname">
+                    <xsl:value-of select="../../../contrib-group/contrib/xref[@rid=$contriputeid][1]/../name/surname"/>
+                </xsl:when>
+                <xsl:when test="ancestor::contrib/name/surname">
+                    <xsl:value-of select="ancestor::contrib/name/surname"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:if test="$given-names != '' and $surname != ''">
             <xsl:text> (</xsl:text>
-            <xsl:value-of select="translate(../name/given-names, concat($smallcase, '. '), '')"/>
-            <xsl:value-of select="translate(../name/surname, concat($smallcase, '. '), '')"/>
+            <xsl:value-of select="translate($given-names, concat($smallcase, $smallspecchars, '. '), '')"/>
+            <xsl:value-of select="translate($surname, concat($smallcase, $smallspecchars, '. '), '')"/>
             <xsl:text>)</xsl:text>
-        </xsl:for-each>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="author-notes/fn[@fn-type='present-address']">
@@ -520,7 +562,6 @@
                 <xsl:variable name="contriputeid">
                     <xsl:value-of select="@id"/>
                 </xsl:variable>
-                <!--<xsl:value-of select="$contriputeid"/> -->
                 <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
                     <xsl:text>--</xsl:text>
                     <xsl:value-of select="translate(../name/given-names, concat($smallcase, '. '), '')"/>
@@ -528,7 +569,6 @@
                     <xsl:value-of select="translate(../name/surname, concat($smallcase, '. '), '')"/>
                     <xsl:text>:</xsl:text>
                 </xsl:for-each>
-                <!--<xsl:value-of select="count(../../contrib-group/contrib/xref[@rid=$contriputeid])"/>-->
             </span>
             <xsl:text> Present address:</xsl:text>
             <br/>
@@ -853,10 +893,12 @@
         </div>
     </xsl:template>
 
-    <xsl:template match="sec[not(@sec-type='datasets')]/title">
-        <xsl:element name="h{count(ancestor::sec) + 2}">
-            <xsl:apply-templates select="@* | node()"/>
-        </xsl:element>
+    <xsl:template match="sec[not(@sec-type='datasets')]/title | boxed-text/caption/title">
+        <xsl:if test="node() != ''">
+            <xsl:element name="h{count(ancestor::sec) + 2}">
+                <xsl:apply-templates select="@* | node()"/>
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="app//sec/title">
@@ -1210,15 +1252,23 @@
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <span class="supplementary-material-label">
-                    <xsl:value-of select="../label/text()"/>
-                </span>
+                <xsl:apply-templates select="../label" mode="supplementary-material"/>
                 <xsl:apply-templates/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="fig//caption/title">
+    <xsl:template match="supplementary-material/label">
+        <xsl:apply-templates select="." mode="supplementary-material"/>
+    </xsl:template>
+
+    <xsl:template match="label" mode="supplementary-material">
+        <span class="supplementary-material-label">
+            <xsl:value-of select="."/>
+        </span>
+    </xsl:template>
+
+    <xsl:template match="fig//caption/title | supplementary-material/caption/title">
         <span class="caption-title">
             <xsl:apply-templates/>
         </span>
@@ -1430,7 +1480,7 @@
 
     <xsl:template match="media" mode="testing">
         <xsl:choose>
-            <xsl:when test="@mimetype = 'application'">
+            <xsl:when test="@mimetype != 'video'">
                 <xsl:variable name="media-download-href"><xsl:value-of select="concat(substring-before(@xlink:href, '.'), '-download.', substring-after(@xlink:href, '.'))"/></xsl:variable>
                 <!-- if mimetype is application -->
                 <span class="inline-linked-media-wrapper">
@@ -1730,7 +1780,7 @@
     <xsl:template match="media">
         <xsl:variable name="data-doi" select="child::object-id[@pub-id-type='doi']/text()"/>
         <xsl:choose>
-            <xsl:when test="@mimetype != 'application'">
+            <xsl:when test="@mimetype = 'video'">
                 <div class="media" data-doi="{$data-doi}">
                     <xsl:apply-templates select="." mode="testing"/>
                 </div>
@@ -1843,28 +1893,26 @@
         <span class="nlm-surname">
             <xsl:value-of select="surname"/>
         </span>
+        <xsl:if test="parent::suffix">
+            <xsl:text> </xsl:text>
+            <span class="nlm-surname">
+                <xsl:value-of select="parent::suffix"/>
+            </span>
+        </xsl:if>
         <xsl:text>, </xsl:text>
-        <xsl:value-of select="name"/>
     </xsl:template>
 
     <xsl:template match="contrib[@contrib-type='editor']//aff">
-        <xsl:apply-templates/>
-        <xsl:if test="following-sibling::*">
-            <xsl:text>, </xsl:text>
-        </xsl:if>
+        <xsl:apply-templates select="child::*"/>
     </xsl:template>
 
-    <xsl:template match="contrib[@contrib-type='editor']//role">
-        <span class="nlm-role">
-            <xsl:apply-templates/>
-        </span>
-        <xsl:text>, </xsl:text>
-    </xsl:template>
-
-    <xsl:template match="contrib[@contrib-type='editor']//institution | contrib[@contrib-type='editor']//country">
+    <xsl:template match="contrib[@contrib-type='editor']//role | contrib[@contrib-type='editor']//institution | contrib[@contrib-type='editor']//country">
         <span class="nlm-{name()}">
             <xsl:apply-templates/>
         </span>
+        <xsl:if test="not(parent::aff) or (parent::aff and following-sibling::*)">
+            <xsl:text>, </xsl:text>
+        </xsl:if>
     </xsl:template>
 
     <!-- END sub-article author contrib information -->
