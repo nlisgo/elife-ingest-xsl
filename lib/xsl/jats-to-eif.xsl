@@ -525,22 +525,29 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="on-behalf-of">
+        <xsl:call-template name="collection">
+            <xsl:with-param name="value">
+                <xsl:call-template name="item">
+                    <xsl:with-param name="key">type</xsl:with-param>
+                    <xsl:with-param name="value" select="name()"/>
+                    <xsl:with-param name="prefix" select="''"/>
+                </xsl:call-template>
+                <xsl:call-template name="item">
+                    <xsl:with-param name="key" select="name()"/>
+                    <xsl:with-param name="value" select="."/>
+                </xsl:call-template>
+            </xsl:with-param>
+        </xsl:call-template>
+    </xsl:template>
+
     <xsl:template match="contrib">
         <xsl:call-template name="collection">
             <xsl:with-param name="prefix" select="''"/>
             <xsl:with-param name="value">
                 <xsl:call-template name="item">
                     <xsl:with-param name="key">type</xsl:with-param>
-                    <xsl:with-param name="value">
-                        <xsl:choose>
-                            <xsl:when test="@contrib-type">
-                                <xsl:value-of select="@contrib-type"/>
-                            </xsl:when>
-                            <xsl:when test="on-behalf-of">
-                                <xsl:value-of select="'on-behalf-of'"/>
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:with-param>
+                    <xsl:with-param name="value" select="@contrib-type"/>
                     <xsl:with-param name="prefix" select="''"/>
                 </xsl:call-template>
                 <xsl:call-template name="item">
@@ -566,10 +573,6 @@
                 <xsl:call-template name="item">
                     <xsl:with-param name="key">role</xsl:with-param>
                     <xsl:with-param name="value" select="role"/>
-                </xsl:call-template>
-                <xsl:call-template name="item">
-                    <xsl:with-param name="key">on-behalf-of</xsl:with-param>
-                    <xsl:with-param name="value" select="on-behalf-of"/>
                 </xsl:call-template>
                 <xsl:call-template name="item">
                     <xsl:with-param name="key">equal-contrib</xsl:with-param>
@@ -609,6 +612,10 @@
                 </xsl:call-template>
             </xsl:with-param>
         </xsl:call-template>
+
+        <xsl:if test="following-sibling::*[1][name() = 'on-behalf-of']">
+            <xsl:apply-templates select="following-sibling::*[1]"/>
+        </xsl:if>
 
         <xsl:if test="position() != last()">
             <xsl:value-of select="',&#10;'"/>
