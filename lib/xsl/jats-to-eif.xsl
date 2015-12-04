@@ -616,6 +616,7 @@
     </xsl:template>
 
     <xsl:template name="contrib-references">
+
         <xsl:variable name="includes">
             <xsl:if test="xref[@ref-type='aff'][@rid]">
                 <xsl:value-of select="'affiliation|'"/>
@@ -632,7 +633,7 @@
             <xsl:if test="xref[@ref-type='fn'][starts-with(@rid, 'con')][not(starts-with(@rid, 'conf'))][@rid]">
                 <xsl:value-of select="'contribution|'"/>
             </xsl:if>
-            <xsl:if test="xref[@ref-type='fn'][starts-with(@rid, 'conf')][@rid]">
+            <xsl:if test="xref[@ref-type][starts-with(@rid, 'conf')][@rid]">
                 <xsl:value-of select="'competing-interest|'"/>
             </xsl:if>
             <xsl:if test="xref[@ref-type='fn'][starts-with(@rid, 'pa')][@rid]">
@@ -756,7 +757,7 @@
                         </xsl:choose>
                     </xsl:with-param>
                     <xsl:with-param name="value">
-                        <xsl:apply-templates select="xref[@ref-type='fn'][starts-with(@rid, 'conf')][@rid]" mode="contrib-reference">
+                        <xsl:apply-templates select="xref[@ref-type][starts-with(@rid, 'conf')][@rid]" mode="contrib-reference">
                         </xsl:apply-templates>
                     </xsl:with-param>
                     <xsl:with-param name="value_prefix" select="'['"/>
