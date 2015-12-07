@@ -107,7 +107,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $convert = $this->convertEifFormat($file);
             $compares[] = [
                 json_decode(file_get_contents($eif)),
-                json_decode($convert->getOutput()),
+                json_decode($convert->getOutput($file)),
             ];
         }
 
@@ -151,7 +151,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
                 foreach ($queries as $query) {
                     $provider[] = [
                         $query->data,
-                        json_decode($this->convertEifFormat($match['filename'])->getOutput()),
+                        json_decode($this->convertEifFormat($match['filename'])->getOutput($match['filename'])),
                         !empty($query->description) ? $query->description : '',
                     ];
                 }

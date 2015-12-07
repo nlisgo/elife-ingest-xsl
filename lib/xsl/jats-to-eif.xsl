@@ -1426,7 +1426,7 @@
         <xsl:param name="prefix" select="''"/>
         <xsl:param name="doi"/>
         <xsl:param name="level" select="0"/>
-        <xsl:variable name="ancestors" select="ancestor::fig-group/fig[not(@specific-use = 'child-fig')]/object-id[@pub-id-type='doi'] | ancestor::*/object-id[@pub-id-type='doi']"/>
+        <xsl:variable name="ancestors" select="ancestor::fig-group/fig[not(@specific-use = 'child-fig')]/object-id[@pub-id-type='doi'] | ancestor::*/object-id[@pub-id-type='doi'] | ancestor::sub-article/front-stub/article-id[@pub-id-type='doi']"/>
         <xsl:variable name="descendants" select=".//object-id[@pub-id-type='doi'][not(text() = $doi)]"/>
         <xsl:choose>
             <xsl:when test="count($ancestors) = $level">
