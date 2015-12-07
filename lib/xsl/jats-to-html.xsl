@@ -22,6 +22,7 @@
         <xsl:call-template name="author-info-correspondence"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
+        <xsl:call-template name="main-figures"/>
         <xsl:apply-templates select="//article-meta/contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
         <xsl:apply-templates select="@* | node()"/>
     </xsl:template>
@@ -30,6 +31,10 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template name="main-figures">
+
     </xsl:template>
 
     <xsl:template name="author-info-correspondence">
@@ -1294,11 +1299,16 @@
         <div class="elife-article-decision-letter">
             <xsl:apply-templates/>
         </div>
-        <div class="elife-article-decision-letter" id='main-text'>
+        <div id='main-text'>
             <div class="article fulltext-view">
                 <xsl:apply-templates mode="testing"/>
                 <xsl:call-template name="appendices-main-text"/>
             </div>
+        </div>
+        <div id="main-figures">
+            <xsl:for-each select=".//fig[not(@specific-use)]">
+                <xsl:apply-templates select="."/>
+            </xsl:for-each>
         </div>
     </xsl:template>
 
