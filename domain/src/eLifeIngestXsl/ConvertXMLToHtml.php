@@ -203,6 +203,13 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getMainFigures() {
+    return $this->getSection("//*[@id='main-figures']");
+  }
+
+  /**
+   * @return string
+   */
   public function getDatasets() {
     return $this->getSection("//*[@id='datasets']");
   }
