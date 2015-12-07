@@ -90,7 +90,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
     }
   }
 
-  protected function addFragmentPaths($fragments, $base_path, $level = 0) {
+  protected function addFragmentPaths($fragments, $base_path, $level = 0, $sub_article = FALSE) {
     $totals = [];
     foreach ($fragments as $k => $fragment) {
       $totals += [
@@ -102,7 +102,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
         $slug = $fragment->type;
       }
       elseif ($fragment->type == 'fig') {
-        $slug = (($level == 0) ? 'figure' : 'figure-supp') . $totals[$fragment->type];
+        $slug = (($level == 0 || $sub_article) ? 'figure' : 'figure-supp') . $totals[$fragment->type];
       }
       elseif ($fragment->type == 'table-wrap') {
         $slug = 'table' . $totals[$fragment->type];
@@ -128,7 +128,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
 
       $fragments[$k]->path = $base_path . '/' . $slug;
       if (isset($fragment->fragments)) {
-        $fragment->fragments = $this->addFragmentPaths($fragment->fragments, $fragments[$k]->path, $level + 1);
+        $fragment->fragments = $this->addFragmentPaths($fragment->fragments, $fragments[$k]->path, $level + 1, $fragment->type == 'sub-article');
       }
     }
     return $fragments;

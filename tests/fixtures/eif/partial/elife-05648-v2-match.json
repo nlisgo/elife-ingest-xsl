@@ -1,0 +1,224 @@
+[
+  {
+    "description": "Verify the hierarchy of fragments within subarticles",
+    "data": {
+      "fragments": [
+        {
+          "type": "abstract",
+          "doi": "10.7554/eLife.05648.001",
+          "path": "content/4/e05648v2/abstract"
+        },
+        {
+          "type": "abstract",
+          "doi": "10.7554/eLife.05648.002",
+          "title": "eLife digest",
+          "path": "content/4/e05648v2/abstract2"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.003",
+          "title": "Figure 1.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.004",
+              "title": "Figure 1—figure supplement 1.",
+              "path": "content/4/e05648v2/figure1/figure-supp1"
+            },
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.005",
+              "title": "Figure 1—figure supplement 2.",
+              "path": "content/4/e05648v2/figure1/figure-supp2"
+            },
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.006",
+              "title": "Figure 1—figure supplement 3.",
+              "path": "content/4/e05648v2/figure1/figure-supp3"
+            }
+          ],
+          "path": "content/4/e05648v2/figure1"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.007",
+          "title": "Figure 2.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.008",
+              "title": "Figure 2—figure supplement 1.",
+              "path": "content/4/e05648v2/figure2/figure-supp1"
+            }
+          ],
+          "path": "content/4/e05648v2/figure2"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.009",
+          "title": "Figure 3.",
+          "fragments": [
+            {
+              "type": "supplementary-material",
+              "doi": "10.7554/eLife.05648.010",
+              "title": "Figure 3—source data 1.",
+              "path": "content/4/e05648v2/figure3/supp-material1"
+            },
+            {
+              "type": "supplementary-material",
+              "doi": "10.7554/eLife.05648.011",
+              "title": "Figure 3—source data 2.",
+              "path": "content/4/e05648v2/figure3/supp-material2"
+            }
+          ],
+          "path": "content/4/e05648v2/figure3"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.012",
+          "title": "Figure 4.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.013",
+              "title": "Figure 4—figure supplement 1.",
+              "path": "content/4/e05648v2/figure4/figure-supp1"
+            }
+          ],
+          "path": "content/4/e05648v2/figure4"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.014",
+          "title": "Figure 5.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.015",
+              "title": "Figure 5—figure supplement 1.",
+              "path": "content/4/e05648v2/figure5/figure-supp1"
+            }
+          ],
+          "path": "content/4/e05648v2/figure5"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.016",
+          "title": "Figure 6.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.017",
+              "title": "Figure 6—figure supplement 1.",
+              "path": "content/4/e05648v2/figure6/figure-supp1"
+            }
+          ],
+          "path": "content/4/e05648v2/figure6"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.018",
+          "title": "Figure 7.",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.019",
+              "title": "Figure 7—figure supplement 1.",
+              "path": "content/4/e05648v2/figure7/figure-supp1"
+            }
+          ],
+          "path": "content/4/e05648v2/figure7"
+        },
+        {
+          "type": "supplementary-material",
+          "doi": "10.7554/eLife.05648.020",
+          "title": "Supplementary file 1.",
+          "path": "content/4/e05648v2/supp-material1"
+        },
+        {
+          "type": "supplementary-material",
+          "doi": "10.7554/eLife.05648.021",
+          "title": "Supplementary file 2.",
+          "path": "content/4/e05648v2/supp-material2"
+        },
+        {
+          "type": "supplementary-material",
+          "doi": "10.7554/eLife.05648.022",
+          "title": "Supplementary file 3.",
+          "path": "content/4/e05648v2/supp-material3"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.023",
+          "title": "Appendix figure 1.",
+          "path": "content/4/e05648v2/figure8"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.024",
+          "title": "Appendix figure 2.",
+          "path": "content/4/e05648v2/figure9"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.025",
+          "title": "Appendix figure 3.",
+          "path": "content/4/e05648v2/figure10"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.026",
+          "title": "Appendix figure 4.",
+          "path": "content/4/e05648v2/figure11"
+        },
+        {
+          "type": "fig",
+          "doi": "10.7554/eLife.05648.027",
+          "title": "Appendix figure 5.",
+          "path": "content/4/e05648v2/figure12"
+        },
+        {
+          "type": "sub-article",
+          "doi": "10.7554/eLife.05648.028",
+          "title": "Decision letter",
+          "contributors": [
+            {
+              "type": "editor",
+              "surname": "Chakraborty",
+              "given-names": "Arup K",
+              "role": "Reviewing editor",
+              "affiliations": [
+                {
+                  "institution": "Massachusetts Institute of Technology",
+                  "country": "United States"
+                }
+              ]
+            }
+          ],
+          "path": "content/4/e05648v2/decision"
+        },
+        {
+          "type": "sub-article",
+          "doi": "10.7554/eLife.05648.029",
+          "title": "Author response",
+          "fragments": [
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.030",
+              "title": "Author response image 1.",
+              "path": "content/4/e05648v2/response/figure1"
+            },
+            {
+              "type": "fig",
+              "doi": "10.7554/eLife.05648.031",
+              "title": "Author response image 2.",
+              "path": "content/4/e05648v2/response/figure2"
+            }
+          ],
+          "path": "content/4/e05648v2/response"
+        }
+      ]
+    }
+  }
+]
