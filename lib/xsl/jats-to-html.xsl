@@ -287,7 +287,7 @@
         <xsl:apply-templates select="collab"/>
     </xsl:template>
 
-    <xsl:template match="collab">
+    <xsl:template match="contrib//collab">
         <h4 class="equal-contrib-label">
             <xsl:apply-templates/>
         </h4>
@@ -392,6 +392,11 @@
                     <xsl:value-of select="@id"/>
                 </xsl:attribute>
             </xsl:if>
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+    <xsl:template match="related-object/collab">
+        <span class="{name()}">
             <xsl:apply-templates/>
         </span>
     </xsl:template>
