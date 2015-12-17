@@ -610,9 +610,9 @@
         </li>
     </xsl:template>
     <xsl:template match="funding-source">
-        <span class="funding-source">
+        <h4 class="funding-source">
             <xsl:apply-templates/>
-        </span>
+        </h4>
     </xsl:template>
     <xsl:template match="funding-source/institution-wrap">
         <xsl:apply-templates/>
@@ -622,26 +622,24 @@
             <xsl:apply-templates/>
         </span>
     </xsl:template>
-
     <xsl:template match="award-id">
-        <span class="award-id">
+        <h5 class="award-id">
             <xsl:apply-templates/>
-        </span>
+        </h5>
     </xsl:template>
 
     <xsl:template match="principal-award-recipient">
-        <span class="principal-award-recipient">
+        <ul class="principal-award-recipient">
             <xsl:apply-templates/>
-        </span>
+        </ul>
     </xsl:template>
-
     <xsl:template
             match="principal-award-recipient/surname | principal-award-recipient/given-names | principal-award-recipient/name">
-        <span class="name">
+        <li class="name">
             <xsl:value-of select="given-names"/>
             <xsl:text> </xsl:text>
             <xsl:value-of select="surname"/>
-        </span>
+        </li>
         <xsl:value-of select="name"/>
     </xsl:template>
 
@@ -1125,7 +1123,7 @@
             <xsl:apply-templates/>
         </span>
     </xsl:template>
-    
+
     <xsl:template match="inline-formula">
         <span class="inline-formula">
             <xsl:apply-templates/>
@@ -2083,7 +2081,7 @@
             <xsl:apply-templates/>
         <xsl:text disable-output-escaping="yes">&lt;/blockquote&gt;</xsl:text>
     </xsl:template>
-    
+
     <!-- END - general format -->
 
     <xsl:template match="sub-article//title-group | sub-article/front-stub | fn-group[@content-type='competing-interest']/fn/p | //history//*[@publication-type='journal']/article-title">
