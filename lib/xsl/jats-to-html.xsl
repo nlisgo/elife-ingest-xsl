@@ -43,11 +43,9 @@
                             <xsl:attribute name="href"><xsl:value-of select="concat('[', @xlink:href, ']')"/></xsl:attribute>
                             <xsl:apply-templates/>
                         </a>
-                        <xsl:if test="../p">
-                            <xsl:value-of select="' ('"/>
-                            <xsl:apply-templates select="../p/node()"/>
-                            <xsl:value-of select="')'"/>
-                        </xsl:if>
+                        <xsl:for-each select="../p">
+                            <xsl:apply-templates select="."/>
+                        </xsl:for-each>
                     </li>
                 </xsl:for-each>
                 </ul>
