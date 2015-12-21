@@ -41,6 +41,7 @@
                     <li>
                         <a>
                             <xsl:attribute name="href"><xsl:value-of select="concat('[', @xlink:href, ']')"/></xsl:attribute>
+                            <xsl:attribute name="download"/>
                             <xsl:apply-templates/>
                         </a>
                         <xsl:for-each select="../p">
