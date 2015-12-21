@@ -210,6 +210,13 @@ class ConvertXMLToHtml extends ConvertXML {
   /**
    * @return string
    */
+  public function getSupplementaryMaterial() {
+    return $this->getSection("//*[@id='supplementary-material']");
+  }
+
+  /**
+   * @return string
+   */
   public function getDatasets() {
     return $this->getSection("//*[@id='datasets']");
   }

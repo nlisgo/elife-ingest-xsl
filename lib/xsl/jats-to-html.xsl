@@ -22,7 +22,7 @@
         <xsl:call-template name="author-info-correspondence"/>
         <xsl:call-template name="article-info-identification"/>
         <xsl:call-template name="article-info-history"/>
-        <xsl:call-template name="main-figures"/>
+        <xsl:call-template name="supplementary-material"/>
         <xsl:apply-templates select="//article-meta/contrib-group/contrib[@contrib-type='editor']" mode="article-info-reviewing-editor"/>
         <xsl:apply-templates select="@* | node()"/>
     </xsl:template>
@@ -33,8 +33,26 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template name="main-figures">
-
+    <xsl:template name="supplementary-material">
+        <div id="supplementary-material">
+            <xsl:if test="//supplementary-material[not(object-id)]">
+                <ul class="supplementary-material">
+                <xsl:for-each select="//supplementary-material[not(object-id)]/ext-link">
+                    <li>
+                        <a>
+                            <xsl:attribute name="href"><xsl:value-of select="concat('[', @xlink:href, ']')"/></xsl:attribute>
+                            <xsl:apply-templates/>
+                        </a>
+                        <xsl:if test="../p">
+                            <xsl:value-of select="' ('"/>
+                            <xsl:apply-templates select="../p/node()"/>
+                            <xsl:value-of select="')'"/>
+                        </xsl:if>
+                    </li>
+                </xsl:for-each>
+                </ul>
+            </xsl:if>
+        </div>
     </xsl:template>
 
     <xsl:template name="author-info-correspondence">

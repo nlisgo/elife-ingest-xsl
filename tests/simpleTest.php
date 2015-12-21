@@ -486,6 +486,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jatsToHtmlMainFiguresProvider
+     */
+    public function testJatsToHtmlMainFigures($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlMainFiguresProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('main-figures', 'getMainFigures');
+    }
+
+    /**
+     * @dataProvider jatsToHtmlSupplementaryMaterialProvider
+     */
+    public function testJatsToHtmlSupplementaryMaterial($expected, $actual) {
+        $this->assertEqualHtml($expected, $actual);
+    }
+
+    public function jatsToHtmlSupplementaryMaterialProvider() {
+        $this->setFolders();
+        return $this->compareHtmlSection('supplementary-material', 'getSupplementaryMaterial');
+    }
+
+    /**
      * @dataProvider jatsToHtmlDoiAbstractProvider
      */
     public function testJatsToHtmlDoiAbstract($expected, $actual) {
