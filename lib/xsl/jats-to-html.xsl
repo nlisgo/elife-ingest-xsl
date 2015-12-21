@@ -657,11 +657,11 @@
             <xsl:attribute name="id"><xsl:value-of select="'article-info-identification'"/></xsl:attribute>
             <div>
                 <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-doi'"/></xsl:attribute>
-                <span class="info-label">DOI</span> <span class="info-content"><a href="/lookup/doi/{$doi}"><xsl:value-of select="$doi"/></a></span>
+                <h4 class="info-label">DOI</h4> <div class="info-content"><a href="/lookup/doi/{$doi}"><xsl:value-of select="$doi"/></a></div>
             </div>
             <div>
                 <xsl:attribute name="class"><xsl:value-of select="'elife-article-info-citeas'"/></xsl:attribute>
-                <span class="info-label">Cite this as</span> <span class="info-content"><xsl:call-template name="citation"/></span>
+                <h4 class="info-label">Cite this as</h4> <div class="info-content"><xsl:call-template name="citation"/></div>
             </div>
         </div>
     </xsl:template>
