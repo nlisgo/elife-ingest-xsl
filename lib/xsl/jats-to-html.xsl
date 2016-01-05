@@ -470,12 +470,13 @@
             </div>
         </xsl:if>
 
-        <xsl:if test="fn[@fn-type='con']|fn[@fn-type='other']">
+        <xsl:if test="fn[@fn-type='con'] | fn[@fn-type='other'] | fn[@fn-type='deceased']">
             <div id="author-info-equal-contrib">
                 <xsl:apply-templates select="fn[@fn-type='con']"/>
             </div>
             <div id="author-info-other-footnotes">
                 <xsl:apply-templates select="fn[@fn-type='other']"/>
+                <xsl:apply-templates select="fn[@fn-type='deceased']"/>
             </div>
         </xsl:if>
         <div id="author-info-contributions">
@@ -523,16 +524,16 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="author-notes/fn[@fn-type='other']">
-        <xsl:variable name="contriputeid">
+    <xsl:template match="author-notes/fn[@fn-type='other'] | author-notes/fn[@fn-type='deceased']">
+        <xsl:variable name="fnid">
             <xsl:value-of select="@id"/>
         </xsl:variable>
-        <div class="foot-note" id="{$contriputeid}">
+        <div class="foot-note" id="{$fnid}">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
 
-    <xsl:template match="author-notes/fn[@fn-type='other']/p">
+    <xsl:template match="author-notes/fn[@fn-type='other']/p | author-notes/fn[@fn-type='deceased']/p">
         <p>
             <xsl:apply-templates/>
         </p>
@@ -603,7 +604,6 @@
         </li>
     </xsl:template>
 
-    <xsl:template match="author-notes/fn[@fn-type='present-address']/label"/>
     <xsl:template match="author-notes/fn[@fn-type='present-address']/p">
         <xsl:apply-templates/>
     </xsl:template>
@@ -2132,6 +2132,8 @@
     <xsl:template match="object-id | table-wrap/label"/>
     <xsl:template match="funding-group//institution-wrap/institution-id"/>
     <xsl:template match="table-wrap/graphic"/>
+    <xsl:template match="author-notes/fn[@fn-type='present-address']/label"/>
+    <xsl:template match="author-notes/fn[@fn-type='deceased']/label"/>
 
     <xsl:template name="camel-case-word">
         <xsl:param name="text"/>
