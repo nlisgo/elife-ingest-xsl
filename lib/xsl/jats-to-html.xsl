@@ -1103,6 +1103,11 @@
                     <xsl:value-of select="concat('table-', @align)"/>
                 </xsl:attribute>
             </xsl:if>
+            <xsl:if test="@style">
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
