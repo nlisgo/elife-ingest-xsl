@@ -486,15 +486,13 @@
 
     <xsl:template match="author-notes/fn[@fn-type='con']">
         <section class="equal-contrib">
-            <h4 class="equal-contrib-label">
-                <xsl:apply-templates/>
-            </h4>
+                <xsl:apply-templates/>:
             <xsl:variable name="contriputeid">
                 <xsl:value-of select="@id"/>
             </xsl:variable>
             <ul class="equal-contrib-list">
                 <xsl:for-each select="../../contrib-group/contrib/xref[@rid=$contriputeid]">
-                    <li>
+                    <li class="equal-contributor">
                         <xsl:value-of select="../name/given-names"/>
                         <xsl:text> </xsl:text>
                         <xsl:value-of select="../name/surname"/>
