@@ -1250,7 +1250,7 @@
     <xsl:template match="fig//caption">
         <xsl:variable name="graphic-type">
             <xsl:choose>
-                <xsl:when test="starts-with(../label/text(), 'Animation')">
+                <xsl:when test="substring-after(../graphic/@xlink:href, '.') = 'gif'">
                     <xsl:value-of select="'animation'"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1261,7 +1261,7 @@
         <xsl:choose>
             <xsl:when test="not(parent::supplementary-material)">
                 <div class="fig-caption">
-                    <xsl:variable name="graphics" select="../graphic/@xlink:href"/>
+                    <xsl:variable name="graphics" select="substring-before(concat(../graphic/@xlink:href, '.'), '.')"/>
                     <!-- three options -->
                     <span class="elife-figure-links">
                         <span class="elife-figure-link elife-figure-link-download">
@@ -1452,7 +1452,7 @@
         </xsl:variable>
         <xsl:variable name="graphic-type">
             <xsl:choose>
-                <xsl:when test="starts-with($caption, 'Animation')">
+                <xsl:when test="substring-after(child::graphic/@xlink:href, '.') = 'gif'">
                     <xsl:value-of select="'animation'"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1460,7 +1460,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="graphics" select="child::graphic/@xlink:href"/>
+        <xsl:variable name="graphics" select="substring-before(concat(child::graphic/@xlink:href, '.'), '.')"/>
         <div id="{$id}" class="fig-inline-img-set">
             <div class="elife-fig-image-caption-wrapper">
                 <div class="fig-expansion">
