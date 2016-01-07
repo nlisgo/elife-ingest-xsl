@@ -57,7 +57,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
       $json->update = $this->updated_date;
     }
     $json->path .= 'v' . $this->version;
-    $json->version = (string) $this->version;
+    $json->version = (int) $this->version;
     $json->{'article-version-id'} = ltrim($json->{'elocation-id'}, 'e') . '.' . $this->version;
     if (isset($json->fragments)) {
       $json->fragments = $this->addFragmentPaths($json->fragments, $json->path);

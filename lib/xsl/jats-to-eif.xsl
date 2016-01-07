@@ -56,7 +56,8 @@
         </xsl:call-template>
         <xsl:call-template name="item">
             <xsl:with-param name="key">publish</xsl:with-param>
-            <xsl:with-param name="value" select="'1'"/>
+            <xsl:with-param name="value" select="'true'"/>
+            <xsl:with-param name="string" select="'false'"/>
         </xsl:call-template>
         <xsl:call-template name="item">
             <xsl:with-param name="key">doi</xsl:with-param>
@@ -69,6 +70,7 @@
         <xsl:call-template name="item">
             <xsl:with-param name="key">volume</xsl:with-param>
             <xsl:with-param name="value"><xsl:call-template name="volume"/></xsl:with-param>
+            <xsl:with-param name="string" select="'false'"/>
         </xsl:call-template>
         <xsl:call-template name="item">
             <xsl:with-param name="key">elocation-id</xsl:with-param>
@@ -116,6 +118,7 @@
         <xsl:param name="key"/>
         <xsl:param name="value" select="''"/>
         <xsl:param name="default_value" select="''"/>
+        <xsl:param name="string" select="'true'"/>
         <xsl:if test="normalize-space($value) != '' or $default_value != ''">
             <xsl:value-of select="$prefix"/>
             <xsl:text>"</xsl:text>
@@ -123,9 +126,13 @@
             <xsl:text>": </xsl:text>
             <xsl:choose>
                 <xsl:when test="normalize-space($value) != ''">
-                    <xsl:text>"</xsl:text>
+                    <xsl:if test="$string = 'true'">
+                        <xsl:text>"</xsl:text>
+                    </xsl:if>
                     <xsl:value-of select="$value"/>
-                    <xsl:text>"</xsl:text>
+                    <xsl:if test="$string = 'true'">
+                        <xsl:text>"</xsl:text>
+                    </xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="$default_value"/>
@@ -228,7 +235,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:value-of select="$date_location"/>
+        <xsl:value-of select="concat($date_location, 'T00:00:00+00:00')"/>
     </xsl:template>
 
     <xsl:template name="year">
@@ -574,14 +581,20 @@
                     <xsl:with-param name="key">role</xsl:with-param>
                     <xsl:with-param name="value" select="role"/>
                 </xsl:call-template>
-                <xsl:call-template name="item">
-                    <xsl:with-param name="key">equal-contrib</xsl:with-param>
-                    <xsl:with-param name="value" select="@equal-contrib"/>
-                </xsl:call-template>
-                <xsl:call-template name="item">
-                    <xsl:with-param name="key">corresp</xsl:with-param>
-                    <xsl:with-param name="value" select="@corresp"/>
-                </xsl:call-template>
+                <xsl:if test="@equal-contrib = 'yes'">
+                    <xsl:call-template name="item">
+                        <xsl:with-param name="key">equal-contrib</xsl:with-param>
+                        <xsl:with-param name="value" select="'true'"/>
+                        <xsl:with-param name="string" select="'false'"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="@corresp = 'yes'">
+                    <xsl:call-template name="item">
+                        <xsl:with-param name="key">corresp</xsl:with-param>
+                        <xsl:with-param name="value" select="'true'"/>
+                        <xsl:with-param name="string" select="'false'"/>
+                    </xsl:call-template>
+                </xsl:if>
                 <xsl:call-template name="item">
                     <xsl:with-param name="key">deceased</xsl:with-param>
                     <xsl:with-param name="value" select="@deceased"/>
