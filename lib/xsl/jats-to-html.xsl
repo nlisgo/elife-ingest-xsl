@@ -1484,7 +1484,7 @@
                         <!-- use variables to set src and alt -->
                         <xsl:variable name="primaryid" select="concat('#', child::fig[not(@specific-use)]/@id)"/>
                         <xsl:variable name="primarycap" select="child::fig[not(@specific-use)]//label/text()"/>
-                        <xsl:variable name="graphichref" select="child::fig[not(@specific-use)]/graphic/@xlink:href"/>
+                        <xsl:variable name="graphichref" select="substring-before(concat(child::fig[not(@specific-use)]/graphic/@xlink:href, '.'), '.')"/>
                         <a href="{$primaryid}">
                             <img src="[graphic-{$graphichref}-small]" alt="{$primarycap}"/>
                         </a>
@@ -1494,7 +1494,7 @@
                             <xsl:for-each select="child::fig[@specific-use]">
                                 <!-- use variables to set src and alt -->
                                 <xsl:variable name="secondarycap" select="child::label/text()"/>
-                                <xsl:variable name="secgraphichref" select="child::graphic/@xlink:href"/>
+                                <xsl:variable name="secgraphichref" select="substring-before(concat(child::graphic/@xlink:href, '.'), '.')"/>
                                 <div class="elife-fig-slider-img elife-fig-slider-secondary">
                                     <a href="#{@id}">
                                         <img src="[graphic-{$secgraphichref}-small]" alt="{$secondarycap}"/>
