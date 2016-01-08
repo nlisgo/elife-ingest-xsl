@@ -595,10 +595,13 @@
                         <xsl:with-param name="string" select="'false'"/>
                     </xsl:call-template>
                 </xsl:if>
-                <xsl:call-template name="item">
-                    <xsl:with-param name="key">deceased</xsl:with-param>
-                    <xsl:with-param name="value" select="@deceased"/>
-                </xsl:call-template>
+                <xsl:if test="@deceased = 'yes'">
+                    <xsl:call-template name="item">
+                        <xsl:with-param name="key">deceased</xsl:with-param>
+                        <xsl:with-param name="value" select="'true'"/>
+                        <xsl:with-param name="string" select="'false'"/>
+                    </xsl:call-template>
+                </xsl:if>
                 <xsl:call-template name="item">
                     <xsl:with-param name="key">collab</xsl:with-param>
                     <xsl:with-param name="value" select="collab"/>
