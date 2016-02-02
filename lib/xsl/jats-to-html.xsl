@@ -1329,7 +1329,7 @@
             </div>
         </div>
         <div id="main-figures">
-            <xsl:for-each select=".//fig[not(@specific-use)]">
+            <xsl:for-each select=".//fig[not(@specific-use)][not(parent::fig-group)] | .//fig-group">
                 <xsl:apply-templates select="."/>
             </xsl:for-each>
         </div>
