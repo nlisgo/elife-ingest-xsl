@@ -2188,8 +2188,8 @@
 
     <xsl:template name="citation">
         <xsl:variable name="year"><xsl:call-template name="year"/></xsl:variable>
-        <xsl:variable name="volume"><xsl:call-template name="volume"/></xsl:variable>
-        <xsl:value-of select="concat(//journal-meta/journal-title-group/journal-title, ' ', $year, ';', $volume, ':', //article-meta/elocation-id)"/>
+        <xsl:variable name="citationid"><xsl:call-template name="citationid"/></xsl:variable>
+        <xsl:value-of select="concat(//journal-meta/journal-title-group/journal-title, ' ', $year, ';', $citationid)"/>
     </xsl:template>
 
     <xsl:template name="year">
@@ -2216,6 +2216,18 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:value-of select="$value"/>
+    </xsl:template>
+
+    <xsl:template name="citationid">
+        <xsl:variable name="volume"><xsl:call-template name="volume"/></xsl:variable>
+        <xsl:choose>
+            <xsl:when test="//article-meta/pub-date[@pub-type='collection']/year">
+                <xsl:value-of select="concat($volume, ':', //article-meta/elocation-id)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="//article-meta/article-id[@pub-id-type='doi']"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>
