@@ -169,7 +169,7 @@
                     </xsl:attribute>
                 </meta>
             </xsl:for-each>
-            <xsl:for-each select="//article-meta/contrib-group/contrib[@contrib-type='author'] | //article-meta/contrib-group/contrib[@contrib-type='editor']">
+            <xsl:for-each select="//article-meta/contrib-group/contrib[@contrib-type='author']">
                 <xsl:variable name="type" select="@contrib-type"/>
                 <meta name="citation_{$type}">
                     <xsl:attribute name="content">
