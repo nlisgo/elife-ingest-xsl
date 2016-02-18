@@ -43,7 +43,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
     if ($format_string) {
       $updated_date = strtotime($updated_date);
     }
-    $this->updated_date = date('Y-m-d H:i:s', $updated_date);
+    $this->updated_date = date(DATE_ATOM, $updated_date);
   }
 
   public function getOutput($filename = NULL) {
