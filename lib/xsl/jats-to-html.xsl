@@ -1302,19 +1302,6 @@
         </span>
     </xsl:template>
 
-    <xsl:template match="fig//ext-link">
-        <xsl:if test="ancestor::supplementary-material or @ext-link-type='doi'">
-            <a href="/lookup/doi/{@xlink:href}">
-                <xsl:apply-templates/>
-            </a>
-        </xsl:if>
-        <xsl:if test="not(ancestor::supplementary-material) and @ext-link-type!='doi'">
-            <a href="{@xlink:href}">
-                <xsl:apply-templates/>
-            </a>
-        </xsl:if>
-    </xsl:template>
-
     <!-- END Figure Handling -->
 
     <!-- body content -->
