@@ -70,11 +70,11 @@ cat [JATS XML file] | ./scripts/convert_jats.php -t 'html' -m 'getHtmlXpath' -a 
 ```
 for example to retrieve the first p element of the fragment doi 10.7554/eLife.00288.042 for article 00288:
 ```
-cat tests/fixtures/jats/00288-vor.xml | ./scripts/convert_jats.php -t 'html' -m 'getHtmlXpath' -a 'getDoi|10.7554/eLife.00288.042|//p[1]'
+cat tests/fixtures/jats/00288-v1-vor.xml | ./scripts/convert_jats.php -t 'html' -m 'getHtmlXpath' -a 'getDoi|10.7554/eLife.00288.042|//p[1]'
 ```
 or to get the the div with class="elife-article-author-response-doi" in the author response:
 ```
-cat tests/fixtures/jats/00288-vor.xml | ./scripts/convert_jats.php -t 'html' -m 'getHtmlXpath' -a 'getAuthorResponse||//div[@class="elife-article-author-response-doi"]'
+cat tests/fixtures/jats/00288-v1-vor.xml | ./scripts/convert_jats.php -t 'html' -m 'getHtmlXpath' -a 'getAuthorResponse||//div[@class="elife-article-author-response-doi"]'
 ```
 
 
@@ -82,6 +82,17 @@ To process all of the elife articles then do the following:
 ```
 git clone git@github.com:elifesciences/elife-articles.git
 ./scripts/generate_xslt_output.sh -s elife-articles -d elife-articles-processed
+```
+
+To get a quick idea of what the main article page will look like you can run the following script:
+```
+cat [JATS XML file] | ./scripts/draft_template.php > ~/draft_article.html
+```
+then open the html file in your browser.
+for example:
+```
+cat tests/fixtures/jats/00288-v1-vor.xml | ./scripts/draft_template.php > ~/00288.html
+open ~/00288.html
 ```
 
 Useful resources:
