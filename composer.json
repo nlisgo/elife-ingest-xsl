@@ -1,10 +1,44 @@
 {
   "name": "elife/elife-ingest-xsl",
   "type": "library",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "elife/elife-eif-schema",
+        "version": "master",
+        "source": {
+          "url": "https://github.com/elifesciences/elife-eif-schema",
+          "type": "git",
+          "reference": "master"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "elife/pattern-library",
+        "version": "master",
+        "source": {
+          "url": "https://github.com/elifesciences/pattern-library",
+          "type": "git",
+          "reference": "master"
+        },
+        "autoload": {
+          "classmap": [
+            "core/lib/PatternLab",
+            "core/lib/Mustache"
+          ]
+        }
+      }
+    }
+  ],
   "require": {
     "php": ">=5.5",
     "beberlei/assert": "~2.3",
-    "symfony/process": "~2.7|~3.0"
+    "symfony/process": "~2.7|~3.0",
+    "elife/elife-eif-schema": "dev-master",
+    "elife/pattern-library": "dev-master"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.2",

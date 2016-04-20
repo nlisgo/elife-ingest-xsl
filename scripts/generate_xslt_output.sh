@@ -35,11 +35,11 @@ do
           exit 0
           ;;
       -s | --source)
-          SOURCEFOLDER="$2"
+          SOURCEFOLDER="$PWD/$2"
            shift 2
            ;;
       -d | --destination)
-          DESTFOLDER="$2"
+          DESTFOLDER="$PWD/$2"
            shift 2
            ;;
       -f | --format)
@@ -65,7 +65,7 @@ generate_xslt_output() {
     mkdir $DESTFOLDER
 
     if [ "$FORMATSTR" = "all" ]; then
-        FORMATSTR="eif,bib,ris,html"
+        FORMATSTR="eif,pl-references,bib,ris,html"
     fi
 
     IFS=,
@@ -74,10 +74,14 @@ generate_xslt_output() {
     # for each jats xml file create a citation format of each type
     for file in $SOURCEFOLDER/*.xml; do
         filename="${file##*/}"
+        arguments="${filename%.*}"
         if [[ "${filename%.*}" != *-dev ]]; then
             for FORMAT in "${FORMATS[@]}"; do
+                if [ "$FORMAT" = "pl-references" ]; then
+                    arguments="$DESTFOLDER|/|${filename%.*}"
+                fi
                 echo "Generating xslt output for $filename in the $FORMAT format ..."
-                cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -t $FORMAT -a "${filename%.*}" > $DESTFOLDER/${filename%.*}.$(format_ext $FORMAT)
+                cat $SOURCEFOLDER/$filename | $SCRIPTPATH/convert_jats.php -m $(format_method $FORMAT) -t $FORMAT -a "$arguments" > $DESTFOLDER/${filename%.*}.$(format_ext $FORMAT)
             done
         fi
     done
@@ -88,11 +92,22 @@ control_c() {
     exit $?
 }
 
+format_method() {
+    local in=$1; shift
+    local method="getOutput"
+    if [ "$in" = "pl-references" ]; then
+        method="getOutputWithAssets"
+    fi
+    echo $method
+}
+
 format_ext() {
     local in=$1; shift
     local ext="txt"
     if [ "$in" = "eif" ]; then
         ext="json"
+    elif [ "$in" = "pl-references" ]; then
+        ext="pl-references.html"
     elif [ -n $in ]; then
         ext=$in
     fi

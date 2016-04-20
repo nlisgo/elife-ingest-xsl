@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -e # all commands must pass
 
-npm install -g bower
-bower install
-npm install --prefix ./bower_components/elife-eif-schema/
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
 composer install --prefer-dist --no-interaction
+npm install --prefix $SCRIPTPATH/vendor/elife/elife-eif-schema
+npm install --prefix $SCRIPTPATH/vendor/elife/pattern-library
+cd $SCRIPTPATH/vendor/elife/pattern-library
+gulp

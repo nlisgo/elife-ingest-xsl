@@ -31,6 +31,7 @@ if (!empty($xml)) {
   $params = [];
   $types = [
     'eif',
+    'pl-references',
     'bib',
     'ris',
     'html',
@@ -74,6 +75,9 @@ if (!empty($xml)) {
   switch ($params['type']) {
     case 'eif':
       $convertxml = new \eLifeIngestXsl\ConvertXMLToEif($xmlstring);
+      break;
+    case 'pl-references':
+      $convertxml = new \eLifeIngestXsl\ConvertXMLToPlReferences($xmlstring);
       break;
     case 'bib':
       $convertxml = new \eLifeIngestXsl\ConvertXMLToBibtex($xmlstring);
