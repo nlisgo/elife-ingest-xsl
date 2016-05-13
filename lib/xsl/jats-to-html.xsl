@@ -2071,6 +2071,12 @@
         </em>
     </xsl:template>
 
+    <xsl:template match="underline">
+        <span class="underline">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
     <xsl:template match="sup">
         <sup>
             <xsl:apply-templates/>

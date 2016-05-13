@@ -772,7 +772,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($expected, $actual, $message);
         }
         else {
-            $this->assertEqualHtml($expected, $actual, $message);
+            $this->assertEqualHtml(new Example($expected, $file), $actual, $message);
         }
     }
 
@@ -894,7 +894,14 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $expectedDom->loadHTML($html_prefix . '<' . $expected . '>' . $expected_html . '</' . $expected . '>');
 
             $compares[] = [
-                $this->getInnerHtml($expectedDom->getElementsByTagName($expected)->item(0)),
+                new Example(
+                    $this->getInnerHtml($expectedDom->getElementsByTagName($expected)->item(0)),
+                    $file,
+                    [
+                        $method,
+                        $params
+                    ]
+                ),
                 call_user_func_array([$actual_html, $method], $params),
             ];
         }
@@ -910,7 +917,7 @@ class simpleTest extends PHPUnit_Framework_TestCase
     /**
      * Compare two HTML fragments.
      */
-    protected function assertEqualHtml($expected, $actual, $message = '') {
+    protected function assertEqualHtml(Example $expected, $actual, $message = '') {
         $from = [
             '/\>[^\S ]+/s',
             '/[^\S ]+\</s',
@@ -928,10 +935,23 @@ class simpleTest extends PHPUnit_Framework_TestCase
             ']<',
         ];
         $this->assertEquals(
-            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $expected)),
-            ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $actual)),
-            $message
+            $this->indentHtml(ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $expected))),
+            $this->indentHtml(ConvertXMLToHtml::tidyHtml(preg_replace($from, $to, $actual))),
+            $message . PHP_EOL . $expected->debugInformation()
         );
+    }
+
+    private function indentHtml($html)
+    {
+        $config = array(
+            'indent'         => true,
+            'wrap'           => 200
+        );
+
+        $tidy = new tidy;
+        $tidy->parseString($html, $config, 'utf8');
+        $tidy->cleanRepair();
+        return (string) $tidy;
     }
 
     /**
@@ -1070,5 +1090,30 @@ class simpleTest extends PHPUnit_Framework_TestCase
             }
         }
         return $element;
+    }
+}
+
+    
+final class Example
+{
+    private $content;
+    private $filename;
+    private $methodCall;
+    
+    public function __construct($content, $filename, array $methodCall = null)
+    {
+        $this->content = $content;
+        $this->filename = $filename;
+        $this->methodCall = $methodCall;
+    }
+
+    public function __toString()
+    {
+        return $this->content;
+    }
+
+    public function debugInformation()
+    {
+        return $this->filename . PHP_EOL . var_export($this->methodCall, true);
     }
 }
