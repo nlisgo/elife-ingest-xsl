@@ -197,7 +197,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getArticleInfoLicense() {
-      return $this->getSection("//*[@id='article-info-license']", 0, $deduplicate = true);
+    return $this->getSection("//*[@id='article-info-license']");
   }
 
   /**
@@ -246,7 +246,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @param int $limit
    * @return string
    */
-  public function getSection($xpath_query, $limit = 0, $deduplicate = false) {
+  public function getSection($xpath_query, $limit = 0) {
     libxml_use_internal_errors(TRUE);
     $actual = new DOMDocument();
     $actual->loadHTML($this->getHtml());
@@ -261,9 +261,6 @@ class ConvertXMLToHtml extends ConvertXML {
         }
         $output[] = $this->getInnerHtml($element);
       }
-    }
-    if ($deduplicate) {
-        $output = array_unique($output);
     }
     libxml_clear_errors();
 
