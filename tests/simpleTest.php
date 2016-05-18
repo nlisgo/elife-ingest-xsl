@@ -881,7 +881,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
         }
         $html_prefix = '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
         $expected = 'expected';
-        $htmls = glob($this->html_folder . $prefix . $section_suffix . ".html");
+        $filter  = $this->html_folder . $prefix . $section_suffix . ".html";
+        $htmls = glob($filter);
         $compares = [];
 
         libxml_use_internal_errors(TRUE);

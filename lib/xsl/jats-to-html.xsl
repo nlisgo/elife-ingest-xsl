@@ -765,8 +765,23 @@
 
     <!-- permissions -->
     <xsl:template match="permissions">
-        <div id="article-info-license">
+        <div>
+            <xsl:choose>
+                <xsl:when test="parent::article-meta">
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="'article-info-license'"/>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="class">
+                        <xsl:value-of select="'copyright-and-license'"/>
+                    </xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:apply-templates/>
+            <xsl:if test="parent::article-meta">
+                <xsl:apply-templates select="//body//permissions"/>
+            </xsl:if>
         </div>
     </xsl:template>
 

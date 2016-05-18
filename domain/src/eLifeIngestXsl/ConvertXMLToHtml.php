@@ -197,7 +197,7 @@ class ConvertXMLToHtml extends ConvertXML {
    * @return string
    */
   public function getArticleInfoLicense() {
-    return $this->getSection("//*[@id='article-info-license']");
+      return $this->getSection("//*[@id='article-info-license']", 0);
   }
 
   /**
