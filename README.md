@@ -8,7 +8,7 @@ cd elife-ingest-xsl
 Install dependencies:
 
 ```
-./setup.sh
+composer install
 ```
 
 Generate example template output formats:

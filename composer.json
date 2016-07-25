@@ -1,10 +1,33 @@
 {
   "name": "elife/elife-ingest-xsl",
   "type": "library",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "elifesciences/elife-eif-schema",
+        "version": "dev-master",
+        "source": {
+          "url": "https://github.com/elifesciences/elife-eif-schema",
+          "type": "git",
+          "reference": "origin/master"
+        }
+      }
+    }
+  ],
+  "scripts": {
+    "post-install-cmd": [
+      "npm install --prefix ./vendor/elifesciences/elife-eif-schema/"
+    ],
+    "post-update-cmd": [
+      "npm install --prefix ./vendor/elifesciences/elife-eif-schema/"
+    ]
+  },
   "require": {
     "php": ">=5.5",
     "beberlei/assert": "~2.3",
-    "symfony/process": "~2.7|~3.0"
+    "symfony/process": "~2.7|~3.0",
+    "elifesciences/elife-eif-schema": "dev-master"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.2",

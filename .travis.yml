@@ -17,11 +17,10 @@ cache:
   directories:
     - bin
     - vendor
-    - bower_components
     - $HOME/.composer/cache
 
 install:
-  - ./setup.sh
+  - composer install --prefer-dist --no-interaction
 
 script:
 # Disable phpspec run for now
