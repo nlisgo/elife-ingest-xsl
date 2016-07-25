@@ -2104,6 +2104,10 @@
         </sub>
     </xsl:template>
 
+    <xsl:template match="break">
+        <br/>
+    </xsl:template>
+
     <xsl:template match="disp-quote">
         <xsl:text disable-output-escaping="yes">&lt;blockquote class="disp-quote"&gt;</xsl:text>
             <xsl:apply-templates/>
