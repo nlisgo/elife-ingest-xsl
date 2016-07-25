@@ -20,7 +20,7 @@ final class ConvertXMLToEif extends ConvertXMLToCitationFormat {
   public function __construct(XMLString $xml) {
     parent::__construct($xml, 'eif');
     // @todo - elife - nlisgo - there has to be a better way to reference validator.js
-    $path_to_validator = realpath(dirname(__FILE__)) . '/../../../bower_components/elife-eif-schema/validator.js';
+    $path_to_validator = realpath(dirname(__FILE__)) . '/../../../vendor/elifesciences/elife-eif-schema/validator.js';
 
     // If validator library is installed then set path to the validator.
     if (file_exists($path_to_validator)) {
