@@ -2137,7 +2137,7 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | underline | sub | sup | sec/title | ext-link | app/title | disp-formula | inline-formula | list | list-item | disp-quote" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | underline | monospace | styled-content | sub | sup | sec/title | ext-link | app/title | disp-formula | inline-formula | list | list-item | disp-quote" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
