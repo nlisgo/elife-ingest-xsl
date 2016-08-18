@@ -2092,6 +2092,23 @@
         </span>
     </xsl:template>
 
+    <xsl:template match="monospace">
+        <span class="monospace">
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
+    <xsl:template match="styled-content">
+        <span class="styled-content">
+            <xsl:if test="@style">
+                <xsl:attribute name="style">
+                    <xsl:value-of select="@style"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates/>
+        </span>
+    </xsl:template>
+
     <xsl:template match="sup">
         <sup>
             <xsl:apply-templates/>
