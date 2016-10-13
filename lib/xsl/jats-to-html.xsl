@@ -1113,16 +1113,29 @@
                     <xsl:value-of select="@colspan"/>
                 </xsl:attribute>
             </xsl:if>
-            <xsl:if test="@align">
+
+            <!-- The author-callout-style-b family applies both background and foreground colour. -->
+            <xsl:variable name="class">
+                <xsl:if test="@align">
+                    <xsl:value-of select="concat(' table-', @align)"/>
+                </xsl:if>
+                <xsl:if test="@style and starts-with(@style, 'author-callout-style-b')">
+                    <xsl:value-of select="concat(' ', @style)"/>
+                </xsl:if>
+            </xsl:variable>
+
+            <xsl:if test="$class != ''">
                 <xsl:attribute name="class">
-                    <xsl:value-of select="concat('table-', @align)"/>
+                    <xsl:value-of select="substring-after($class, ' ')"/>
                 </xsl:attribute>
             </xsl:if>
-            <xsl:if test="@style">
+
+            <xsl:if test="@style and not(starts-with(@style, 'author-callout-style-b'))">
                 <xsl:attribute name="style">
                     <xsl:value-of select="@style"/>
                 </xsl:attribute>
             </xsl:if>
+
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
