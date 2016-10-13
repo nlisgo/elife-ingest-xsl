@@ -11,6 +11,11 @@ Install dependencies:
 composer install
 ```
 
+The PHP Tidy library is also required. The version depends on the version of PHP it's to run against. For example on OSX using PHP 7.0.x this may be installed via homebrew with:
+ ```
+ brew install homebrew/php/php70-tidy 
+ ```
+
 Generate example template output formats:
 ```
 ./scripts/generate_xslt_output.sh
