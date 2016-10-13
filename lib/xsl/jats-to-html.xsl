@@ -1132,7 +1132,6 @@
 
             <xsl:if test="@style and not(starts-with(@style, 'author-callout-style-b'))">
                 <xsl:attribute name="style">
-                    <!--<xsl:if test="not(starts-with(@style, 'author-callout-style-a') or starts-with(@style, 'author-callout-style-b'))">-->
                     <xsl:value-of select="@style"/>
                 </xsl:attribute>
             </xsl:if>
