@@ -2144,13 +2144,19 @@
         <xsl:text disable-output-escaping="yes">&lt;/blockquote&gt;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="code">
+        <pre>
+            <xsl:apply-templates/>
+        </pre>
+    </xsl:template>
+
     <!-- END - general format -->
 
     <xsl:template match="sub-article//title-group | sub-article/front-stub | fn-group[@content-type='competing-interest']/fn/p | //history//*[@publication-type='journal']/article-title">
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | underline | monospace | styled-content | sub | sup | sec/title | ext-link | app/title | disp-formula | inline-formula | list | list-item | disp-quote" mode="testing">
+    <xsl:template match="caption | table-wrap/table | table-wrap-foot | fn | bold | italic | underline | monospace | styled-content | sub | sup | sec/title | ext-link | app/title | disp-formula | inline-formula | list | list-item | disp-quote | code" mode="testing">
         <xsl:apply-templates select="."/>
     </xsl:template>
 
