@@ -1,0 +1,8 @@
+<h5>RosettaScripts framework</h5><p>All computational protocols were executed from within the RosettaScripts framework, which enables the user to piece together select portions of ROSETTA code in order to generate project-specific protocols (<a class="xref-bibr" href="#bib26">Leaver-Fay et al., 2011</a>; <a class="xref-bibr" href="#bib13">Fleishman et al., 2011a</a>). An example of a command line executed to launch ROSETTA employing a RosettaScripts protocol is as follows:<pre>/path/rosetta_scripts.default.linuxgccrelease
+–database /path/main/database
+–parser:protocol rosetta_scripts_protocol.xml
+-in:file:native BINDI.pdb
+-nstruct 3
+–ex1
+–ex2
+–ignore_zero_occupancy false</pre></p><p>An example of a RosettaScripts XML protocol is found below, under 'Computational Methods: Design with ROSETTA.'</p>
