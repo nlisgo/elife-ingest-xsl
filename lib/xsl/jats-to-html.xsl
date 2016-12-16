@@ -2145,9 +2145,20 @@
     </xsl:template>
 
     <xsl:template match="code">
-        <pre>
-            <xsl:apply-templates/>
-        </pre>
+        <xsl:choose>
+            <xsl:when test="@xml:space = 'preserve'">
+                <pre>
+                    <code>
+                        <xsl:apply-templates/>
+                    </code>
+                </pre>
+            </xsl:when>
+            <xsl:otherwise>
+                <code>
+                    <xsl:apply-templates/>
+                </code>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- END - general format -->
