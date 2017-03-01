@@ -949,20 +949,10 @@
     <xsl:template match="p">
         <xsl:if test="not(supplementary-material)">
             <p>
-                <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="'first-child'"/>
-                    </xsl:attribute>
-                </xsl:if>
                 <xsl:apply-templates/>
             </p>
         </xsl:if>
         <xsl:if test="supplementary-material">
-            <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
-                <xsl:attribute name="class">
-                    <xsl:value-of select="'first-child'"/>
-                </xsl:attribute>
-            </xsl:if>
             <xsl:apply-templates/>
         </xsl:if>
     </xsl:template>
@@ -1376,20 +1366,10 @@
     <xsl:template match="p" mode="testing">
         <xsl:if test="not(supplementary-material)">
             <p>
-                <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="'first-child'"/>
-                    </xsl:attribute>
-                </xsl:if>
                 <xsl:apply-templates mode="testing"/>
             </p>
         </xsl:if>
         <xsl:if test="supplementary-material">
-            <xsl:if test="ancestor::caption and (count(preceding-sibling::p) = 0) and (ancestor::boxed-text or ancestor::media)">
-                <xsl:attribute name="class">
-                    <xsl:value-of select="'first-child'"/>
-                </xsl:attribute>
-            </xsl:if>
             <xsl:apply-templates/>
         </xsl:if>
     </xsl:template>
