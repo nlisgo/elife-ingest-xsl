@@ -903,6 +903,7 @@
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:apply-templates/>
+            <xsl:apply-templates select="." mode="internal-doi-link"/>
         </div>
     </xsl:template>
 
@@ -915,6 +916,7 @@
         <div class="supplementary-material" data-doi="{$data-doi}">
             <div class="supplementary-material-expansion" id="{$id}">
                 <xsl:apply-templates/>
+                <xsl:apply-templates select="." mode="internal-doi-link"/>
             </div>
         </div>
     </xsl:template>
@@ -1058,6 +1060,7 @@
                 <div class="table-caption">
                     <xsl:apply-templates select="parent::table-wrap/label" mode="captionLabel"/>
                     <xsl:apply-templates/>
+                    <xsl:apply-templates select="parent::table-wrap" mode="internal-doi-link"/>
                     <div class="sb-div caption-clear"></div>
                 </div>
             </xsl:when>
@@ -1424,6 +1427,7 @@
                         <xsl:value-of select="@id"/>
                     </xsl:attribute>
                     <xsl:apply-templates/>
+                    <xsl:apply-templates select="." mode="internal-doi-link"/>
                 </div>
             </xsl:when>
             <xsl:otherwise>
@@ -1465,6 +1469,7 @@
                         </a>
                     </div>
                     <xsl:apply-templates/>
+                    <xsl:apply-templates select="." mode="internal-doi-link"/>
                 </div>
             </div>
         </div>
@@ -1545,6 +1550,7 @@
                         </div>
                     </div>
                     <xsl:apply-templates/>
+                    <xsl:apply-templates select="." mode="internal-doi-link"/>
                 </div>
             </xsl:otherwise>
         </xsl:choose>
@@ -1849,6 +1855,9 @@
                 <xsl:if test="@article-type='article-commentary'">
                     <xsl:text>decision-letter</xsl:text>
                 </xsl:if>
+                <xsl:if test="@article-type='decision-letter'">
+                    <xsl:text>decision-letter</xsl:text>
+                </xsl:if>
                 <xsl:if test="@article-type='reply'">
                     <xsl:text>author-response</xsl:text>
                 </xsl:if>
@@ -1866,6 +1875,9 @@
                 <xsl:if test="../@article-type='article-commentary'">
                     <xsl:text>elife-article-decision-letter</xsl:text>
                 </xsl:if>
+                <xsl:if test="../@article-type='decision-letter'">
+                    <xsl:text>elife-article-decision-letter</xsl:text>
+                </xsl:if>
                 <xsl:if test="../@article-type='reply'">
                     <xsl:text>elife-article-author-response</xsl:text>
                 </xsl:if>
@@ -1877,6 +1889,9 @@
         <div>
             <xsl:attribute name="class">
                 <xsl:if test="../@article-type='article-commentary'">
+                    <xsl:text>elife-article-decision-letter-doi</xsl:text>
+                </xsl:if>
+                <xsl:if test="../@article-type='decision-letter'">
                     <xsl:text>elife-article-decision-letter-doi</xsl:text>
                 </xsl:if>
                 <xsl:if test="../@article-type='reply'">
@@ -2223,6 +2238,24 @@
                 <xsl:value-of select="'December'"/>
             </xsl:when>
         </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="*" mode="internal-doi-link">
+        <xsl:variable name="doi" select="child::object-id[@pub-id-type='doi']/text()"/>
+        <xsl:if test="$doi != ''">
+            <xsl:if test="not(contains(., 'DOI: http://dx.doi.org/10.7554'))">
+                <p>
+                    <strong>DOI:</strong>
+                    <xsl:text> </xsl:text>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="concat('/lookup/doi/', $doi)"/>
+                        </xsl:attribute>
+                        <xsl:value-of select="concat('http://dx.doi.org/', $doi)"/>
+                    </a>
+                </p>
+            </xsl:if>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template name="citation">
