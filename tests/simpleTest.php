@@ -1,5 +1,6 @@
 <?php
 
+use eLifeIngestXsl\ConvertDisqusXmlToHypothesIs;
 use eLifeIngestXsl\ConvertXML\XMLString;
 use eLifeIngestXsl\ConvertXMLToBibtex;
 use eLifeIngestXsl\ConvertXMLToCitationFormat;
@@ -15,6 +16,8 @@ class simpleTest extends PHPUnit_Framework_TestCase
     private $eif_folder = '';
     private $eif_jats_folder = '';
     private $html_folder = '';
+    private $disqus_folder = '';
+    private $hypothes_is_folder = '';
 
     public function setUp()
     {
@@ -30,7 +33,34 @@ class simpleTest extends PHPUnit_Framework_TestCase
             $this->eif_folder = $realpath . '/fixtures/eif/';
             $this->eif_jats_folder = $realpath . '/fixtures/eif-jats/';
             $this->html_folder = $realpath . '/fixtures/html/';
+            $this->disqus_folder = $realpath . '/fixtures/disqus/';
+            $this->hypothes_is_folder = $realpath . '/fixtures/hypothes_is/';
         }
+    }
+
+    /**
+     * @dataProvider disqusToHypothesIsProvider
+     */
+    public function testDisqusToHypothesIs($expected, $actual) {
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function disqusToHypothesIsProvider() {
+        $compares = [];
+        $this->setFolders();
+        $hyps = glob($this->hypothes_is_folder . '*.json');
+
+        foreach ($hyps as $hyp) {
+            $file = basename($hyp, '.json');
+            $xml_string = XMLString::fromString(file_get_contents($this->disqus_folder . $file . '.xml'));
+            $convert = new ConvertDisqusXmlToHypothesIs($xml_string);
+            $compares[] = [
+                json_decode(file_get_contents($hyp)),
+                json_decode($convert->getOutput()),
+            ];
+        }
+
+        return $compares;
     }
 
     /**

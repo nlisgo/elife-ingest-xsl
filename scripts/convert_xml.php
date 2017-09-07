@@ -34,6 +34,7 @@ if (!empty($xml)) {
     'bib',
     'ris',
     'html',
+    'disqus',
   ];
   $method = 'getOutput';
   $args = [];
@@ -80,6 +81,9 @@ if (!empty($xml)) {
       break;
     case 'ris':
       $convertxml = new \eLifeIngestXsl\ConvertXMLToRis($xmlstring);
+      break;
+    case 'disqus':
+      $convertxml = new \eLifeIngestXsl\ConvertDisqusXmlToHypothesIs($xmlstring);
       break;
     default:
       $convertxml = new \eLifeIngestXsl\ConvertXMLToHtml($xmlstring);
