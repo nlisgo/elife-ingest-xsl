@@ -64,6 +64,10 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
 
   public function convertMediaLinks($markdown) {
     $markdown = preg_replace('~\[(http[^\]]+)\.\.\.\]\((\1[^\)]+)\)~', '$2', $markdown);
+    $markdown = preg_replace('~(https://uploads\.disquscdn\.com/images/[a-z0-9]+\.)(jpg|png)( \"\1\2\")~', '$1$2', $markdown);
+    $markdown = preg_replace_callback('~https?://(.*?)\.(jpg|png|gif)(\?\w+=\w+)?~i', function($matches) { 
+            return '<img src="'.$matches[0].'" style="max-width: 300px;" />'; 
+        }, $markdown);
     return $markdown;
   }
 
