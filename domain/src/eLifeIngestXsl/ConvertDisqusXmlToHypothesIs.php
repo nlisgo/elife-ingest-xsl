@@ -82,7 +82,7 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
     foreach ($json as $item)  {
       $this->disqus[$item->id] = $item;
       $children[$item->target][$item->id] = $item;
-      if (strpos($item->target, 'elife-legacy:') === FALSE) {
+      if (strpos($item->target, 'disqus-import:') === FALSE) {
         $tree[$item->target] = [];
       }
     }
