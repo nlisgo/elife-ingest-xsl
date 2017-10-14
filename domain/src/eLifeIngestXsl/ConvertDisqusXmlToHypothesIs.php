@@ -73,7 +73,9 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
   }
 
   public function getTree($json = null) {
-    $json = $json ?? json_decode($this->getOutput());
+    if (is_null($json)) {
+        $json = json_decode($this->getOutput());
+    }
     $children = [];
     $tree = [];
 
@@ -112,7 +114,9 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
   }
 
   public function presentOutput($tree = null) {
-    $tree = $tree ?? json_decode($this->getTree());
+    if (is_null($tree)) {
+        $tree = json_decode($this->getTree());
+    }
     $output = '';
     foreach ($tree as $target => $items) {
       $output .= sprintf('<h2><a href="%s">%s</a></h2>', $target, $target) . PHP_EOL;
