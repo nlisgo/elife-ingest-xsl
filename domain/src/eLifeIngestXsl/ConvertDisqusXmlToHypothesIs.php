@@ -42,10 +42,9 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
   public function getOutput() {
     $json = json_decode(parent::getOutput());
     foreach ($json as $k => $item) {
-      if (!empty($this->creator)) {
-        $item->creator = $this->creator;
+      if (!empty($this->getCreator())) {
+        $item->creator = $this->getCreator();
       }
-      // $markdown = $this->htmlToMarkdown(sprintf('<p><em>Legacy comment by %s</em></p>', $item->name) . $item->body);
       $markdown = $this->htmlToMarkdown($item->body);
       $markdown = $this->convertMediaLinks($markdown);
       $item->body = [
@@ -55,7 +54,6 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
           'format' => 'text/markdown',
         ],
       ];
-      // unset($item->name);
       $json[$k] = $item;
     }
 
@@ -146,5 +144,13 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
       $output .= '</ul>' . PHP_EOL;
     }
     return $output;
+  }
+
+  public function setCreator($creator) {
+    $this->creator = $creator;
+  }
+
+  public function getCreator() {
+    return $this->creator;
   }
 }
