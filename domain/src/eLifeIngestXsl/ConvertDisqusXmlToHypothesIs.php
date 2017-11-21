@@ -45,12 +45,10 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
       if (!empty($this->getCreator())) {
         $item->creator = $this->getCreator();
       }
-      $markdown = $this->htmlToMarkdown($item->body);
-      $markdown = $this->convertMediaLinks($markdown);
       $item->body = [
         [
           'type' => 'TextualBody',
-          'value' => $markdown,
+          'value' => '',
           'format' => 'text/markdown',
         ],
       ];
