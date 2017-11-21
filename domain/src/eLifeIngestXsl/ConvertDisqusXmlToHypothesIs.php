@@ -136,7 +136,10 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
       $output .= '<ul>' . PHP_EOL;
         foreach ($branch as $id => $children) {
           $item = $this->disqus[$id];
-          $document = $parser->parse($item->body[0]->value);
+          $body = $item->body[0]->value;
+          $body = preg_replace('~\\n~', '<br>', $body);
+          $body = preg_replace('~(<br>){2,}~', PHP_EOL.PHP_EOL, $body);
+          $document = $parser->parse($body);
           $output .= sprintf("<li><h3>%s <em>by %s</em></h3>\n%s</li>", $timeago->inWords($item->created), $item->name, $htmlRenderer->renderBlock($document) . $this->prepareBranch($children)) . PHP_EOL;
         }
       $output .= '</ul>' . PHP_EOL;
