@@ -48,7 +48,7 @@ final class ConvertDisqusXmlToHypothesIs extends ConvertXML {
       $item->body = [
         [
           'type' => 'TextualBody',
-          'value' => '',
+          'value' => $item->body,
           'format' => 'text/markdown',
         ],
       ];
